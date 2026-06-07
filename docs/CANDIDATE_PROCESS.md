@@ -4,6 +4,29 @@ How a candidate earns capital. Two stages: **objective gates** (mechanical, auto
 **subjective evaluation** (expensive-model judgment + a pre-registered admission). A candidate never
 enters at the top tier — it starts as a small, capped satellite.
 
+## Mandate boundary (define it by the chokepoint criterion, not a sector label)
+
+A domain's mandate is the set of nodes in scope. Define it by a **physical-input criterion** — *does
+this chokepoint gate or feed the target system?* — **not** by a sector label. This matters because it
+forces a distinction between two different "purities":
+
+- **chokepoint-purity** — supplier concentration, no substitute, capacity lead-time (how *binding* the
+  constraint is);
+- **theme-demand-purity** — how much of the vehicle's demand is the headline theme vs adjacent uses.
+
+A genuine *input* chokepoint can be a **pure chokepoint but low-theme-beta** (its demand is mostly
+adjacent). That is a **feature, not a disqualifier**: it diversifies the book and does not consume the
+theme-beta cap. So **admit on chokepoint strength + a *real* vehicle** (revenue / signed offtake /
+capacity), and **do not reject for low theme-demand-purity alone**. Symmetrically, **do not admit a
+pre-revenue, hot-narrative name on chokepoint strength alone** (the cycle-peak / hype trap). The
+boundary is a *hypothesis*: re-evaluating a rejected name under a corrected boundary is itself
+pre-registered and auditable.
+
+> *Worked example (the AI domain):* critical-material inputs (rare earth, tungsten) are **in scope** —
+> they gate AI hardware upstream — even though their demand is mostly EV/wind/defense; a different
+> *compute paradigm* that is not an input (e.g. quantum) is **out of scope** unless the mandate is
+> explicitly expanded.
+
 ```
 idea → tradeability → liquidity → node fit → bottleneck relevance → exposure purity
      → valuation/crowding → correlation/overlap → role → pre-registered admission → probation

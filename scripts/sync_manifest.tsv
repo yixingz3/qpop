@@ -3,7 +3,7 @@
 # concept may have changed -> propagate the sanitized lesson, then update the baseline hash here.
 # NEVER track live-state files (the scored bottleneck_map, the QPOP ledger, queue state, broker code).
 # Columns: private_relpath <TAB> public_counterpart <TAB> last_synced_sha256   (baseline 2026-06-07)
-ai-sid/docs/CANDIDATE_PROCESS.md	docs/CANDIDATE_PROCESS.md	29b33f138c2c46be5776bd725231f5abb718566bf5f1def25cafe84212481860
+ai-sid/docs/CANDIDATE_PROCESS.md	docs/CANDIDATE_PROCESS.md	0479b65d2751facb50ee1d782991ed01b65200a3ae98a7ee83afbbc6317f38da
 ai-sid/docs/SCOREBOARD.md	docs/SCOREBOARD.md	21614b64b7bbcd4655a258e49909db2f5575b5d1e902f5848d034af53cf72446
 ai-sid/docs/TUNING.md	docs/TUNING.md	d7108f38cd174ef3c366ea11688e595715788711d30e50711b52d33d893845b9
 ai-sid/docs/DISCOVERY_AGENT.md	docs/METHOD.md	4fe90d193cb9a1994aff56bf4c078685d6945017eaab64ff5b9f620fa42ec850
