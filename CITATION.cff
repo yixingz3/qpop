@@ -1,0 +1,26 @@
+cff-version: 1.2.0
+title: "chokepoint-research-engine: A pre-registered, agent-assisted framework for thematic investment research"
+message: "If you use this framework, please cite it."
+type: software
+authors:
+  - family-names: Zheng
+    given-names: Yixing
+repository-code: "https://github.com/yixingz3/chokepoint-research-engine"
+abstract: >-
+  A domain-agnostic framework for using LLM agents to conduct disciplined thematic
+  investment research. It wraps open-ended agentic discovery in deterministic gates
+  and a forward pre-registration ("forward-QPOP") protocol to resist confabulation,
+  narrative drift, over-admission, and backtest overfitting. Contributions include a
+  portable bottleneck graph, a decomposed confidence model, a budget-aware
+  cheap-source / deterministic-gate / expensive-evaluate funnel, and forward
+  validation via paper trading and conservative shadow fills.
+keywords:
+  - large language models
+  - agentic research
+  - pre-registration
+  - investment research
+  - supply-chain bottlenecks
+  - trustworthy AI in finance
+license: MIT
+version: 0.1.0
+date-released: "2026-06-07"

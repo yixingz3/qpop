@@ -1,0 +1,35 @@
+# benchmark_config.template.yml — the theme benchmark you measure alpha against, and scoreboard settings.
+
+benchmark:
+  # The theme benchmark for ALPHA attribution (the scoreboard). Judge excess return vs THIS, not cash.
+  # e.g. a liquid thematic ETF, or a blend. Keep it separate from any beta-cap reference.
+  scoreboard_benchmark: "<TICKER or blend, e.g. 50% THEME_ETF + 25% BROAD + 25% basket>"
+
+  # The single reference used for the gross-thematic-beta CAP math (a SIZING input — keep frozen).
+  beta_reference: "<TICKER>"
+
+scoreboard:
+  judged_on: conservative_shadow_fill    # opening print + assumed adverse slippage (not optimistic fills)
+  assumed_slippage_bps: 7.5
+  min_forward_snapshots_for_performance: 20   # performance metrics are meaningless before this
+
+caps:
+  core_max_weight: 0.15
+  satellite_max_weight: 0.03
+  node_max_weight: 0.25
+  layer_max_weight: 0.35
+  gross_theme_beta_cap: 0.80
+  gross_theme_beta_cap_probation: 0.65
+  probation_trading_days: 10
+  probation_weight_factor: 0.85
+
+candidate_admission:
+  require_tradable: true
+  min_price: 5.0
+  min_avg_dollar_volume: 10000000    # recent-window average $ volume
+  initial_role: satellite
+  initial_max_weight: 0.02
+  overlap_penalty:
+    same_node_existing_core: 0.25
+    corr_to_existing_core_gt_0_80: 0.25
+    corr_to_existing_core_gt_0_90: 0.40
