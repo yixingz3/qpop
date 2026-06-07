@@ -1,8 +1,10 @@
 <!--
-DRAFT — agent-assisted literature survey. BEFORE SUBMISSION: independently verify every citation
-(authors, year, venue, arXiv id, URL). A few entries are flagged inline as needing confirmation;
-some arXiv ids are recent and must be re-checked. This is consistent with the framework's own
-"verify, don't assert" discipline — do not submit on unverified references.
+DRAFT — citations independently verified 2026-06-07 against arXiv/DOI pages; `references.bib` is the
+source of truth (use it for the LaTeX build). Two first-draft errors were caught and fixed: a
+FABRICATED entry ("Framing" on pre-analysis plans → replaced by Brodeur et al. 2024, JPE Micro) and
+a WRONG-AUTHOR entry ("Ren et al." → actually Fritz-Morgenthal, Hein & Papenbrock 2022, Frontiers in
+AI vol. 5). Still re-verify at camera-ready. This whole exercise is the framework's own
+"verify, don't assert" discipline applied to its own paper.
 -->
 
 # Related Work
@@ -66,9 +68,9 @@ simulation.
 
 ## 6. Trustworthy / Responsible AI in Finance
 
-Ren et al. (2022) connected trustworthy-AI principles (fairness, explainability, robustness,
-accountability) to financial risk management, arguing self-learning models must archive full data
-and metadata after material changes [20]. Regulatory direction (EU AI Act 2024; NIST AI RMF) treats
+Fritz-Morgenthal, Hein & Papenbrock (2022) connected trustworthy-AI principles (fairness,
+explainability, robustness, accountability) to financial risk management, arguing self-learning
+models must archive full data and metadata after material changes [20]. Regulatory direction (EU AI Act 2024; NIST AI RMF) treats
 high-risk AI as requiring documented, auditable decision trails — a standard backtest-centric agents
 do not meet. Our content-hashed, timestamped, forward-validated, human-readable ledger makes the
 system's reasoning inspectable independently of the LLM that produced it.
@@ -83,23 +85,25 @@ reproducible and auditable without relying on any single LLM instance or trainin
 
 ## References
 
-> _To be verified before submission._ Working list (see the header note):
+> Verified 2026-06-07; `references.bib` is the canonical source (BibTeX keys in brackets). Re-verify
+> at camera-ready. `[14]` replaces a fabricated draft entry; `[20]` corrects a wrong-author draft entry.
 
-[1] Wu et al. (2023). *BloombergGPT*. arXiv:2303.17564.
-[2] Yang, Liu, Wang (2023). *FinGPT*. arXiv:2306.06031.
-[3] Ding et al. (2024). *LLM Agent in Financial Trading: A Survey*. arXiv:2408.06361.
-[4] Xiao et al. (2024). *TradingAgents*. arXiv:2412.20138.
-[5] Zhang et al. (2024). *FinAgent / A Multimodal Foundation Agent for Financial Trading*. arXiv:2402.18485.
-[7] Malmqvist (2024). *Sycophancy in LLMs: Causes and Mitigations*. arXiv:2411.15287.
-[8] Gao, Jiang, Yan (2025). *A Test of Lookahead Bias in LLM Forecasts*. _(verify arXiv id)_.
-[9] Harvey, Liu, Zhu (2016). *…and the Cross-Section of Expected Returns*. Review of Financial Studies 29(1).
-[10] Li et al. (2025). *Profit Mirage: Information Leakage in LLM Financial Agents*. arXiv:2510.07920 _(verify)_.
-[11] Nosek, Ebersole, DeHaven, Mellor (2018). *The preregistration revolution*. PNAS 115(11).
-[12] Casey, Glennerster, Miguel (2012). *Reshaping Institutions … Preanalysis Plan*. QJE 127(4).
-[13] McLean, Pontiff (2016). *Does Academic Research Destroy Stock Return Predictability?* J. Finance 71(1).
-[14] _(pre-analysis-plan / p-hacking study — replace with a confirmed published version before submission)_.
-[15] Du, Li, Torralba, Tenenbaum, Mordatch (2023). *Improving Factuality … through Multiagent Debate*. arXiv:2305.14325.
-[16] Li et al. (2025). *From Generation to Judgment: LLM-as-a-judge*. arXiv:2411.16594.
-[18] Volpati et al. (2020). *Zooming In on Equity Factor Crowding*. arXiv:2001.04185.
-[19] Lou, Polk (2022). *Comomentum*. Review of Financial Studies 35(7).
-[20] Ren et al. (2022). *Financial Risk Management and Explainable, Trustworthy, Responsible AI*. Frontiers in AI 4.
+[1] Wu, Irsoy, Lu, Dabravolski, Dredze, Gehrmann, Kambadur, Rosenberg, Mann (2023). *BloombergGPT: A Large Language Model for Finance*. arXiv:2303.17564. `[wu2023bloomberggpt]`
+[2] Yang, Liu, Wang (2023). *FinGPT: Open-Source Financial Large Language Models*. FinLLM @ IJCAI 2023, arXiv:2306.06031. `[yang2023fingpt]`
+[3] Ding, Li, Wang, Chen, Guo, Zhang (2024). *Large Language Model Agent in Financial Trading: A Survey*. arXiv:2408.06361. `[ding2024llmagentfinance]`
+[4] Xiao, Sun, Luo, Wang (2024). *TradingAgents: Multi-Agents LLM Financial Trading Framework*. arXiv:2412.20138. `[xiao2024tradingagents]`
+[5] Zhang et al. (2024). *A Multimodal Foundation Agent for Financial Trading: Tool-Augmented, Diversified, and Generalist*. arXiv:2402.18485. `[zhang2024finagent]`
+[7] Malmqvist (2024). *Sycophancy in Large Language Models: Causes and Mitigations*. arXiv:2411.15287. `[malmqvist2024sycophancy]`
+[8] Gao, Jiang, Yan (2025). *A Test of Lookahead Bias in LLM Forecasts*. arXiv:2512.23847. `[gao2025lookaheadbias]`
+[9] Harvey, Liu, Zhu (2016). *…and the Cross-Section of Expected Returns*. Review of Financial Studies 29(1):5–68. `[harvey2016crosssection]`
+[10] Li, Zeng, Xing, Xu, Xu (2025). *Profit Mirage: Revisiting Information Leakage in LLM-based Financial Agents*. arXiv:2510.07920. `[li2025profitmirage]`
+[11] Nosek, Ebersole, DeHaven, Mellor (2018). *The preregistration revolution*. PNAS 115(11):2600–2606. `[nosek2018preregistration]`
+[12] Casey, Glennerster, Miguel (2012). *Reshaping Institutions: Evidence on Aid Impacts Using a Preanalysis Plan*. QJE 127(4):1755–1812. `[casey2012reshaping]`
+[13] McLean, Pontiff (2016). *Does Academic Research Destroy Stock Return Predictability?* Journal of Finance 71(1):5–32. `[mclean2016academic]`
+[14] Brodeur, Cook, Hartley, Heyes (2024). *Do Preregistration and Preanalysis Plans Reduce p-Hacking and Publication Bias?* J. Political Economy Microeconomics 2(3):527–561. `[brodeur2024preregistration]`
+[15] Du, Li, Torralba, Tenenbaum, Mordatch (2024). *Improving Factuality and Reasoning in Language Models through Multiagent Debate*. ICML 2024, arXiv:2305.14325. `[du2024multiagentdebate]`
+[16] Li, Jiang, Huang, Beigi, Zhao, Tan, Bhattacharjee, Jiang, Chen, Wu, Shu, Cheng, Liu (2025). *From Generation to Judgment: Opportunities and Challenges of LLM-as-a-judge*. EMNLP 2025, arXiv:2411.16594. `[li2025llmjudge]`
+[17] Khatchadourian (2026). *Replayable Financial Agents: A Determinism-Faithfulness Assurance Harness for Tool-Using LLM Agents*. ICLR 2026 Workshop on Advances in Financial AI, arXiv:2601.15322. `[khatchadourian2026replayable]`
+[18] Volpati, Benzaquen, Eisler, Mastromatteo, Toth, Bouchaud (2020). *Zooming In on Equity Factor Crowding*. Journal of Risk 23(1), arXiv:2001.04185. `[volpati2020crowding]`
+[19] Lou, Polk (2022). *Comomentum: Inferring Arbitrage Activity from Return Correlations*. Review of Financial Studies 35(7):3272–3302. `[lou2022comomentum]`
+[20] Fritz-Morgenthal, Hein, Papenbrock (2022). *Financial Risk Management and Explainable, Trustworthy, Responsible AI*. Frontiers in Artificial Intelligence 5:779799. `[fritzmorgenthal2022xai]`
