@@ -24,6 +24,30 @@ substitutability⁻¹, capacity_lead_time, supplier_concentration, pricing_power
 node-level `valuation_adjustment` / `crowding_adjustment`, and **measurable `exit_triggers`, each
 with a checkable `data_source`** (an admission rejects any trigger you cannot actually check).
 
+### What makes a chokepoint an *edge*: uncertainty about the constraint
+
+A binding chokepoint is necessary but **not sufficient** for a tradeable edge. The edge lives in the
+**uncertainty about the constraint** — how much of the scarcity is *not yet known or priced*. The
+question is not only *"is this a chokepoint?"* but *"how anticipated is it?"*
+
+- **Physical chokepoints** (refining capacity, fab lead-times, permits, ore grades) keep their
+  pricing power because their magnitude and timing are **uncertain and discovered late** — the market
+  learns the bottleneck is binding only as lead-times stretch and inventories empty. The
+  `capacity_lead_time` and `supplier_concentration` dims are proxies for exactly this *unpriced*
+  scarcity.
+- A **synthetic / scheduled constraint** with a *known date and a known, shrinking magnitude* gets
+  **arbitraged toward zero edge** — the market prices it in earlier each time it recurs. The
+  canonical case is Bitcoin's *halving*: a real algorithmic supply cut, but the most pre-announced
+  supply event in finance, whose marginal shock shrinks each cycle (≈1.7% → 0.83% → 0.41% of supply)
+  *and* which the market now front-runs (a pre-halving all-time-high in 2024). Real constraint, no
+  durable edge.
+
+This is the same principle as **policy-as-evidence**: an event *already in the price* is sunk
+information, not alpha (a signed award that has already fired, an extended/anticipated cycle). It is
+why the `valuation_adjustment` and `crowding_adjustment` exist — they discount a constraint the
+market has already learned. **Prefer chokepoints whose binding is still being discovered** (lead-times
+stretching, the re-rate ahead) over ones whose schedule everyone already trades.
+
 ## 2. Confidence decomposition (kills theme-chasing)
 
 ```

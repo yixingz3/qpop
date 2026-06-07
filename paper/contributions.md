@@ -21,10 +21,18 @@
    (replace, don't stack); structural-vs-cyclical; a position changes only on a fired pre-registered
    trigger, a binding cap, or a risk limit.
 
-6. **An empirical finding about restraint** — a pre-registered, gated agent admits a small
+6. **The *uncertainty-about-the-constraint* principle** — a binding chokepoint is necessary but not
+   sufficient for a tradeable edge; the edge lives in how *unpriced/undiscovered* the scarcity is.
+   Physical chokepoints (uncertain lead-times, discovered late) keep pricing power; a *synthetic,
+   scheduled* constraint with a known date and shrinking magnitude is arbitraged toward zero edge.
+   The clean case study is Bitcoin's halving — a real algorithmic supply cut, fully pre-announced and
+   front-run (a *pre*-halving ATH), with monotonically decaying post-event returns — contrasted with
+   physical-supply chokepoints. This unifies with policy-as-evidence ("already priced = sunk info").
+
+7. **An empirical finding about restraint** — a pre-registered, gated agent admits a small
    single-digit fraction of LLM-surfaced candidates, with each admission explainable and auditable;
    ablating any single discipline raises the admission rate, quantifying its contribution.
 
-7. **An open, reproducible release** — the framework, a worked AI-supply-chain example, a
+8. **An open, reproducible release** — the framework, a worked AI-supply-chain example, a
    `template_domain` for new domains, synthetic samples, and the methods paper — so others can fork,
    extend to new domains, and contribute forward results (the cross-domain flywheel).
