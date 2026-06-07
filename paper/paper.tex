@@ -1,0 +1,79 @@
+% paper.tex — LaTeX skeleton for the methods paper.
+% Build: pdflatex paper && bibtex paper && pdflatex paper && pdflatex paper  (or use `make`).
+% Swap \documentclass for the target venue template (e.g. ACM `acmart`, IEEE `IEEEtran`) at submission.
+% Section prose lives in the paper/*.md files during drafting; port it here for the camera-ready.
+
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage{hyperref}
+
+\title{Pre-Registered, Agent-Assisted Thematic Research:\\
+A Framework for Reducing Narrative Drift and LLM Confabulation in Investment Hypothesis Generation}
+\author{Yixing Zheng}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+% Port from paper/abstract.md.
+We present a pre-registered, agent-assisted research framework for thematic investment hypotheses,
+designed to resist LLM confabulation, narrative drift, over-admission, and backtest overfitting.
+Open-ended LLM discovery is wrapped in deterministic gates and a forward pre-registration protocol,
+so an idea moves capital only after surviving falsifiable, dated-evidence checks and forward (not
+backtested) validation. Our central finding is methodological rather than a return claim: a
+disciplined, pre-registered agent \emph{rejects most of the candidates it surfaces}, with a low,
+pre-committed admission rate, while every admitted position remains auditable from the ledger alone.
+\end{abstract}
+
+\section{Introduction}
+% Motivation: LLMs make thematic research cheap but unreliable; we trade recall for auditable restraint.
+
+\section{Related Work}
+% Port from paper/related_work.md. Cites: \citep{wu2023bloomberggpt,xiao2024tradingagents,
+% malmqvist2024sycophancy,gao2025lookaheadbias,nosek2018preregistration,brodeur2024preregistration,
+% du2024multiagentdebate,li2025llmjudge,harvey2016crosssection,volpati2020crowding,lou2022comomentum,
+% fritzmorgenthal2022xai,mclean2016academic,li2025profitmirage,casey2012reshaping,
+% khatchadourian2026replayable,ding2024llmagentfinance,yang2023fingpt,zhang2024finagent}.
+
+\section{Method}
+% Port from docs/METHOD.md: bottleneck graph; confidence decomposition; policy-as-evidence;
+% source--gate--evaluate funnel; forward-QPOP; the no-stories discipline stack.
+\[
+\text{confidence} = \text{bottleneck} \times \text{purity} \times \text{demand}
+                    \times \text{valuation} \times \text{crowding}
+\]
+
+\section{System}
+% Multi-agent implementation; model-tier allocation; content-hashed auditable ledger; reproducibility.
+
+\section{Experiment Design (Pre-Registered)}
+% Port from paper/experiment_plan.md. State hypotheses, horizon, metrics, and decision rules in advance.
+
+\section{Results}
+% Discipline results first (admission rate, no-action rate, source-tier + overlap distributions,
+% ledger integrity); forward results (benchmark-relative, conservative shadow fills) as they accrue;
+% ablations (gate off / bear-case-first off / overlap-penalty off raise the admission rate).
+
+\section{Cross-Domain Portability}
+% The same engine on a second domain (e.g. rare earth / power / uranium) as a config.
+
+\section{Limitations}
+% No live track record; small early sample; LLM nondeterminism; admission rate is necessary, not
+% sufficient, for alpha.
+
+\section{Ethics and Responsible Use}
+% See ETHICS.md. Not investment advice; no performance claim; auditability; data-provider compliance.
+
+\section{Conclusion}
+
+\bibliographystyle{plainnat}
+\bibliography{references}
+
+\end{document}

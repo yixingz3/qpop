@@ -53,12 +53,16 @@ disciplined agent-assisted research from naïve LLM screening, which over-admits
 
 ```
 chokepoint-research-engine/
-  docs/        METHOD · RESEARCH_RULES · QPOP_PROTOCOL · CANDIDATE_PROCESS · SCOREBOARD · TUNING · PAPER_OUTLINE
+  docs/        METHOD · RESEARCH_RULES · QPOP_PROTOCOL · CANDIDATE_PROCESS · SCOREBOARD · TUNING
+               · WRITING_STANDARDS · SYNC · PAPER_OUTLINE
   src/         engine interfaces: qpop · scoring · discovery · gating · evaluation · validation
   examples/    ai_supply_chain/ (worked example) · template_domain/ (copy this to start a new domain)
-  paper/       abstract · outline · contributions · experiment_plan · related_work
-  data/        synthetic/ (illustrative, non-sensitive samples only)
+  paper/       paper.tex + Makefile · references.bib (verified) · abstract · contributions
+               · experiment_plan · related_work
+  data/        synthetic/ (prices · candidate cards · QPOP ledger · scoreboard — non-sensitive samples)
+  scripts/     check_sync_drift.sh + sync_manifest.tsv (keep this repo in sync with the private impl)
   tests/
+  ETHICS.md · DISCLAIMER.md · LICENSE · CITATION.cff
 ```
 
 ## Adding a new domain (the flywheel)
