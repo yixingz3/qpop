@@ -83,22 +83,33 @@ right questions (*has it already fired? what would reverse it? does it unlock ca
 ## 3. The funnel (budget-aware multi-agent discovery)
 
 ```
-SOURCE   →  GATE        →  EVALUATE
-cheap LLM   deterministic   expensive LLM (finalists only)
-wide        script, no LLM  bear-case-first, written before the recommendation
+SOURCE   →  GATE        →  TRIAGE      →  EVALUATE      →  ADJUDICATE
+cheap LLM   deterministic   cheapest LLM   mid LLM          expensive LLM
+wide        script, no LLM  drop obvious   bear-case-first  admit-flags only
+(deduped)                   low-purity
 ```
 
-- **SOURCE** (cheap model, e.g. a small/fast LLM): high-volume, low-judgment candidate cards with
-  dated, source-tiered evidence — one lens per node, plus gap / social / policy lenses.
+- **SOURCE** (cheap model): high-volume, low-judgment candidate cards with dated, source-tiered
+  evidence — one lens per node, plus gap / social / policy / **literature** lenses. **Deduped against
+  a persistent "seen" set** (every previously-held / watchlisted / rejected name): the lenses skip a
+  decided name unless it shows a *material, dated* change, so the expensive sourcing tokens are spent
+  on genuinely new candidates, not re-researching the book.
 - **GATE** (no LLM): tradeability + liquidity + **overlap penalty** vs the existing book. Pure,
   reproducible, cheap. A name failing the gate is watchlist-only, never "free capacity."
-- **EVALUATE** (expensive model, *finalists only*): deep fit + a **bear case written before the
-  recommendation** + a falsifiable decision. Reserve the scarce model for capital-at-risk judgment.
+- **TRIAGE** (cheapest LLM): a quick purity pre-filter that drops the obvious non-starters
+  (diversified-giant-tiny-segment / commodity price-taker / pre-revenue hype) *before* the expensive
+  bear-case pass. **Safe by asymmetry** — a wrong drop only watchlists a name (a delay), and a wrong
+  pursue costs one cheap evaluation that watchlists it anyway.
+- **EVALUATE** (mid model, *triage survivors only*): deep fit + a **bear case written before the
+  recommendation** + a falsifiable decision.
+- **ADJUDICATE** (expensive model, *admit-flags only*): a capital-at-risk re-judgment of the names the
+  EVALUATE pass flags to admit/replace. Reserve the scarce model for exactly the irreversible call.
 
-**Model allocation is a knob** (`docs/TUNING.md`): when the expensive pool is scarce, run a
-*cheap-model first-pass* EVALUATE and reserve the expensive model to **adjudicate only the names the
-first pass flags as admit** — the asymmetry is safe because a false-watchlist merely delays a name,
-while a false-admit is caught by the adjudication.
+**Model allocation is a tunable cascade** (`docs/TUNING.md`): each tier hands the next a smaller,
+higher-value set, so the cheapest models do the volume and the expensive model only ever judges
+admits. The asymmetry is safe throughout — a false-watchlist merely delays a name, while a
+false-admit is caught downstream. (This same asymmetry is why the *audit of rejections* uses a cheap
+bull-only screen escalated to an expensive adjudication — see `docs/RESULTS_INITIAL.md`.)
 
 ## 4. Forward-QPOP (pre-registration without a backtest)
 
