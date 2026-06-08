@@ -9,6 +9,8 @@
 \usepackage{graphicx}
 \usepackage[numbers,sort&compress]{natbib}
 \usepackage{hyperref}
+\usepackage{tikz}
+\usetikzlibrary{positioning,arrows.meta,calc,decorations.pathreplacing}
 
 \title{Forward-Registered LLM-Assisted Thematic Research:\\
 An Auditable Framework for Investment Hypothesis Generation}
@@ -102,10 +104,10 @@ discipline that counteracts sycophancy; and a \textbf{forward-QPOP pre-registrat
 that commits hypotheses, dated evidence, and measurable exit triggers \emph{before} any
 capital-allocation claim, foreclosing HARKing and backtest overfitting.
 
-The headline empirical result is deliberately not a return claim.
+The pilot empirical result reported in this draft is deliberately not a return claim.
 It is the \textbf{admission rate}: a disciplined agent \emph{rejects most of what it
 surfaces}.
-In our initial batch, fewer than 10\% of LLM-surfaced candidates were admitted to the
+In our initial pilot batch, fewer than 10\% of LLM-surfaced candidates were admitted to the
 forward ledger; the remainder were rejected via deterministic gates or bear-case evaluation,
 with an auditor-verified rejection precision of 0.93 on a 14-rejection sample.
 We report this restraint figure alongside ablation comparisons---ungated screener,
@@ -395,7 +397,52 @@ everyone already trades.
 
 A correct node with a poor proxy (low purity) or a crowded entry yields \emph{low} confidence.
 Tier is \textbf{derived} from confidence (e.g.\ core $\geq 0.22$, satellite $\geq 0.10$, below
-$\to$ dropped), not asserted.
+$\to$ dropped), not asserted (Figure~\ref{fig:confidence}).
+
+\begin{figure}[t]
+\centering
+\begin{tikzpicture}[
+   font=\footnotesize,
+   >={Stealth[length=5pt]},
+   bx/.style={draw=black!55, rounded corners=2pt, minimum width=15mm,
+              minimum height=11mm, align=center, inner sep=2pt, fill=white},
+   pen/.style={draw=black!70, rounded corners=2pt, minimum width=15mm,
+               minimum height=11mm, align=center, inner sep=2pt, fill=black!12},
+]
+\node[bx] (b) {\textbf{bottleneck}\\\scriptsize how binding};
+\node[bx,right=5mm of b] (p) {\textbf{purity}\\\scriptsize proxy quality};
+\node[bx,right=5mm of p] (d) {\textbf{demand}\\\scriptsize order pull};
+\node[pen,right=8mm of d] (v) {\textbf{valuation}\\\scriptsize {$\times\,(\leq 1)$}};
+\node[pen,right=5mm of v] (c) {\textbf{crowding}\\\scriptsize {$\times\,(\leq 1)$}};
+\foreach \l/\r in {b/p,p/d} {\node at ($(\l)!0.5!(\r)$) {$\times$};}
+\node at ($(d)!0.5!(v)$) {$\times$};
+\node at ($(v)!0.5!(c)$) {$\times$};
+\draw[decorate,decoration={brace,amplitude=4pt,mirror,raise=2pt},black!50]
+   (b.south west) -- (d.south east)
+   node[midway,below=8pt,font=\scriptsize,black!60]{scored $\geq 0$ (build the case)};
+\draw[decorate,decoration={brace,amplitude=4pt,mirror,raise=2pt},black!50]
+   (v.south west) -- (c.south east)
+   node[midway,below=8pt,font=\scriptsize,black!60]{can only \emph{cut} ($\leq 1$)};
+\coordinate (mid) at ($(d.south)!0.5!(v.south)$);
+\node[draw=black!55,rounded corners=2pt,fill=white,align=center,inner sep=4pt,
+      below=20mm of mid] (conf) {\textbf{confidence}\\\scriptsize $=$ product of the five};
+\draw[->,black!55] (c.south) |- (conf.east);
+\node[bx,below=12mm of conf,xshift=-3.4cm,minimum height=8mm] (t1) {core\\\scriptsize $\geq 0.22$};
+\node[bx,below=12mm of conf,xshift=-1.15cm,minimum height=8mm] (t2) {basket\\\scriptsize split};
+\node[bx,below=12mm of conf,xshift=1.15cm,minimum height=8mm] (t3) {lottery\\\scriptsize $\geq 0.10$};
+\node[bx,below=12mm of conf,xshift=3.4cm,minimum height=8mm] (t4) {watchlist\\\scriptsize zero};
+\foreach \t in {t1,t2,t3,t4} {\draw[->,black!45] (conf.south) -- (\t.north);}
+\node[font=\scriptsize,black!55,anchor=east] at ($(t1.south west)+(-0.15,-0.40)$) {high conf.};
+\node[font=\scriptsize,black!55,anchor=west] at ($(t4.south east)+(0.15,-0.40)$) {low};
+\draw[->,black!40] ($(t1.south)+(0,-0.40)$) -- ($(t4.south)+(0,-0.40)$);
+\end{tikzpicture}
+\caption{The confidence decomposition. Three evidence-scored factors and two
+multiplicative penalties capped at $1$ (a crowded or richly-valued name can only
+lose confidence, never gain it) combine into a single score, from which the
+position tier --- and thus sizing (core $\geq 0.22$, satellite $\geq 0.10$) --- is
+\emph{derived}, not asserted.}
+\label{fig:confidence}
+\end{figure}
 
 \subsubsection*{Policy is \emph{evidence}, not a factor}
 
@@ -776,8 +823,11 @@ Edit only by appending dated amendments.
     full pipeline's by \textbf{$\geq$~25\% relative or $\geq$~5 percentage points, whichever is
     larger}.
   \item H3 is \textbf{supported} if the second-domain admission rate is \textbf{within
-    2$\times$} the first-domain rate \textbf{and $\geq$~70\%} of its rejections map to the shared
-    rejection-category taxonomy.
+    2$\times$} the first-domain rate, \textbf{and $\geq$~70\%} of its rejections map to the shared
+    rejection-category taxonomy, \textbf{and} the second-domain run uses the \emph{same engine code
+    and prompt templates}, with changes limited to \texttt{bottleneck\_map.yml}, the domain-specific
+    source lists, and the benchmark config (clause (c) --- otherwise ``portability'' could be
+    satisfied by quietly modifying the system).
   \item H5 is \textbf{supported} if \textbf{rejection precision $\geq$~0.80} and the
     \textbf{false-rejection rate $\leq$~10\%} on the audited sample.
   \item A position's outcome is recorded \textbf{Supported / Weakened / Falsified} strictly by
@@ -877,19 +927,78 @@ not yet observed.
 \subsection{The Funnel, on a Real Batch}
 
 A discovery session (2026-06-07, AI-supply-chain domain) over under-covered
-chokepoint layers:
+chokepoint layers, sourced across 12 lenses (per-node, gaps, social, policy, and
+literature), produced the cascade in Figure~\ref{fig:cascade}: $\sim$87 candidate
+cards collapsed to $\sim$25 unique new symbols after seen-set dedup; 24 passed the
+deterministic gate (tradeability + liquidity + overlap; foreign-OTC and
+sub-threshold-liquidity names rejected mechanically); and the
+bear-case-written-before-recommendation evaluation plus adjudication admitted
+\textbf{0} this session (prior build-out sessions admitted 3, all at small
+satellite).
 
-\begin{verbatim}
-~87 candidate cards sourced   (12 lenses: per-node + gaps + social +
-                               policy + literature)
-   -> ~25 unique new symbols
-   -> deterministic GATE       (tradeability + liquidity + overlap;
-                                foreign-OTC and sub-threshold-liquidity
-                                names rejected mechanically)
-   -> 24 evaluated finalists   (bear-case-written-before-recommendation)
-   ->  0 admitted this session (prior build-out sessions admitted 3,
-                                all at small satellite)
-\end{verbatim}
+\begin{figure}[t]
+\centering
+\begin{tikzpicture}[
+    x=1cm, y=1cm,
+    font=\footnotesize,
+    >={Stealth[length=5pt]},
+]
+% Horizontal attrition chart. Bar LENGTH = candidate count; bar FILL = model cost tier.
+% LLM-free stages (dedup, GATE) are white/hatched; cost darkens to expensive Opus.
+\def\sx{0.05057}     % 4.4cm / 87 candidates -> cm per candidate
+\def\bh{0.40}        % bar height
+\def\lx{-2.55}       % left label-column anchor (x)
+% ---- SOURCE: 87 cards, cheap (Sonnet) ----
+\def\yA{0}
+\fill[black!18] (0,\yA) rectangle ({87*\sx},{\yA+\bh});
+\draw[black!55,line width=0.5pt] (0,\yA) rectangle ({87*\sx},{\yA+\bh});
+\node[anchor=east,align=right] at (\lx,{\yA+0.5*\bh}) {\textbf{SOURCE}\\[-1pt]\scriptsize\textcolor{black!55}{Sonnet $\cdot$ cheap}};
+\node[anchor=west] at ({87*\sx+0.15},{\yA+0.5*\bh}) {\textbf{87} cards};
+% ---- dedup: 25 unique (LLM-free, white) ----
+\def\yB{-0.80}
+\fill[white] (0,\yB) rectangle ({25*\sx},{\yB+\bh});
+\draw[black!55,line width=0.5pt] (0,\yB) rectangle ({25*\sx},{\yB+\bh});
+\node[anchor=east,align=right] at (\lx,{\yB+0.5*\bh}) {dedup\\[-1pt]\scriptsize\textcolor{black!55}{seen-set $\cdot$ no LLM}};
+\node[anchor=west] at ({25*\sx+0.15},{\yB+0.5*\bh}) {\textbf{25} new symbols};
+% ---- GATE: 24 pass (deterministic, white + hatch) ----
+\def\yC{-1.60}
+\fill[white] (0,\yC) rectangle ({24*\sx},{\yC+\bh});
+\foreach \hx in {0.10,0.24,...,1.20} {\draw[black!25,line width=0.3pt] (\hx,\yC) -- (\hx,{\yC+\bh});}
+\draw[black!55,line width=0.5pt] (0,\yC) rectangle ({24*\sx},{\yC+\bh});
+\node[anchor=east,align=right] at (\lx,{\yC+0.5*\bh}) {\textbf{GATE}\\[-1pt]\scriptsize\textcolor{black!55}{script $\cdot$ no LLM}};
+\node[anchor=west] at ({24*\sx+0.15},{\yC+0.5*\bh}) {\textbf{24} pass};
+% ---- TRIAGE: 24, cheapest (Haiku) ----
+\def\yD{-2.40}
+\fill[black!30] (0,\yD) rectangle ({24*\sx},{\yD+\bh});
+\draw[black!55,line width=0.5pt] (0,\yD) rectangle ({24*\sx},{\yD+\bh});
+\node[anchor=east,align=right] at (\lx,{\yD+0.5*\bh}) {TRIAGE\\[-1pt]\scriptsize\textcolor{black!55}{Haiku $\cdot$ cheapest}};
+\node[anchor=west] at ({24*\sx+0.15},{\yD+0.5*\bh}) {\textbf{24}};
+% ---- EVALUATE: 24 finalists, mid (Sonnet, bear-case-first) ----
+\def\yE{-3.20}
+\fill[black!50] (0,\yE) rectangle ({24*\sx},{\yE+\bh});
+\draw[black!55,line width=0.5pt] (0,\yE) rectangle ({24*\sx},{\yE+\bh});
+\node[anchor=east,align=right] at (\lx,{\yE+0.5*\bh}) {EVALUATE\\[-1pt]\scriptsize\textcolor{black!55}{Sonnet $\cdot$ bear-case}};
+\node[anchor=west] at ({24*\sx+0.15},{\yE+0.5*\bh}) {\textbf{24} finalists};
+% ---- ADJUDICATE: 0 admitted, expensive (Opus) ----
+\def\yF{-4.00}
+\fill[black!82] (0,\yF) rectangle (0.06,{\yF+\bh});
+\draw[black!82,line width=0.6pt] (0,\yF) rectangle (0.06,{\yF+\bh});
+\node[anchor=east,align=right] at (\lx,{\yF+0.5*\bh}) {\textbf{ADJUDICATE}\\[-1pt]\scriptsize\textcolor{black!55}{Opus $\cdot$ admits only}};
+\node[anchor=west] at (0.22,{\yF+0.5*\bh}) {\textbf{0} admitted \scriptsize\textcolor{black!55}{(3 across build-out)}};
+% ---- compact cost-gradient key ----
+\node[anchor=west,font=\scriptsize,black!55] at (\lx,{\yF-0.62}) {cost};
+\shade[left color=black!12,right color=black!82] (\lx+0.66,{\yF-0.70}) rectangle (\lx+1.96,{\yF-0.54});
+\draw[black!55,line width=0.3pt] (\lx+0.66,{\yF-0.70}) rectangle (\lx+1.96,{\yF-0.54});
+\node[anchor=west,font=\scriptsize,black!55] at (\lx+2.08,{\yF-0.62}) {cheap $\to$ expensive \;\;bar length $=$ count};
+\end{tikzpicture}
+\caption{The discovery cascade on a real batch (2026-06-07, AI-supply-chain). Bar
+\emph{length} is the candidate count surviving each stage; bar \emph{fill} is the
+model cost tier (white $=$ deterministic, no LLM). The dedup step removes
+duplicates, not ideas; the expensive model judges only the survivors and admitted
+\textbf{none} this session --- this is rejection, not throughput, and ``no action''
+is the modal outcome.}
+\label{fig:cascade}
+\end{figure}
 
 Admission rate among evaluated finalists \textbf{this session: 0/24}
 (rule-of-three 95\% upper bound $\approx 12\%$ on so small a sample); trailing
@@ -926,6 +1035,12 @@ Adjudicated precision (secondary) & 1.00 (14/14) \\
 \end{tabular}
 \caption{Rejection-quality audit summary.}
 \end{table}
+
+\noindent The reported metric, in order of precedence, is: \textbf{primary} --- raw auditor
+precision $0.93$ (Wilson 95\% CI $[0.69, 0.99]$); \textbf{secondary} --- post-adjudication
+resolution $1.00$, reported only to show the layering works; \textbf{interpretation} --- the single
+auditor/engine disagreement is a useful diagnostic signal, not a number to celebrate. The takeaway
+is the raw $0.93$, \emph{not} an ``effective $14/14$.''
 
 Category distribution of justified rejections: low-purity-conglomerate
 $\times 8$, commodity-cycle $\times 2$, pre-revenue/hype $\times 2$,
@@ -1002,6 +1117,12 @@ $-$ bear-case-first (recommend from the bull thesis, no written bear case)
 \end{tabular}
 \caption{Ablation results on the 38-candidate batch.}
 \end{table}
+
+\noindent\emph{Reproducibility of the baselines.} The ungated baseline was \textbf{allowed to
+reject} --- it is not a strawman forced to admit. The full baseline prompt, the model version, the
+temperature, and the candidate cards are released (\texttt{src/prompts.md}; cards sanitized) so a
+reader can judge for themselves whether the ungated arm was unfairly admission-biased rather than
+taking our word that the $100\%$ is a fair comparison.
 
 The result is monotone and decisive: an \textbf{ungated LLM admits literally
 every candidate} (the ``over-admits by construction'' failure made concrete);
