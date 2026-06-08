@@ -22,7 +22,11 @@ over-admit. This framework wraps agentic discovery in **deterministic gates** an
 falsifiable, dated-evidence checks — and is validated **forward** (on paper trading), not via a
 fragile backtest.
 
-## The six contributions
+## What the framework provides
+
+These are the framework's *components*. The companion methods paper groups them into **four
+contributions** (framework · protocol · forward-QPOP · evaluation-and-release) — see
+`docs/PAPER_OUTLINE.md` and `paper/contributions.md`.
 
 1. **A domain-agnostic bottleneck graph** — nodes are physical chokepoints, edges are dependencies.
    AI today; rare earth, power, gas, mining, uranium, defense-industrial tomorrow. A new domain is
@@ -39,7 +43,12 @@ fragile backtest.
 5. **A "no-stories" discipline stack** — source tiers, fact-vs-announcement, overlap penalty,
    structural-vs-cyclical, admission restraint. A position changes only on a *fired pre-registered
    trigger, a binding cap, or a risk limit* — never a narrative.
-6. **Forward validation** — judged on conservative shadow fills against a benchmark, with the
+6. **Literature ingestion with verify-before-cite** — credible published research enters as a SOURCE
+   lens (mechanism + priors) and as a methods literature-watch (related work + gap), but **no paper
+   can move a score or enter `references.bib` until an adversarial, refute-by-default auditor
+   confirms its identifier resolves to the claimed title and author** (see `docs/LITERATURE.md`).
+   A *published, tradeable anomaly* is treated as already-priced crowding evidence, not a buy signal.
+7. **Forward validation** — judged on conservative shadow fills against a benchmark, with the
    accumulated pre-registration ledger forming a reusable, auditable dataset.
 
 ## Why "no action" is the result
@@ -54,7 +63,7 @@ disciplined agent-assisted research from naïve LLM screening, which over-admits
 ```
 chokepoint-research-engine/
   docs/        METHOD · RESEARCH_RULES · QPOP_PROTOCOL · CANDIDATE_PROCESS · SCOREBOARD · TUNING
-               · WRITING_STANDARDS · SYNC · PAPER_OUTLINE
+               · WRITING_STANDARDS · LITERATURE · SYNC · PAPER_OUTLINE
   src/         engine interfaces: qpop · scoring · discovery · gating · evaluation · validation
   examples/    ai_supply_chain/ (worked example) · template_domain/ (copy this to start a new domain)
   paper/       paper.tex + Makefile · references.bib (verified) · abstract · contributions
