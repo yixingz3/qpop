@@ -115,13 +115,31 @@ decision trails — a standard backtest-centric agents do not meet. Our content-
 forward-validated, human-readable ledger makes the system's reasoning inspectable independently of
 the LLM that produced it.
 
+## 7. Live LLM-Trading Benchmarks and Auditable Trade Logs
+
+A reviewer will rightly note that neither *forward evaluation* nor *tamper-evident logging* is, on
+its own, novel — so we state precisely where the line is. Qian et al. (2025), *When Agents Trade*,
+introduce the Agent Market Arena, a **lifelong, real-time multi-market benchmark** for LLM trading
+agents, finding that agent architecture drives risk behavior more than the base LLM [31]. Chen et
+al. (2025), *StockBench*, give a contamination-free sequential trading benchmark and find most LLM
+agents fail to beat buy-and-hold [32]. On the engineering side, the open-source `llm-quant` system
+records LLM paper-trades in a **SHA-256 hash-chained, git-tracked ledger** [33]. We borrow from this
+last design — our Forward-QPOP ledger is likewise hash-chained — but our contribution is *not* the
+immutable log. The distinction, which we make central: these systems evaluate or record **what an
+agent *did*** in the market; ours forward-**locks a researcher-level hypothesis** (the
+binding-chokepoint claim, dated evidence, and entry/update/exit triggers) to a hash-stamped record
+**before the evaluation window opens**. Live evaluation tells you the outcome; the forward lock makes
+the *prediction* auditable against that outcome, closing the gap that lets backtest- or
+benchmark-based claims be rationalized after the fact.
+
 ## Gap We Fill
 
 Existing work addresses individual validity threats in isolation: lookahead-bias diagnostics and
 benchmarks [8, 23], structural-validity checklists applied *post-hoc* by reviewers [24], automated
-falsification for *already-formed* hypotheses [29], and output-layer auditability for tool-using
-agents [17]. No prior system ties these into a *prospective, forward-locked* workflow that unifies
-all four capabilities: (a) agentic open-ended hypothesis discovery across thematic domains; (b)
+falsification for *already-formed* hypotheses [29], output-layer auditability for tool-using
+agents [17], and live trading benchmarks or hash-chained trade logs that record *executions* rather
+than *pre-registered predictions* [31, 32, 33]. To our knowledge, no prior system ties these into a *prospective, forward-locked* workflow that
+unifies all four capabilities: (a) agentic open-ended hypothesis discovery across thematic domains; (b)
 deterministic gating that enforces source-tier, purity, and overlap rules *before* any expensive
 model is invoked; (c) **forward pre-registration — not backtesting — as the evidentiary standard**,
 immutable once content-hashed and dated; and (d) a portable cross-domain bottleneck schema that makes
@@ -169,3 +187,6 @@ backfitting) nor the discovery phase nor the finance-portable schema.
 [28] Zhao, Balagopalan, Agrawal, Yergasheva, Alshikh, Bikel (2026). *The Price of Agreement: Measuring LLM Sycophancy in Agentic Financial Applications*. ICLR 2026 FinAI Workshop, arXiv:2604.24668. `[zhao2026priceofagreement]`
 [29] Huang, Jin, Li, Li, Candès, Leskovec (2025). *Automated Hypothesis Validation with Agentic Sequential Falsifications* (POPPER). ICML 2025, arXiv:2502.09858. `[huang2025popper]`
 [30] Buscemi, Deckenbrunnen, Kabir, Mishchenko, Mowla (2026). *Assessing High-Risk AI Systems under the EU AI Act: From Legal Requirements to Technical Verification*. arXiv:2512.13907. `[buscemi2026euaiact]`
+[31] Qian et al. (2025). *When Agents Trade: Live Multi-Market Trading Benchmark for LLM Agents* (introduces Agent Market Arena). arXiv:2510.11695. `[qian2025whenagents]`
+[32] Chen, Yao, Liu, Xin, Ye, Yu, Hou, Li (2025). *StockBench: Can LLM Agents Trade Stocks Profitably In Real-world Markets?* arXiv:2510.02209. `[chen2025stockbench]`
+[33] 45ck (2025). *llm-quant: LLM-Powered Paper Trading System with a Tamper-Evident SHA-256 Trade Ledger*. GitHub: github.com/45ck/llm-quant. `[45ck2025llmquant]`

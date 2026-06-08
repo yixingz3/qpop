@@ -43,9 +43,12 @@ uncertainty-about-the-constraint) are *support*, not pillars.
    overlap-penalized** idea end-to-end (e.g. an admitted critical-material chokepoint at half size,
    a "next-MU" commodity-cycle reject, an overlap-penalized duplicate of a held bet).
 8. **Results / Forward Log** — *discipline metrics first* (candidate count, gate-pass rate,
-   **admission rate < 10%**, no-action rate, source-tier & overlap distributions, ledger integrity);
-   *forward performance only when enough time passes* (excess return, IR, active drawdown on shadow
-   fills, with CIs); *ablations* (gate / bear-case-first / overlap removed → admission rate rises).
+   **admission rate < 10%**, no-action rate, **rejection precision** from the H5 audit, source-tier &
+   overlap distributions, ledger integrity) — initial real-batch numbers in `docs/RESULTS_INITIAL.md`
+   (rejection precision 0.93 on a 14-rejection sample, one reported false rejection); *ablations vs
+   baselines* (ungated screener / debate-only / no-QPOP-lock / no-overlap → admission rate rises AND
+   rejection precision falls); *forward performance only when enough time passes* (excess return, IR,
+   active drawdown on shadow fills, with CIs + the structural-validity checklist).
 9. **Discussion** — cross-domain portability (the same engine on a second domain as a config); and a
    **short conceptual case study: uncertainty-about-the-constraint** (the Bitcoin-halving example —
    a real but *scheduled, known-magnitude* constraint is arbitraged toward zero edge, unlike a

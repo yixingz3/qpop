@@ -48,13 +48,28 @@ prior_confidence: 0.0
 evidence:                 # dated, source-tiered
   - { summary: "...", tier: primary, date: <date>, url: "..." }
 content_hash: "<hash of the frozen fields>"
+prev_hash:    "<content_hash of the previous ledger entry>"   # hash-chain link
+entry_hash:   "<sha256(content_hash + prev_hash)>"            # this entry's chain position
 ```
 
-## The content hash
+## The hash chain
 
 The load-bearing fields (claim, exit_triggers, decomposed_confidence, prior) are hashed at
-creation. Any later edit to a *closed* entry breaks the hash and is rejected. This makes the ledger
-**auditable** — an external reviewer can verify the hypothesis was registered *before* the outcome.
+creation (`content_hash`). Each entry **also binds the previous entry's hash** (`prev_hash`), so the
+ledger is a **hash chain** (`entry_hash = sha256(content_hash ‖ prev_hash)`), not merely a set of
+independently-hashed rows. Two properties follow:
+
+- **Per-entry integrity:** any later edit to a *closed* entry breaks its `content_hash` and is
+  rejected — an external reviewer can verify the hypothesis was registered *before* the outcome.
+- **Append-order integrity:** because each entry commits to its predecessor, you cannot silently
+  insert, delete, or re-order a past entry without breaking every `entry_hash` after it. This is the
+  difference from a bare "immutable trade log" (e.g. a hash-chained *execution* ledger): here the
+  chained object is the *pre-registered hypothesis contract* — claim, dated evidence, and
+  entry/update/exit triggers committed before the evaluation window — so the chain proves *what was
+  predicted, and when*, not just what was traded.
+
+> Design note: the hash-chain construction is borrowed from tamper-evident LLM trade logs; the
+> contribution here is chaining the *hypothesis* (with its forward triggers), not the trade.
 
 ## Posterior recording
 
