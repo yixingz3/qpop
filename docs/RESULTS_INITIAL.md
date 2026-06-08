@@ -40,13 +40,24 @@ rejection JUSTIFIED or FALSE REJECTION with a category.
 Category distribution of justified rejections: low-purity-conglomerate ×8, commodity-cycle ×2,
 pre-revenue/hype ×2, duplicate-overlap ×1.
 
-**The one false rejection is reported, not hidden** — it is the most useful output. The auditor
-judged an early-stage pure-play (a primary-sourced design win, no conglomerate dilution) admissible
-at small satellite where the engine had said "watchlist," and noted a **mild systematic over-caution
-on early-stage pure-plays** relative to the engine's (correct) firmness on commodity/conglomerate
-names. That single disagreement (a) is a credibility signal — the audit is adversarial, not a
-rubber stamp — and (b) feeds gate calibration: the over-caution bias is a measurable, fixable
-parameter, not a vibe.
+**The one flagged false rejection is reported, not hidden** — it is the most useful output. The
+auditor judged an early-stage pure-play (a primary-sourced design win, no conglomerate dilution)
+admissible at small satellite where the engine had said "watchlist," and noted a **mild systematic
+over-caution on early-stage pure-plays.** That single disagreement is a credibility signal — the
+audit is adversarial, not a rubber stamp.
+
+**But the layering corrected the auditor, not the engine.** Because the audit's verdict was itself a
+*flag*, not a final decision, the flagged name went to an independent capital-at-risk **adjudication**
+(the expensive model, with fresh web verification). The adjudication surfaced the load-bearing fact
+the bull-only auditor had missed — the name's headline design win is **shared across a 14-member
+supplier alliance that already includes a name the book holds**, so the candidate is one of fourteen
+substitutable suppliers, not a chokepoint owner — and **upheld the original rejection.** The
+*effective* rejection precision after adjudication is therefore **14/14**. The methodological point
+is the architecture, not the number: a cheap, bull-biased audit *should* occasionally push to admit,
+and the expensive adjudication layer exists precisely to catch that over-correction — the same
+cheap-screen → expensive-adjudicate asymmetry that governs admissions also governs the audit of
+rejections. We report both the raw audit (0.93) and the post-adjudication result (1.00) rather than
+only the flattering one.
 
 ## Worked example (one of each)
 
