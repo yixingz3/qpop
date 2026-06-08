@@ -13,8 +13,8 @@
 \usepackage[numbers,sort&compress]{natbib}
 \usepackage{hyperref}
 
-\title{Pre-Registered, Agent-Assisted Thematic Research:\\
-A Framework for Reducing Narrative Drift and LLM Confabulation in Investment Hypothesis Generation}
+\title{Forward-Registered LLM-Assisted Thematic Research:\\
+An Auditable Framework for Investment Hypothesis Generation}
 \author{Yixing Zheng}
 \date{\today}
 
@@ -23,12 +23,15 @@ A Framework for Reducing Narrative Drift and LLM Confabulation in Investment Hyp
 
 \begin{abstract}
 % Port from paper/abstract.md.
-We present a pre-registered, agent-assisted research framework for thematic investment hypotheses,
-designed to resist LLM confabulation, narrative drift, over-admission, and backtest overfitting.
-Open-ended LLM discovery is wrapped in deterministic gates and a forward pre-registration protocol,
-so an idea moves capital only after surviving falsifiable, dated-evidence checks and forward (not
-backtested) validation. Our central finding is methodological rather than a return claim: a
-disciplined, pre-registered agent \emph{rejects most of the candidates it surfaces}, with a low,
+We present a forward-registered, agent-assisted research framework for thematic investment
+hypotheses. Large language models are useful for \emph{sourcing} hypotheses but dangerous as
+\emph{decision engines}: they can generate plausible but unsupported claims, amplify narrative
+priors, recommend more candidates than a disciplined process should admit, and---when evaluated by
+backtest---overfit periods that postdate their training data. Open-ended LLM discovery is wrapped in
+deterministic gates and a forward pre-registration protocol, so a hypothesis is admitted to a
+forward-evaluation portfolio only after surviving falsifiable, dated-evidence checks and forward
+(not backtested) validation. Our central finding is methodological rather than a return claim: a
+disciplined, forward-registered agent \emph{rejects most of the candidates it surfaces}, with a low,
 pre-committed admission rate, while every admitted position remains auditable from the ledger alone.
 \end{abstract}
 
@@ -36,33 +39,50 @@ pre-committed admission rate, while every admitted position remains auditable fr
 % Motivation: LLMs make thematic research cheap but unreliable; we trade recall for auditable restraint.
 
 \section{Related Work}
-% Port from paper/related_work.md. Cites: \citep{wu2023bloomberggpt,xiao2024tradingagents,
-% malmqvist2024sycophancy,gao2025lookaheadbias,nosek2018preregistration,brodeur2024preregistration,
-% du2024multiagentdebate,li2025llmjudge,harvey2016crosssection,volpati2020crowding,lou2022comomentum,
-% fritzmorgenthal2022xai,mclean2016academic,li2025profitmirage,casey2012reshaping,
-% khatchadourian2026replayable,ding2024llmagentfinance,yang2023fingpt,zhang2024finagent}.
+% Port from paper/related_work.md. Cites: \citep{wu2023bloomberggpt,yang2023fingpt,
+% ding2024llmagentfinance,xiao2024tradingagents,zhang2024finagent,ye2026alphaillusion,lee2025yourai,
+% malmqvist2024sycophancy,gao2025lookaheadbias,li2025profitmirage,benhenda2026lookaheadbench,
+% kong2026evaluating,roy2026memguard,harvey2016crosssection,nosek2018preregistration,
+% casey2012reshaping,mclean2016academic,brodeur2024preregistration,hofman2023preregistration,
+% du2024multiagentdebate,li2025llmjudge,ma2025judging,zhao2026priceofagreement,huang2025popper,
+% volpati2020crowding,lou2022comomentum,fritzmorgenthal2022xai,khatchadourian2026replayable,
+% buscemi2026euaiact}.
 
-\section{Method}
-% Port from docs/METHOD.md: bottleneck graph; confidence decomposition; policy-as-evidence;
-% source--gate--evaluate funnel; forward-QPOP; the no-stories discipline stack.
+\section{Framework}
+% Port from docs/METHOD.md S1-2: bottleneck graph; confidence decomposition; policy-as-evidence;
+% source tiers and deterministic gates.
 \[
 \text{confidence} = \text{bottleneck} \times \text{purity} \times \text{demand}
                     \times \text{valuation} \times \text{crowding}
 \]
 
-\section{System}
-% Multi-agent implementation; model-tier allocation; content-hashed auditable ledger; reproducibility.
+\section{Forward-QPOP Protocol}
+% Port from docs/QPOP_PROTOCOL.md: content hash; append-only ledger; dated admission / belief-update
+% / exit triggers; paper trading and conservative shadow fills.
 
-\section{Experiment Design (Pre-Registered)}
-% Port from paper/experiment_plan.md. State hypotheses, horizon, metrics, and decision rules in advance.
+\section{System Implementation}
+% Cheap-source --> deterministic-gate --> expensive-evaluate; bear case before recommendation;
+% model-tier split (cheap-first-pass / adjudication); content-hashed auditable ledger; reproducibility.
 
-\section{Results}
-% Discipline results first (admission rate, no-action rate, source-tier + overlap distributions,
+\section{Experiment Plan (Pre-Registered)}
+% Port from paper/experiment_plan.md. H1 restraint (<10%), H2 ablations (>=25% rel or >=5pp),
+% H3 portability (within 2x rate + >=70% taxonomy overlap), H4 descriptive forward. State the fixed
+% implementation details (models, prompts, timestamps, price source, fill rule, costs, corp actions,
+% post-admission-news rule) in advance.
+
+\section{Worked Example: AI Supply Chain}
+% One admitted (critical-material chokepoint at half size), one rejected (commodity-cycle "next-MU"),
+% one overlap-penalized (duplicate of a held bet) idea, end-to-end through the funnel and the ledger.
+
+\section{Results / Forward Log}
+% Discipline results first (admission rate <10%, no-action rate, source-tier + overlap distributions,
 % ledger integrity); forward results (benchmark-relative, conservative shadow fills) as they accrue;
 % ablations (gate off / bear-case-first off / overlap-penalty off raise the admission rate).
 
-\section{Cross-Domain Portability}
-% The same engine on a second domain (e.g. rare earth / power / uranium) as a config.
+\section{Discussion}
+% Cross-domain portability (the same engine on a second domain as a config). Short conceptual case
+% study: uncertainty-about-the-constraint (the Bitcoin-halving example) -- an illustration of why
+% forward, unanticipated evidence matters, NOT a contribution.
 
 \section{Limitations}
 % No live track record; small early sample; LLM nondeterminism; admission rate is necessary, not
