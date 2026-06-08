@@ -45,12 +45,13 @@ The framework contributes four components.
     discipline ablations against ungated baselines, cross-domain portability, and descriptive forward outcomes.
 \end{enumerate}
 
-Rather than a return claim, our central contribution is methodological, and our claims are
-pre-registered rather than asserted: we test whether a disciplined, forward-registered agent
-\textbf{rejects most of the candidates it surfaces} \emph{for defensible reasons}. We report initial discipline
-metrics from real candidate batches --- a low, pre-committed admission rate and an \textbf{independent
-rejection-quality audit} (whether rejections were justified) --- and pre-register the forward
-evaluation rather than reporting forward returns we have not yet observed. Every admitted position
+Rather than a return claim, our central contribution is methodological: \textbf{this validates
+process discipline, not investment profitability} (which awaits the forward window). We test whether
+a disciplined, forward-registered agent \textbf{rejects most of the candidates it surfaces}
+\emph{for defensible reasons}. We report \emph{pilot} discipline metrics from early candidate batches
+--- a low admission rate and a \textbf{held-out rejection-quality audit} (raw precision 0.93) ---
+which \emph{motivate} the pre-registered forward evaluation, not confirm it; forward returns are not
+yet observed. Every admitted position
 remains explainable and auditable from the ledger alone, whereas ungated LLM screeners lack an
 explicit rejection mechanism. We release the framework, a worked AI-supply-chain example with a real
 candidate flow, and a template for new domains.
@@ -716,8 +717,12 @@ Edit only by appending dated amendments.
     rate stays \textbf{within 2$\times$} the first domain's rate, \textbf{and} (b)
     \textbf{$\geq$~70\%} of the second domain's rejections map to the \textbf{same gate /
     rejection-category taxonomy} used in the first (tradeability, liquidity, low purity, overlap,
-    valuation, crowding, unverifiable-trigger). ``Comparable'' is thus defined on both rate and the
-    failure-mode taxonomy, not asserted qualitatively.
+    valuation, crowding, unverifiable-trigger); \textbf{and} (c) the second-domain run uses the
+    \emph{same engine code and prompt templates}, with changes limited to
+    \texttt{bottleneck\_map.yml}, the domain-specific source lists, and the benchmark config ---
+    otherwise ``portability'' could be satisfied by quietly modifying the system. ``Comparable'' is
+    thus defined on rate, the failure-mode taxonomy, and a no-source-change constraint, not asserted
+    qualitatively.
 
   \item \textbf{H4 (forward, reported honestly):} over the forward window, benchmark-relative
     excess return and information ratio on conservative shadow fills are reported with confidence
@@ -857,12 +862,16 @@ incumbent it would duplicate. A full sanitized walk-through is the released
 \section{Results}
 
 \begin{quote}
-\textbf{Not a performance claim.}
-Forward returns are not yet observed; these are \emph{discipline} metrics
-from real candidate batches, reported per the experiment plan (H1 restraint,
-H5 rejection quality).
-They are the empirical core the paper can show \emph{today} without waiting
-on the forward window.
+\textbf{Pilot metrics --- not a performance claim, and not confirmatory.}
+This paper validates \emph{process discipline}, not investment profitability;
+investment validity requires the H4 forward window. The numbers below are
+\textbf{pilot / initial discipline metrics} from early candidate batches: they
+\emph{motivate} the registered evaluation and are labeled as such, \emph{not}
+treated as confirmatory evidence. Where a threshold (H1's \texttt{<10\%}, H5's
+\texttt{$\geq$0.80}) was not locked strictly before these specific batches were
+observed, the batch number is a pilot reading against that threshold, and the
+pre-registered plan governs only the forward study window. Forward returns are
+not yet observed.
 \end{quote}
 
 \subsection{The Funnel, on a Real Batch}
@@ -882,9 +891,11 @@ chokepoint layers:
                                 all at small satellite)
 \end{verbatim}
 
-Admission rate among evaluated finalists \textbf{this session: 0/24};
-trailing admission rate across the build-out is \textbf{low single digits}
---- consistent with H1 (\texttt{< 10\%}).
+Admission rate among evaluated finalists \textbf{this session: 0/24}
+(rule-of-three 95\% upper bound $\approx 12\%$ on so small a sample); trailing
+admission rate across the build-out is \textbf{low single digits} --- a pilot
+reading consistent with H1 (\texttt{< 10\%}), to be confirmed over the forward
+window with proper intervals.
 Two consecutive 0-admit rounds were \emph{not} a failure of sourcing; the
 gate-passers were diversified mega-caps (chokepoint = a tiny segment) or
 pre-revenue, and the genuinely pure vehicles surfaced were foreign-OTC and
@@ -895,7 +906,8 @@ failed the US-tradeability gate.
 
 The central objection to a low admission rate is that \emph{a system can
 reject 95\% of ideas by being arbitrarily conservative.}
-So a \textbf{held-out independent LLM auditor} was shown only the steelmanned
+So a \textbf{held-out LLM auditor} (a different model instance; human review is
+planned for the forward study, not yet done) was shown only the steelmanned
 \textbf{bull} case and the decision --- \textbf{not} the engine's bear case
 --- and asked to label each sampled rejection \textsc{justified} or
 \textsc{false rejection} with a category.
@@ -907,9 +919,9 @@ So a \textbf{held-out independent LLM auditor} was shown only the steelmanned
 \textbf{Metric} & \textbf{Value} \\
 \midrule
 Sampled rejections audited & 14 \\
-\textbf{Rejection precision} (judged justified) & \textbf{0.93} (13/14) \\
-False rejections & 1 \\
-False-rejection rate & 7\% \\
+\textbf{Rejection precision} (raw, primary) & \textbf{0.93} (13/14; Wilson 95\% CI $[0.69, 0.99]$) \\
+Disagreement rate & 0.07 (1/14) \\
+Adjudicated precision (secondary) & 1.00 (14/14) \\
 \bottomrule
 \end{tabular}
 \caption{Rejection-quality audit summary.}
@@ -928,24 +940,20 @@ early-stage pure-plays.}
 That single disagreement is a credibility signal --- the audit is adversarial,
 not a rubber stamp.
 
-\textbf{But the layering corrected the auditor, not the engine.}
-Because the audit's verdict was itself a \emph{flag}, not a final decision,
-the flagged name went to an independent capital-at-risk \textbf{adjudication}
-(the expensive model, with fresh web verification).
-The adjudication surfaced the load-bearing fact the bull-only auditor had
-missed --- the name's headline design win is \textbf{shared across a
-14-member supplier alliance that already includes a name the book holds},
-so the candidate is one of fourteen substitutable suppliers, not a chokepoint
-owner --- and \textbf{upheld the original rejection.}
-The \emph{effective} rejection precision after adjudication is therefore
-\textbf{14/14}.
-The methodological point is the architecture, not the number: a cheap,
-bull-biased audit \emph{should} occasionally push to admit, and the expensive
-adjudication layer exists precisely to catch that over-correction --- the same
-cheap-screen $\to$ expensive-adjudicate asymmetry that governs admissions also
-governs the audit of rejections.
-We report both the raw audit (0.93) and the post-adjudication result (1.00)
-rather than only the flattering one.
+\textbf{We treat the raw 0.93 as the primary metric and do not lean on the 1.00.}
+Because the audit's verdict is a \emph{flag}, not a final decision, the flagged
+name went to a capital-at-risk \textbf{adjudication} (the expensive model, fresh
+web verification), which surfaced the fact the bull-only auditor had missed ---
+the name's headline design win is \textbf{shared across a 14-member supplier
+alliance that already includes a held name}, so it is one of fourteen
+substitutable suppliers, not a chokepoint owner --- and \textbf{upheld the
+rejection.} A process that overrules its own auditor and then reports 100\%
+would read as circular, so we headline the \textbf{raw auditor precision (0.93)}
+and report the adjudicated 1.00 only as a \emph{secondary} resolution mechanism.
+The 0.93 is already good and does not need the 1.00. The methodological point is
+the architecture, not the number: a cheap, bull-biased audit \emph{should}
+occasionally push to admit, and the expensive layer exists to catch that --- the
+same cheap-screen $\to$ expensive-adjudicate asymmetry that governs admissions.
 
 \subsection{Worked Example}
 
@@ -967,9 +975,12 @@ rather than only the flattering one.
 
 The same \textbf{38-candidate batch} was run through baselines that each
 \emph{remove one discipline}, and their admission rates compared to the full
-pipeline.
-(The batch is a real sourced round; the candidate cards are identical across
-arms --- only the decision discipline changes.)
+pipeline. To keep the comparison honest: the candidate cards, the model
+identifier, and the temperature are \emph{identical} across arms; every arm may
+choose \textsc{admit} / \textsc{watchlist} / \textsc{reject} under the same
+capital-at-risk context --- only the decision \emph{discipline} differs. All arm
+prompts are released (\texttt{src/prompts.md}) so the baselines can be inspected;
+they are explicitly \emph{allowed to reject}, not strawmen forced to admit.
 
 \begin{table}[h]
 \centering
@@ -984,8 +995,8 @@ $-$ overlap penalty (judge each name on its own, ignore duplication with the
   & 25 / 38 & 66\% \\
 $-$ bear-case-first (recommend from the bull thesis, no written bear case)
   & 28 / 38 & 74\% \\
-\textbf{Ungated LLM screener} (no gate, purity, overlap, or bear case ---
-  ``is the thesis good?'')
+\textbf{Ungated LLM screener} (same cards + admit/watchlist/reject, but no gate,
+  purity bar, overlap penalty, or bear-case requirement)
   & \textbf{38 / 38} & \textbf{100\%} \\
 \bottomrule
 \end{tabular}
@@ -998,9 +1009,14 @@ removing \emph{any single} discipline raises the admission rate far past H2's
 threshold ($\geq 25\%$ relative \emph{or} $\geq 5$ pp); and the full stack
 drives 100\% $\to$ 0\%.
 This is the comparison the headline needs --- the pipeline admits \textbf{fewer}
-ideas, and the earlier rejection audit (0.93 $\to$ 1.00) shows the ones it
-keeps out are the right ones.
-H2 is \textbf{supported} for every ablated discipline.
+ideas, and the raw rejection audit (0.93) shows the ones it keeps out are mostly
+the right ones.
+H2 is \textbf{supported} for every ablated discipline (a \emph{pilot} reading;
+the registered ablation locks thresholds before the forward batches).
+We read the 100\% honestly: an ungated screener that is free to reject but admits
+everything is exhibiting exactly the structural bias-to-admit the framework
+exists to counter --- the informative quantity is the \emph{change} in behavior
+when a discipline is removed, not that any single arm always admits.
 
 \begin{quote}
 A reviewer's exact objection --- ``a system can reject 95\% of ideas by being
@@ -1018,6 +1034,34 @@ ablation shows the rejections come from \emph{specific, removable disciplines}
   \item \textbf{Forward outcomes} (H4) --- accrue over the forward window;
     reported only with the structural-validity checklist.
 \end{itemize}
+
+\subsection{Reproducibility and Release}
+
+To make ``open release'' concrete, Table~\ref{tab:release} states exactly what is
+and is not published. The boundary is firm: the \emph{method} (code, prompts,
+schemas, synthetic and sanitized fixtures) is released so the disciplines and the
+ablations are reproducible; the \emph{live book} (positions, broker data, paid
+feeds) is never released, because publishing it would read as ``copy these
+trades,'' which this project explicitly is not.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lll}
+\toprule
+\textbf{Artifact} & \textbf{Released?} & \textbf{Contains} \\
+\midrule
+Code            & Yes                        & gate, scoring, ledger, example runner \\
+Prompts         & Yes                        & source / triage / evaluate / adjudicate / audit \\
+Candidate cards & Sanitized                  & redacted evidence summaries \\
+Ledger          & Synthetic + sanitized real & QPOP schema and sample hashes \\
+Live positions  & No                         & not released \\
+Broker data     & No                         & not released \\
+Paid data       & No                         & not redistributed \\
+\bottomrule
+\end{tabular}
+\caption{What the open release contains.}
+\label{tab:release}
+\end{table}
 
 \section{Discussion}
 \paragraph{Cross-domain portability.} A new domain is a configuration file. The same engine runs on
