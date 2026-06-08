@@ -126,9 +126,27 @@ you cannot rewrite the hypothesis after seeing the result.
   dataset. The system is optimized for *auditability*, not cleverness — every weight must be
   explainable by score × purity × adjustments × caps × drift, or no position is taken.
 
-## Why the admission rate is the headline
+## Why the admission rate is the headline — and why it is not enough alone
 
 A naïve LLM screener over-admits by construction — it is rewarded for *finding* ideas. This
 framework is rewarded for *refusing* them: most candidates are on-theme yet fail "does this improve
 the book after overlap, purity, valuation, and crowding?" The low admission rate, achieved by
-pre-committed gates rather than after-the-fact judgment, is the measurable contribution.
+pre-committed gates rather than after-the-fact judgment, is one measurable contribution.
+
+But a low admission rate is **not, by itself, evidence of quality** — a system can reject 95% of
+ideas by being arbitrarily conservative. So restraint is reported with two companions:
+
+- **Rejection quality (rejection precision).** A held-out auditor (an independent LLM and/or a human),
+  shown only the *bull* case and the decision — **not** the engine's bear case — labels each sampled
+  rejection JUSTIFIED or a FALSE REJECTION, with a category (low-purity / duplicate-overlap /
+  valuation-or-crowding / commodity-cycle / pre-revenue-or-hype / unverifiable-or-untradeable). The
+  headline pairs *admission rate* (how much is rejected) with *rejection precision* (whether it
+  should have been). High restraint + low rejection precision would be a failure, not a success.
+- **Ablation against baselines.** The same candidate stream is run through an ungated screener,
+  debate-only, no-Forward-QPOP-lock, and no-overlap-penalty variants; the claim is that the full
+  pipeline admits *fewer* ideas **and** that its rejections are better justified — not merely that
+  gates reduce the count.
+
+Outcome decisions over many triggers and positions use a **sequential test with explicit Type-I
+control** (an anytime-valid / e-value formulation), so monitoring many exit triggers does not inflate
+false "Falsified" calls — the prospective analogue of the factor-zoo multiple-comparisons problem.

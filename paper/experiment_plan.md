@@ -23,6 +23,15 @@ collected, consistent with the framework's own discipline. Edit only by appendin
 - **H4 (forward, reported honestly):** over the forward window, benchmark-relative excess return and
   information ratio on conservative shadow fills are reported with confidence intervals. *No
   threshold is pre-set for H4 with a small sample* — it is descriptive, not a success gate.
+- **H5 (rejection *quality*, not just quantity):** restraint is only evidence of discipline if the
+  rejected ideas were actually bad. We therefore audit rejections: an independent reviewer (a held-out
+  LLM auditor and/or a human), given only the *bull* case and the decision — **not** the engine's
+  bear case — labels each sampled rejection JUSTIFIED or a FALSE REJECTION and assigns a category
+  (low-purity / duplicate-overlap / valuation-or-crowding / commodity-cycle / pre-revenue-or-hype /
+  unverifiable-or-untradeable). *Supported if* **rejection precision ≥ 0.80** (≥ 80% of sampled
+  rejections judged justified) **and** the false-rejection rate is **≤ 10%**. This directly answers
+  "a system can reject 95% of ideas by being arbitrarily conservative" — H1 measures *how much* is
+  rejected, H5 measures *whether it should have been*.
 
 ## Design
 
@@ -33,11 +42,17 @@ collected, consistent with the framework's own discipline. Edit only by appendin
   (admitted → forward outcome).
 - **Primary metrics:** sourced/gated/evaluated/admitted counts; admission rate; no-action rate;
   source-tier distribution; overlap-penalty distribution; ledger-integrity (% admissions with a
-  valid content hash registered before the position).
+  valid hash, chained to the prior entry, registered before the position); **rejection precision**
+  and **false-rejection rate** from the H5 audit.
 - **Secondary (forward):** excess return vs the theme benchmark; information ratio; active drawdown;
   gross/net thematic beta; turnover; shadow-fill slippage.
-- **Ablations:** rerun the same candidate stream with (a) gate off, (b) bear-case-first off,
-  (c) overlap penalty off; compare admission rates.
+- **Ablations and baselines:** rerun the same candidate stream against (a) **ungated LLM screener**
+  (no deterministic gate); (b) **debate-only** (bull/bear with no pre-registration lock); (c) **no
+  Forward-QPOP lock** (same evaluation, hypotheses not content-hashed before the window); (d) **no
+  overlap penalty**; and, where feasible, (e) a **human/manual thematic shortlist** for the same
+  domain. Report each one's admission rate **and** its rejection precision — the point is to show the
+  full pipeline admits *fewer* ideas *and* that its rejections are better justified, not merely that
+  gates reduce count.
 
 ## Decision rules (pre-committed)
 
@@ -46,8 +61,14 @@ collected, consistent with the framework's own discipline. Edit only by appendin
   **≥ 25% relative or ≥ 5 percentage points, whichever is larger**.
 - H3 is **supported** if the second-domain admission rate is **within 2×** the first-domain rate
   **and ≥ 70%** of its rejections map to the shared rejection-category taxonomy.
+- H5 is **supported** if **rejection precision ≥ 0.80** and the **false-rejection rate ≤ 10%** on the
+  audited sample.
 - A position's outcome is recorded **Supported / Weakened / Falsified** strictly by its
-  pre-registered exit triggers — never by an after-the-fact narrative.
+  pre-registered exit triggers — never by an after-the-fact narrative. Because a thesis is judged
+  against *several* triggers over time, outcome decisions use a **sequential test with explicit
+  Type-I error control** (an e-value / anytime-valid formulation, after Huang et al. 2025 [POPPER]),
+  so that monitoring many triggers across many positions does not inflate false "Falsified" calls —
+  the multiple-comparisons analogue of the factor-zoo problem, controlled *prospectively*.
 
 ## Implementation details (fixed in advance, for reproducibility)
 
@@ -76,10 +97,17 @@ additive amendment.
 
 ## Integrity controls
 
-- Every admission carries a content-hashed QPOP entry registered before the position.
+- Every admission carries a hash-chained QPOP entry (each entry binds the prior entry's hash)
+  registered before the position — tampering with any past entry breaks the chain.
 - The ledger is append-only; closed entries are immutable.
 - No metric is changed after seeing results; amendments are dated and additive.
-- Forward results are validated on conservative shadow fills, not optimistic fills.
+- Forward results are **evaluated** on conservative shadow fills, not optimistic fills.
+- **Structural-validity reporting (after Ye et al. 2026, *The Alpha Illusion*):** any forward
+  performance number is reported only alongside its structural-validity checklist — temporal
+  integrity (admission strictly precedes the evaluation bar), frictions (slippage + costs applied),
+  robustness (across the accumulated ledger, not a cherry-picked window), calibration (admitted
+  confidence vs realized outcome), and execution (shadow-fill rule). A return without this checklist
+  is not reported as evidence.
 
 ## Threats to validity (declared in advance)
 
