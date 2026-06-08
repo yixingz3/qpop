@@ -72,8 +72,8 @@ cheap-screen → expensive-adjudicate asymmetry that governs admissions.
 - **Admitted** (earlier session): a critical-material chokepoint, gated through purity *and* a
   separate critical-inputs concentration cap, admitted at **half** the unconstrained satellite weight
   — restraint expressed as *sizing*, not just selection.
-- **Rejected:** a commodity-cycle miner — real AI-driven demand, but a price-taker with no supplier
-  pricing power; admitting it would buy commodity beta, not chokepoint economics.
+- **Rejected:** an integrated energy major proposed for a "helium chokepoint" whose helium revenue is
+  under one percent of the company — a real chokepoint the *ticker* does not capture.
 - **Overlap-penalized:** a high-purity pure-play that *duplicated* a held incumbent in a full node
   sleeve → routed to a **replace-not-stack** decision (a future replacement candidate), not a
   standalone add.
@@ -105,17 +105,6 @@ earlier rejection audit (raw 0.93) shows the ones it keeps out are mostly the ri
 > conservative" — is answered by these two results together: the ablation shows the rejections come
 > from *specific, removable disciplines* (not blanket conservatism), and the audit shows they are
 > *justified*.
-
-## Worked example (one of each)
-
-- **Admitted** (earlier session): a critical-material chokepoint, gated through purity *and* a
-  separate critical-inputs concentration cap, admitted at **half** the unconstrained satellite weight
-  — restraint expressed as *sizing*, not just selection.
-- **Rejected:** a commodity-cycle miner — real AI-driven demand, but a price-taker with no supplier
-  pricing power; admitting it would buy commodity beta, not chokepoint economics.
-- **Overlap-penalized:** a high-purity pure-play that *duplicated* a held incumbent in a full node
-  sleeve → routed to a **replace-not-stack** decision (a future replacement candidate), not a
-  standalone add.
 
 ## What is still pending (declared)
 

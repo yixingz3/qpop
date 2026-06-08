@@ -36,12 +36,13 @@ uncertainty-about-the-constraint) are *support*, not pillars.
    before recommendation; model-tier split (incl. cheap-first-pass / adjudication) and
    reproducibility. (Mirrors `docs/METHOD.md` §3.)
 6. **Experiment Plan (pre-registered)** — see `paper/experiment_plan.md`: H1 admission restraint,
-   H2 ablations, H3 portability, H4 descriptive forward performance — with the testable thresholds
+   H2 ablations, H3 portability, H4 descriptive forward performance, H5 rejection quality (audited
+   precision) — with the testable thresholds
    and the fixed implementation details (models, prompts, timestamps, price source, fill rule,
    costs, corporate actions, post-admission-news rule).
 7. **Worked Example (AI supply chain)** — show **one admitted, one rejected, one
    overlap-penalized** idea end-to-end (e.g. an admitted critical-material chokepoint at half size,
-   a "next-MU" commodity-cycle reject, an overlap-penalized duplicate of a held bet).
+   an integrated-energy-major "helium chokepoint" reject, an overlap-penalized duplicate of a held bet).
 8. **Results / Forward Log** — *discipline metrics first* (candidate count, gate-pass rate,
    **admission rate < 10%**, no-action rate, **rejection precision** from the H5 audit, source-tier &
    overlap distributions, ledger integrity) — initial real-batch numbers in `docs/RESULTS_INITIAL.md`

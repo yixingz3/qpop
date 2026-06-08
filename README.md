@@ -64,7 +64,8 @@ disciplined agent-assisted research from naïve LLM screening, which over-admits
 chokepoint-research-engine/
   docs/        METHOD · RESEARCH_RULES · QPOP_PROTOCOL · CANDIDATE_PROCESS · SCOREBOARD · TUNING
                · WRITING_STANDARDS · LITERATURE · RESULTS_INITIAL · SYNC · PAPER_OUTLINE
-  src/         engine interfaces: qpop · scoring · discovery · gating · evaluation · validation
+  src/         prompts + deterministic-gate reference spec (engine module contracts — qpop · scoring
+               · discovery · gating · evaluation · validation — specified in src/README.md)
   examples/    ai_supply_chain/ (worked example) · template_domain/ (copy this to start a new domain)
   paper/       paper.tex + Makefile · references.bib (verified) · abstract · contributions
                · experiment_plan · related_work
