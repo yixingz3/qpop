@@ -18,8 +18,11 @@ collected, consistent with the framework's own discipline. Edit only by appendin
   changed. *Supported if* (a) the second domain's admission rate stays **within 2×** the first
   domain's rate, **and** (b) **≥ 70%** of the second domain's rejections map to the **same gate /
   rejection-category taxonomy** used in the first (tradeability, liquidity, low purity, overlap,
-  valuation, crowding, unverifiable-trigger). "Comparable" is thus defined on both rate and the
-  failure-mode taxonomy, not asserted qualitatively.
+  valuation, crowding, unverifiable-trigger); **and** (c) the second-domain run uses the **same
+  engine code and prompt templates**, with changes limited to `bottleneck_map.yml`, the
+  domain-specific source lists, and the benchmark config — otherwise "portability" could be satisfied
+  by quietly modifying the system. "Comparable" is thus defined on rate, the failure-mode taxonomy,
+  and a no-source-change constraint, not asserted qualitatively.
 - **H4 (forward, reported honestly):** over the forward window, benchmark-relative excess return and
   information ratio on conservative shadow fills are reported with confidence intervals. *No
   threshold is pre-set for H4 with a small sample* — it is descriptive, not a success gate.

@@ -1,6 +1,9 @@
 # Initial Results (discipline metrics)
 
-> **Not a performance claim.** Forward returns are not yet observed; these are *discipline* metrics
+> **Pilot metrics — not a performance claim, and not confirmatory.** This validates *process
+> discipline*, not investment profitability (which awaits H4). The numbers below are pilot / initial
+> discipline metrics that *motivate* the registered evaluation, not confirm it. Forward returns are
+> not yet observed; these are *discipline* metrics
 > from real candidate batches, reported per the experiment plan (H1 restraint, H5 rejection quality).
 > They are the empirical core the paper can show *today* without waiting on the forward window.
 
@@ -51,13 +54,13 @@ audit is adversarial, not a rubber stamp.
 (the expensive model, with fresh web verification). The adjudication surfaced the load-bearing fact
 the bull-only auditor had missed — the name's headline design win is **shared across a 14-member
 supplier alliance that already includes a name the book holds**, so the candidate is one of fourteen
-substitutable suppliers, not a chokepoint owner — and **upheld the original rejection.** The
-*effective* rejection precision after adjudication is therefore **14/14**. The methodological point
-is the architecture, not the number: a cheap, bull-biased audit *should* occasionally push to admit,
-and the expensive adjudication layer exists precisely to catch that over-correction — the same
-cheap-screen → expensive-adjudicate asymmetry that governs admissions also governs the audit of
-rejections. We report both the raw audit (0.93) and the post-adjudication result (1.00) rather than
-only the flattering one.
+substitutable suppliers, not a chokepoint owner — and **upheld the original rejection.** A process
+that overrules its own auditor and then reports 100% would read as circular, so we **headline the raw
+auditor precision (0.93; Wilson 95% CI [0.69, 0.99]; disagreement 0.07)** and report the adjudicated
+**1.00 only as a secondary resolution mechanism** — the 0.93 is already good and doesn't need the
+1.00. The methodological point is the architecture, not the number: a cheap, bull-biased audit
+*should* occasionally push to admit, and the expensive layer exists to catch that — the same
+cheap-screen → expensive-adjudicate asymmetry that governs admissions.
 
 ## Worked example (one of each)
 
@@ -87,7 +90,7 @@ The result is monotone and decisive: an **ungated LLM admits literally every can
 "over-admits by construction" failure made concrete); removing *any single* discipline raises the
 admission rate far past H2's threshold (≥ 25% relative *or* ≥ 5 pp); and the full stack drives
 100% → 0%. This is the comparison the headline needs — the pipeline admits **fewer** ideas, and the
-earlier rejection audit (0.93 → 1.00) shows the ones it keeps out are the right ones. H2 is
+earlier rejection audit (raw 0.93) shows the ones it keeps out are mostly the right ones. H2 is
 **supported** for every ablated discipline.
 
 > A reviewer's exact objection — "a system can reject 95% of ideas by being arbitrarily

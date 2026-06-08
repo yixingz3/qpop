@@ -22,12 +22,12 @@ before the evaluation window), not the tamper-evidence alone. (4) A pre-register
 open release** measuring admission restraint, *rejection quality*, discipline ablations against
 ungated baselines, cross-domain portability, and descriptive forward outcomes.
 
-Rather than a return claim, our central contribution is methodological, and our claims are
-pre-registered rather than asserted: we test whether a disciplined, forward-registered agent
-**rejects most of the candidates it surfaces** *for defensible reasons*. We report initial discipline
-metrics from real candidate batches — a low, pre-committed admission rate and an **independent
-rejection-quality audit** (whether rejections were justified) — and pre-register the forward
-evaluation rather than reporting forward returns we have not yet observed. Every admitted position
+Rather than a return claim, our central contribution is methodological: **this validates process
+discipline, not investment profitability** (which awaits the forward window). We test whether a
+disciplined, forward-registered agent **rejects most of the candidates it surfaces** *for defensible
+reasons*. We report **pilot** discipline metrics from early candidate batches — a low admission rate
+and a **held-out rejection-quality audit** (raw precision 0.93) — which *motivate* the pre-registered
+forward evaluation, not confirm it; forward returns are not yet observed. Every admitted position
 remains explainable and auditable from the ledger alone, whereas ungated LLM screeners lack an
 explicit rejection mechanism. We release the framework, a worked AI-supply-chain example with a real
 candidate flow, and a template for new domains.
