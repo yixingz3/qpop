@@ -4,7 +4,9 @@ The engine is organized into six modules with clear boundaries. This `src/` tree
 **interfaces and contracts**; a working reference implementation exists in a private deployment
 (the live AI-supply-chain book) and is being progressively generalized and open-sourced here as
 domain-agnostic code. Until then, this document is the authoritative spec — a contributor can
-implement against these contracts.
+implement against these contracts. The **stage prompts** (the disciplines themselves) are committed
+in [`prompts.md`](prompts.md), and the **deterministic gate** is specified with reference pseudocode
+in [`gate_reference.md`](gate_reference.md) — so the method is reproducible from this repo alone.
 
 ```
 src/
@@ -37,10 +39,13 @@ evaluate_candidate(symbol, node, book) -> {
 Pure and deterministic. No LLM. A failing candidate is watchlist-only.
 
 ### `discovery/` and `evaluation/`
-The funnel's two model-backed stages. `discovery/` runs the cheap model wide (one lens per node +
-gaps/social/policy). `evaluation/` runs the expensive model on finalists only, each producing a
-**bear case written before the recommendation** and a falsifiable decision. The model tier for each
-stage is a **knob** (`docs/TUNING.md`), including a cheap-first-pass / expensive-adjudication mode.
+The funnel's model-backed stages, run as a cost cascade (cheapest models do the volume; the expensive
+model only ever judges admits): **SOURCE** (cheap, wide — one lens per node + gaps/social/policy/
+literature, deduped against a seen-set) → GATE → **TRIAGE** (cheapest — drop obvious low-purity) →
+**EVALUATE** (mid — bear-case-before-recommendation on survivors) → **ADJUDICATE** (expensive — only
+the admit-flags). Each stage's exact prompt is in [`prompts.md`](prompts.md); the model tier is a
+**knob** (`docs/TUNING.md`). The asymmetry that makes the cascade safe — a false watchlist only
+delays, a false admit is caught downstream — also governs the audit of rejections.
 
 ### `qpop/`
 ```
