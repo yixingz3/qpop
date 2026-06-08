@@ -37,6 +37,56 @@ Each node carries decomposed scores and measurable exit triggers, exactly as in
   evidence + a reversal trigger on a real chokepoint; a name whose thesis is *only* policy goes to a
   separate, capped sleeve.
 
+## A worked candidate flow (real numbers)
+
+One discovery round, end to end (counts are from a real run; tickers are sanitized where a name is
+a live holding, named where it is a *reject* — a reject is not a position):
+
+```
+~40 candidate cards   sourced across 12 lenses (per-node + gaps + social + policy + literature)
+   ~10 NEW symbols    the rest deduped against the persistent "seen" set (already-decided names)
+    ~6 pass the GATE   deterministic: foreign-OTC and sub-liquidity names rejected mechanically
+    ~4 survive TRIAGE  cheap model drops the obvious low-purity (conglomerate / commodity / pre-rev)
+     0 admitted        Sonnet bear-case + Opus adjudication on survivors -> watchlist/reject
+```
+
+Most rounds end at **0 admitted**. Across the build-out the funnel evaluated dozens of finalists and
+admitted a **low single-digit fraction**, all at small satellite weight. "No action" is the modal
+outcome, and it is the result, not a failure.
+
+## One admitted, one rejected, one overlap-penalized
+
+- **Admitted** (an earlier round): a critical-material permanent-magnet chokepoint — a genuinely
+  supplier-concentrated, hard-to-substitute input. Admitted at **half** the unconstrained satellite
+  weight, because a separate critical-inputs concentration cap bound it. *Restraint expressed as
+  sizing, not just selection.* (Vehicle sanitized — it is a live holding.)
+- **Rejected — `XOM` for a "helium chokepoint":** the helium scarcity is real and the supply-share
+  claim checks out, but helium is **< 1%** of a ~$330B oil major; the stock trades on crude, not
+  helium economics. The chokepoint is real, the *ticker* captures none of it. Canonical
+  rounding-error-in-a-conglomerate reject.
+- **Overlap-penalized — `AAOI` (a pure-play 800G optical-transceiver name):** high purity, real
+  chokepoint, but the optics sleeve was already **full** (at its node cap, holding the incumbent
+  it would duplicate). Routed to a **replace-not-stack** decision — a *future replacement candidate*
+  gated on the incumbent firing an exit trigger, not a standalone add. The gate caught the
+  duplication before any expensive evaluation.
+
+## Ablation — each discipline contributes to restraint
+
+The same **38-candidate batch**, run through baselines that each remove one discipline:
+
+| Arm | Admitted | Rate |
+|---|---|---|
+| **Full pipeline** (gate + seen-set + triage + bear-case-first + overlap) | **0 / 38** | **0%** |
+| − overlap penalty | 25 / 38 | 66% |
+| − bear-case-first | 28 / 38 | 74% |
+| **Ungated LLM screener** (no discipline) | **38 / 38** | **100%** |
+
+An ungated LLM admits *literally everything*; removing any single discipline raises admission far
+past a "beyond noise" threshold; the full stack drives 100% → 0%. Paired with the rejection-quality
+audit (an independent reviewer judged the rejections **0.93 justified**, rising to **1.00** after a
+capital-at-risk adjudication overturned the one flagged false-rejection), this is the evidence that
+the restraint is *discipline*, not blanket conservatism. Full write-up: `../../docs/RESULTS_INITIAL.md`.
+
 ## Reproducing the method (not the positions)
 
 Use `../template_domain/` to build your own map and run the funnel. The *engine and disciplines* are
