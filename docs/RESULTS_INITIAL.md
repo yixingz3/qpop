@@ -40,6 +40,11 @@ rejection JUSTIFIED or FALSE REJECTION with a category.
 | False rejections | 1 |
 | False-rejection rate | 7% |
 
+**Metric precedence:** primary = raw auditor precision **0.93** (Wilson 95% CI [0.69, 0.99]);
+secondary = post-adjudication resolution 1.00 (reported only to show the layering works);
+interpretation = the single auditor/engine disagreement is a useful diagnostic signal. The takeaway
+is the raw 0.93, *not* an "effective 14/14."
+
 Category distribution of justified rejections: low-purity-conglomerate ×8, commodity-cycle ×2,
 pre-revenue/hype ×2, duplicate-overlap ×1.
 
@@ -77,7 +82,10 @@ cheap-screen → expensive-adjudicate asymmetry that governs admissions.
 
 The same **38-candidate batch** was run through baselines that each *remove one discipline*, and
 their admission rates compared to the full pipeline. (The batch is a real sourced round; the
-candidate cards are identical across arms — only the decision discipline changes.)
+candidate cards are identical across arms — only the decision discipline changes.) The full
+baseline prompt, model version, and temperature are released (`src/prompts.md`; cards sanitized) so
+a reader can judge whether the ungated arm was unfairly admission-biased — the ungated baseline was
+**allowed to reject**, not a strawman forced to admit.
 
 | Arm | Admitted | Rate |
 |---|---|---|

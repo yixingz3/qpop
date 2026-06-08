@@ -62,8 +62,11 @@ collected, consistent with the framework's own discipline. Edit only by appendin
 - H1 is **supported** if the evaluated-finalist admission rate is **< 10%** over the window.
 - H2 is **supported** (per ablation) if that ablation's admission rate exceeds the full pipeline's by
   **≥ 25% relative or ≥ 5 percentage points, whichever is larger**.
-- H3 is **supported** if the second-domain admission rate is **within 2×** the first-domain rate
-  **and ≥ 70%** of its rejections map to the shared rejection-category taxonomy.
+- H3 is **supported** if the second-domain admission rate is **within 2×** the first-domain rate,
+  **and ≥ 70%** of its rejections map to the shared rejection-category taxonomy, **and** the
+  second-domain run uses the **same engine code and prompt templates**, with changes limited to
+  `bottleneck_map.yml`, the domain-specific source lists, and the benchmark config (clause (c) —
+  otherwise "portability" could be satisfied by quietly modifying the system).
 - H5 is **supported** if **rejection precision ≥ 0.80** and the **false-rejection rate ≤ 10%** on the
   audited sample.
 - A position's outcome is recorded **Supported / Weakened / Falsified** strictly by its
