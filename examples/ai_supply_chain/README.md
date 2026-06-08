@@ -60,11 +60,11 @@ outcome, and it is the result, not a failure.
   supplier-concentrated, hard-to-substitute input. Admitted at **half** the unconstrained satellite
   weight, because a separate critical-inputs concentration cap bound it. *Restraint expressed as
   sizing, not just selection.* (Vehicle sanitized — it is a live holding.)
-- **Rejected — `XOM` for a "helium chokepoint":** the helium scarcity is real and the supply-share
-  claim checks out, but helium is **< 1%** of a ~$330B oil major; the stock trades on crude, not
+- **Rejected — an integrated energy major pitched for a "helium chokepoint":** the helium scarcity is
+  real and the supply-share claim checks out, but helium is **< 1%** of a ~$330B oil major; the stock trades on crude, not
   helium economics. The chokepoint is real, the *ticker* captures none of it. Canonical
   rounding-error-in-a-conglomerate reject.
-- **Overlap-penalized — `AAOI` (a pure-play 800G optical-transceiver name):** high purity, real
+- **Overlap-penalized — a pure-play 800G optical-transceiver name:** high purity, real
   chokepoint, but the optics sleeve was already **full** (at its node cap, holding the incumbent
   it would duplicate). Routed to a **replace-not-stack** decision — a *future replacement candidate*
   gated on the incumbent firing an exit trigger, not a standalone add. The gate caught the
