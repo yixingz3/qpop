@@ -1072,22 +1072,6 @@ the architecture, not the number: a cheap, bull-biased audit \emph{should}
 occasionally push to admit, and the expensive layer exists to catch that --- the
 same cheap-screen $\to$ expensive-adjudicate asymmetry that governs admissions.
 
-\subsection{Worked Example}
-
-\begin{itemize}
-  \item \textbf{Admitted} (earlier session): a critical-material chokepoint,
-    gated through purity \emph{and} a separate critical-inputs concentration
-    cap, admitted at \textbf{half} the unconstrained satellite weight ---
-    restraint expressed as \emph{sizing}, not just selection.
-  \item \textbf{Rejected:} a commodity-cycle miner --- real AI-driven demand,
-    but a price-taker with no supplier pricing power; admitting it would buy
-    commodity beta, not chokepoint economics.
-  \item \textbf{Overlap-penalized:} a high-purity pure-play that \emph{duplicated}
-    a held incumbent in a full node sleeve $\to$ routed to a
-    \textbf{replace-not-stack} decision (a future replacement candidate), not
-    a standalone add.
-\end{itemize}
-
 \subsection{Ablation: Each Discipline Contributes to Restraint (H2)}
 
 The same \textbf{38-candidate batch} was run through baselines that each
@@ -1176,7 +1160,7 @@ trades,'' which this project explicitly is not.
 Code            & Yes                        & gate, scoring, ledger, example runner \\
 Prompts         & Yes                        & source / triage / evaluate / adjudicate / audit \\
 Candidate cards & Sanitized                  & redacted evidence summaries \\
-Ledger          & Synthetic + sanitized real & QPOP schema and sample hashes \\
+Ledger          & Synthetic                  & QPOP schema and sample hashes \\
 Live positions  & No                         & not released \\
 Broker data     & No                         & not released \\
 Paid data       & No                         & not redistributed \\
@@ -1217,6 +1201,12 @@ optimized for auditability: every admitted position is explainable from the cont
 alone. We comply with data-provider terms (no paid feeds are redistributed), publish only synthetic
 and sanitized examples, and never release live positions, broker credentials, or the scored live map.
 See \texttt{ETHICS.md} and \texttt{DISCLAIMER.md}.
+
+\paragraph{Conflicts of interest and disclosure.} The author maintains a private research book that
+applies this method and may hold positions in names within the example domains discussed here.
+Example names are illustrations of the decision taxonomy --- not endorsements, recommendations, or a
+disclosure of the book; no live positions, weights, or sizes are revealed. The author declares no
+other competing interests.
 
 \section{Conclusion}
 LLMs make thematic research cheap but unreliable as decision engines. We presented a
