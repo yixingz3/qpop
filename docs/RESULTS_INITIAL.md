@@ -106,6 +106,28 @@ earlier rejection audit (raw 0.93) shows the ones it keeps out are mostly the ri
 > from *specific, removable disciplines* (not blanket conservatism), and the audit shows they are
 > *justified*.
 
+## Portability (H3): a second domain
+
+The same funnel was run on a deliberately distant domain — **pharmaceutical injectables / GLP-1 drug
+delivery** — changing only the node list. It narrowed the same way: **27 cards → 17 US-tradeable (10
+real chokepoints with only a foreign/private vehicle) → gate 7 pass / 10 fail → 0 admit, 2 watchlist,
+5 reject.**
+
+- The engine **located the domain's canonical chokepoint** (a coated-elastomer closure near-monopoly,
+  FDA/BLA-named → multi-year change-control to substitute — the pharma analogue of the AI substrate-
+  film chokepoint) and scored it high; it **rejected the five conglomerate look-alikes** on
+  **low exposure purity** (the dominant rejection category in both domains).
+- The **entry discipline fired independently of the chokepoint-quality test**: the bear-case pass
+  flagged the pure chokepoint for admission; adjudication **downgraded it to watchlist** on the same
+  valuation/crowding logic the AI book applied to its priced-in names (thesis = "the multiple holds").
+
+H3 read: **(a)** admission rate (≈0) within 2× the first domain's ✓; **(b)** **100%** of rejections
+map to the shared taxonomy (low-purity-conglomerate / foreign-no-vehicle / illiquid / priced-in-
+watchlist) ✓; **(c)** **partial** — the disciplines are domain-general but the prompt templates embed
+the first domain, so the probe needed domain-general prompts, not a `bottleneck_map.yml`-only swap.
+Config-only portability requires a `{domain}` parameter in the templates (declared next step). The
+evidence is at the *method* level; config-level portability is still to be demonstrated.
+
 ## What is still pending (declared)
 
 - **Remaining baselines** (debate-only, no-Forward-QPOP-lock) — the three run here (ungated,
