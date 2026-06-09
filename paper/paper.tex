@@ -1132,6 +1132,44 @@ ablation shows the rejections come from \emph{specific, removable disciplines}
 (not blanket conservatism), and the audit shows they are \emph{justified}.
 \end{quote}
 
+\subsection{Portability (H3): A Second Domain}
+
+To probe H3 we ran the \emph{same} funnel on a deliberately distant domain ---
+\textbf{pharmaceutical injectables / GLP-1 drug delivery} --- changing only the
+node list. The funnel narrowed the same way: \textbf{27 candidate cards sourced}
+$\to$ 17 with a US-tradeable symbol (10 were real chokepoints whose only vehicle
+is foreign / private, the same ``no clean domestic vehicle'' failure seen in the
+AI domain) $\to$ deterministic gate \textbf{7 pass / 10 fail} (foreign-OTC ADRs +
+sub-liquidity) $\to$ triage + bear-case + adjudication $\to$ \textbf{0 admit, 2
+watchlist, 5 reject}.
+
+The disciplines transferred. The engine \emph{located} the domain's canonical
+chokepoint on the first pass --- a coated-elastomer closure near-monopoly whose
+components are named in FDA/BLA filings, so substitution requires multi-year
+change-control revalidation (the pharma analogue of the substrate-film chokepoint
+in the AI domain) --- and scored it high on both bottleneck strength and purity.
+It \textbf{rejected the five conglomerate look-alikes} on \emph{low exposure
+purity} (the dominant rejection category in both domains; the chokepoint is a
+small segment of a diversified parent). And the \textbf{entry discipline fired
+independently of the chokepoint-quality test}: the bear-case pass flagged the pure
+chokepoint for admission, but adjudication \emph{downgraded it to watchlist} on
+exactly the valuation/crowding logic the first-domain book applied to its own
+real-but-priced-in names --- a stretched multiple with a thesis that reduces to
+``the multiple holds.''
+
+Measured against the pre-registered H3 criteria: \textbf{(a)} the second-domain
+admission rate ($\approx 0$) is within $2\times$ the first domain's; \textbf{(b)}
+\textbf{100\%} of the second-domain rejections map to the shared taxonomy
+(low-purity-conglomerate, foreign / no domestic vehicle, illiquid,
+priced-in-watchlist). \textbf{(c)} is only \emph{partially} met and we report it
+as such: the disciplines are domain-general, but the current SOURCE / EVALUATE
+prompt templates embed the first domain's framing, so the probe required authoring
+domain-general prompts rather than changing \texttt{bottleneck\_map.yml} alone.
+True config-only portability requires threading a \texttt{domain} parameter through
+the prompt templates --- a concrete, declared next step. The portability evidence
+is therefore at the \emph{method} level (the disciplines and the rejection taxonomy
+transfer), with config-level portability still to be demonstrated.
+
 \subsection{What Is Still Pending (Declared)}
 
 \begin{itemize}
