@@ -482,6 +482,36 @@ easy to overfit a story. Pre-registration replaces ``fit the past'' with ``commi
 future.'' The ledger is the contract against \textbf{HARKing} (hypothesizing after results are known)
 and \textbf{data-snooping}.
 
+For an \emph{LLM-scored} engine the objection is sharper than fragility: a backward test is
+\textbf{structurally invalid}, not merely noisy --- and three properties defeat it, each sufficient on
+its own. \textbf{(i)~No information is injected backward.} The engine is a deterministic composition of
+LLM judgments, so retrodicting historical names measures the model's \emph{hindsight}, not the engine's
+edge. \textbf{(ii)~The labels are already in the model.} The outcomes one would test against have
+settled and are present in the model's training corpus, so there is no clean train/test split: the
+label leaks into the feature through pretraining. \textbf{(iii)~The features \emph{are} the
+fingerprint.} The very attributes the engine scores --- which chokepoint, what purity, whose capacity
+--- uniquely identify the company and hence its known outcome, so anonymizing the inputs cannot restore
+a blind test. The consequence is not ``prefer forward''; it is that \emph{no} backward procedure can
+evidence the engine's predictive signal --- a backward run is at best an internal-consistency check.
+This is the engine-level analogue of the HARKing argument the ledger already enforces at the hypothesis
+level, and it is why we operationalize forward evaluation with the registry below rather than a
+historical analog study.
+
+\subsection*{The forward-scoring registry (engine-level evaluation)}
+
+The hypothesis ledger validates individual \emph{admissions} forward. To evaluate the \emph{scoring
+engine itself} --- whether a higher \texttt{final\_confidence} ranks a higher forward return --- we
+keep a separate \textbf{append-only forward-scoring registry}. At a cohort date we freeze every scored
+name's effective tier (core/satellite, assigned by the \emph{production} tiering rule on post-refresh
+values, not a bare threshold) together with its decomposed confidence, and then let outcomes settle
+\emph{after} the model's knowledge. Because the signatures are recorded forward and the outcomes are
+unanticipated, the test is honest in exactly the way a backward retrodiction (\S\,above) is not. The
+registry is \textbf{provisional} until it accrues power --- on the order of dozens of
+name--horizon observations spanning both high- and low-confidence names --- so it is a multi-year
+instrument, reported with the structural-validity checklist, never a near-term gate. A subtle
+requirement: the cohort must be labeled with the same tiering function the live book uses (including
+any hold/override path), or the registry's own labels disagree with the book it claims to validate.
+
 \subsection*{Entry types}
 
 \begin{enumerate}
@@ -1178,6 +1208,10 @@ transfer), with config-level portability still to be demonstrated.
     disciplines; the remaining two are additive.
   \item \textbf{Forward outcomes} (H4) --- accrue over the forward window;
     reported only with the structural-validity checklist.
+  \item \textbf{Forward-scoring registry read-out} --- the engine-level cohort is
+    seeded and frozen forward (the first cohort is recorded); it is provisional until it
+    accrues sufficient name--horizon observations, with the first read-out roughly two
+    quarters out, and is likewise reported only with the structural-validity checklist.
 \end{itemize}
 
 \subsection{Reproducibility and Release}
