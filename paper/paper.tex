@@ -34,7 +34,8 @@ than by a fragile backtest.
 The framework contributes four components.
 \begin{enumerate}
   \item A \textbf{framework}: a domain-agnostic bottleneck graph
-    in which nodes are physical chokepoints and a new domain is a configuration file, not new code, with
+    in which nodes are physical chokepoints and adding a domain is mostly a matter of configuration
+    (a new bottleneck map) rather than new modeling code, with
     a decomposed confidence model (bottleneck $\times$ purity $\times$ demand $\times$ valuation $\times$ crowding).
   \item A \textbf{protocol} for disciplined judgment: deterministic gates, source-tier rules, a bear case written
     before any recommendation, overlap penalties, and government policy entered as \emph{dated evidence and a
@@ -44,8 +45,9 @@ The framework contributes four components.
     pre-registration ledger for hypothesis admission, belief updates, and exits --- the contribution is
     the \emph{forward-locked hypothesis contract} (dated evidence + entry/update/exit triggers committed
     before the evaluation window), not the tamper-evidence alone.
-  \item A pre-registered \textbf{evaluation and open release} measuring admission restraint, \emph{rejection quality},
-    discipline ablations against ungated baselines, cross-domain portability, and descriptive forward outcomes.
+  \item A \textbf{pre-registered evaluation with pilot evidence} --- a low admission rate, a held-out
+    rejection-quality audit, discipline ablations against ungated baselines, and a cross-domain portability
+    probe --- released as an open framework, with forward outcomes left to the evaluation window.
 \end{enumerate}
 
 Rather than a return claim, our central contribution is methodological: \textbf{this validates
@@ -54,8 +56,8 @@ a disciplined, forward-registered agent \textbf{rejects most of the candidates i
 \emph{for defensible reasons}. We report \emph{pilot} discipline metrics from early candidate batches
 --- a low admission rate and a \textbf{held-out rejection-quality audit} (raw precision 0.93) ---
 which \emph{motivate} the pre-registered forward evaluation, not confirm it; forward returns are not
-yet observed. Every admitted position
-remains explainable and auditable from the ledger alone, whereas ungated LLM screeners lack an
+yet observed. The method makes each admitted position
+explainable from its content-hashed ledger entry, whereas ungated LLM screeners lack an
 explicit rejection mechanism. We release the framework, a worked AI-supply-chain example with a real
 candidate flow, and a template for new domains.
 \end{abstract}
@@ -481,6 +483,36 @@ re-rating), a long backtest is fragile: regime change, survivorship, and lookahe
 easy to overfit a story. Pre-registration replaces ``fit the past'' with ``commit, then observe the
 future.'' The ledger is the contract against \textbf{HARKing} (hypothesizing after results are known)
 and \textbf{data-snooping}.
+
+For an \emph{LLM-scored} engine the objection is sharper than fragility: a backward test is
+\textbf{structurally invalid}, not merely noisy --- and three properties defeat it, each sufficient on
+its own. \textbf{(i)~No information is injected backward.} The engine is a deterministic composition of
+LLM judgments, so retrodicting historical names measures the model's \emph{hindsight}, not the engine's
+edge. \textbf{(ii)~The labels are already in the model.} The outcomes one would test against have
+settled and are present in the model's training corpus, so there is no clean train/test split: the
+label leaks into the feature through pretraining. \textbf{(iii)~The features \emph{are} the
+fingerprint.} The very attributes the engine scores --- which chokepoint, what purity, whose capacity
+--- uniquely identify the company and hence its known outcome, so anonymizing the inputs cannot restore
+a blind test. The consequence is not ``prefer forward''; it is that \emph{no} backward procedure can
+evidence the engine's predictive signal --- a backward run is at best an internal-consistency check.
+This is the engine-level analogue of the HARKing argument the ledger already enforces at the hypothesis
+level, and it is why we operationalize forward evaluation with the registry below rather than a
+historical analog study.
+
+\subsection*{The forward-scoring registry (engine-level evaluation)}
+
+The hypothesis ledger validates individual \emph{admissions} forward. To evaluate the \emph{scoring
+engine itself} --- whether a higher \texttt{final\_confidence} ranks a higher forward return --- we
+keep a separate \textbf{append-only forward-scoring registry}. At a cohort date we freeze every scored
+name's effective tier (core/satellite, assigned by the \emph{production} tiering rule on post-refresh
+values, not a bare threshold) together with its decomposed confidence, and then let outcomes settle
+\emph{after} the model's knowledge. Because the signatures are recorded forward and the outcomes are
+unanticipated, the test is honest in exactly the way a backward retrodiction (\S\,above) is not. The
+registry is \textbf{provisional} until it accrues power --- on the order of dozens of
+name--horizon observations spanning both high- and low-confidence names --- so it is a multi-year
+instrument, reported with the structural-validity checklist, never a near-term gate. A subtle
+requirement: the cohort must be labeled with the same tiering function the live book uses (including
+any hold/override path), or the registry's own labels disagree with the book it claims to validate.
 
 \subsection*{Entry types}
 
@@ -1017,7 +1049,8 @@ failed the US-tradeability gate.
 
 The central objection to a low admission rate is that \emph{a system can
 reject 95\% of ideas by being arbitrarily conservative.}
-So a \textbf{held-out LLM auditor} (a different model instance; human review is
+So a \textbf{held-out, bull-only LLM auditor} (a different model instance --- an
+\emph{adversarial diagnostic}, not a claim of model-independent audit; human review is
 planned for the forward study, not yet done) was shown only the steelmanned
 \textbf{bull} case and the decision --- \textbf{not} the engine's bear case
 --- and asked to label each sampled rejection \textsc{justified} or
@@ -1110,8 +1143,8 @@ temperature, and the candidate cards are released (\texttt{src/prompts.md}; card
 reader can judge for themselves whether the ungated arm was unfairly admission-biased rather than
 taking our word that the $100\%$ is a fair comparison.
 
-The result is monotone and decisive: an \textbf{ungated LLM admits literally
-every candidate} (the ``over-admits by construction'' failure made concrete);
+The result is monotone and decisive: in this batch and prompt setting, the
+\textbf{ungated screener admitted every candidate} (the ``over-admits by construction'' failure made concrete);
 removing \emph{any single} discipline raises the admission rate far past H2's
 threshold ($\geq 25\%$ relative \emph{or} $\geq 5$ pp); and the full stack
 drives 100\% $\to$ 0\%.
@@ -1178,6 +1211,10 @@ transfer), with config-level portability still to be demonstrated.
     disciplines; the remaining two are additive.
   \item \textbf{Forward outcomes} (H4) --- accrue over the forward window;
     reported only with the structural-validity checklist.
+  \item \textbf{Forward-scoring registry read-out} --- the engine-level cohort is
+    seeded and frozen forward (the first cohort is recorded); it is provisional until it
+    accrues sufficient name--horizon observations, with the first read-out roughly two
+    quarters out, and is likewise reported only with the structural-validity checklist.
 \end{itemize}
 
 \subsection{Reproducibility and Release}
@@ -1209,10 +1246,16 @@ Paid data       & No                         & not redistributed \\
 \end{table}
 
 \section{Discussion}
-\paragraph{Cross-domain portability.} A new domain is a configuration file. The same engine runs on
-rare-earth refining, power transformers, uranium, or copper by supplying a different
-\texttt{bottleneck\_map.yml}; the disciplines (gates, source tiers, bear-case-first, overlap, the
-forward lock) are domain-agnostic.
+\paragraph{Cross-domain portability.} Adding a domain is \emph{intended} to be mostly
+configuration-driven. The pilot second-domain run (\S Portability) supports the \emph{method-level}
+claim --- the same engine located the canonical chokepoint and rejected the conglomerate look-alikes
+on a different node list, and the rejection taxonomy transferred --- but is honest about the limit:
+\emph{true} config-only portability still requires threading a \texttt{domain} parameter through the
+SOURCE/EVALUATE prompt templates, which currently embed the first domain's framing, so the probe
+required authoring domain-general prompts rather than changing \texttt{bottleneck\_map.yml} alone. The
+disciplines (gates, source tiers, bear-case-first, overlap, the forward lock) are domain-agnostic; a
+full config-only domain swap (the same engine on rare-earth refining, power transformers, uranium, or
+copper from a new map alone) is a declared next step, not a demonstrated result.
 
 \paragraph{Uncertainty about the constraint (a conceptual case study).} A binding chokepoint is
 \emph{necessary but not sufficient} for a tradeable edge --- the edge lives in the \emph{uncertainty}
@@ -1235,8 +1278,8 @@ performance, which only the pre-registered forward log can establish.
 
 \section{Ethics and Responsible Use}
 This is a research framework, not investment advice, and we make no performance claim. The system is
-optimized for auditability: every admitted position is explainable from the content-hashed ledger
-alone. We comply with data-provider terms (no paid feeds are redistributed), publish only synthetic
+optimized for auditability: each admitted position is explainable from its content-hashed ledger
+entry (we release the schema and synthetic/sanitized examples, not the live ledger). We comply with data-provider terms (no paid feeds are redistributed), publish only synthetic
 and sanitized examples, and never release live positions, broker credentials, or the scored live map.
 See \texttt{ETHICS.md} and \texttt{DISCLAIMER.md}.
 
