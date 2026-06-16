@@ -1203,6 +1203,29 @@ the prompt templates --- a concrete, declared next step. The portability evidenc
 is therefore at the \emph{method} level (the disciplines and the rejection taxonomy
 transfer), with config-level portability still to be demonstrated.
 
+\paragraph{A third domain, and a new rejection pattern.} As a further portability
+probe we ran the same funnel on a third, distant domain --- the launch /
+satellite-internet supply chain, grounded in the recent S-1 of its dominant
+operator. The engine transferred unmodified and again produced a decisive negative
+(\textbf{0 admit}). Two of the prior domains' patterns recurred and a new one
+emerged. \textbf{(i)} The rejection taxonomy held: low-purity conglomerates,
+foreign / no-US-vehicle chokepoints (one UK-listed and several Asia-listed), and
+priced-for-perfection cyclicals trading near all-time highs were all rejected on
+the same gates. \textbf{(ii)} The engine caught a class of error a naive
+``supplier-of-X'' screen does not --- it flagged apparent suppliers that are in
+fact \emph{competitors} or \emph{spectrum counterparties} of the target rather than
+input vendors. \textbf{(iii)} A substitution mode appeared that the prior domains
+never exhibited: the customer \emph{vertically integrating the chokepoint away}.
+The target actively engineers out its own named inputs (in-sourcing propellant
+pressurization, primary structures, and user-terminal silicon), so a ``supplier''
+thesis must additionally survive the customer building the part itself. The engine
+absorbed this without modification, adding \emph{``can the customer in-source this
+input?''} to the bear case alongside the second-source, new-technology, and
+policy-substitution tests. A third distant domain therefore reinforces the
+\emph{method}-level portability claim --- the disciplines and the rejection
+taxonomy transfer --- and the new bypass mode shows the bear case is extensible to
+domain-specific substitution paths rather than fixed to the first domain's.
+
 \subsection{What Is Still Pending (Declared)}
 
 \begin{itemize}
@@ -1247,9 +1270,10 @@ Paid data       & No                         & not redistributed \\
 
 \section{Discussion}
 \paragraph{Cross-domain portability.} Adding a domain is \emph{intended} to be mostly
-configuration-driven. The pilot second-domain run (\S Portability) supports the \emph{method-level}
+configuration-driven. The pilot second- and third-domain runs (\S Portability) support the \emph{method-level}
 claim --- the same engine located the canonical chokepoint and rejected the conglomerate look-alikes
-on a different node list, and the rejection taxonomy transferred --- but is honest about the limit:
+on a different node list, the rejection taxonomy transferred, and a domain-specific bypass mode
+(customer in-sourcing) was absorbed into the bear case unmodified --- but is honest about the limit:
 \emph{true} config-only portability still requires threading a \texttt{domain} parameter through the
 SOURCE/EVALUATE prompt templates, which currently embed the first domain's framing, so the probe
 required authoring domain-general prompts rather than changing \texttt{bottleneck\_map.yml} alone. The
@@ -1274,7 +1298,14 @@ LLM outputs are nondeterministic across model versions, so we log the exact mode
 prompt commit per run and treat a version change as a dated amendment. Survivorship enters through
 which domains get built. Most importantly, the admission rate is \emph{necessary but not sufficient}
 for alpha: a disciplined rejection process is a precondition for, not a guarantee of, forward
-performance, which only the pre-registered forward log can establish.
+performance, which only the pre-registered forward log can establish. Finally, a screening engine's
+\emph{coverage} (which chokepoints the SOURCE stage surfaces) is a separate failure mode from its
+\emph{judgment} (whether the gates correctly accept or reject a surfaced candidate). In the
+third-domain probe a blind comparison against an external expert reading list revealed a genuine
+chokepoint the SOURCE stage had missed even though the gates rejected it correctly once it was
+surfaced --- a coverage gap, not a judgment gap. We treat that distinction as load-bearing: a coverage
+gap is closed by adding a source lens, never by loosening the gates, and we use blind held-out
+comparisons against external lists as the way to detect coverage gaps when entering a new domain.
 
 \section{Ethics and Responsible Use}
 This is a research framework, not investment advice, and we make no performance claim. The system is
