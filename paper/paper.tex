@@ -16,6 +16,8 @@
 \usepackage{tabularx}
 \newcolumntype{L}{>{\raggedright\arraybackslash}X}
 \setlength{\emergencystretch}{3em}  % absorb residual overfull from long \texttt{} tokens
+% full-width abstract (article default indents it via \quotation; match the body margins)
+\renewenvironment{abstract}{\begin{center}\bfseries\abstractname\end{center}\par\noindent\ignorespaces}{\par\medskip}
 
 \title{Forward-Registered LLM-Assisted Thematic Research:\\
 An Auditable Framework for Investment Hypothesis Generation}
@@ -650,10 +652,12 @@ The discovery pipeline is a five-stage funnel in which each tier hands the next 
 higher-value candidate set:
 
 \begin{center}
-\texttt{SOURCE \textrightarrow{} GATE \textrightarrow{} TRIAGE \textrightarrow{} EVALUATE \textrightarrow{} ADJUDICATE}\\[2pt]
-\texttt{cheap LLM \quad deterministic \quad cheapest LLM \quad mid LLM \quad expensive LLM}\\
-\texttt{wide \qquad\quad script, no LLM \; drop obvious \quad bear-case-first \; admit-flags only}\\
-\texttt{(deduped) \qquad\qquad\qquad\quad low-purity}
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{@{}c c c c c c c c c@{}}
+\texttt{SOURCE} & \textrightarrow & \texttt{GATE} & \textrightarrow & \texttt{TRIAGE} & \textrightarrow & \texttt{EVALUATE} & \textrightarrow & \texttt{ADJUDICATE} \\
+{\scriptsize\textcolor{black!55}{cheap LLM}} & & {\scriptsize\textcolor{black!55}{no LLM}} & & {\scriptsize\textcolor{black!55}{cheapest LLM}} & & {\scriptsize\textcolor{black!55}{mid LLM}} & & {\scriptsize\textcolor{black!55}{expensive LLM}} \\
+{\scriptsize\textcolor{black!55}{wide, deduped}} & & {\scriptsize\textcolor{black!55}{deterministic}} & & {\scriptsize\textcolor{black!55}{drop low-purity}} & & {\scriptsize\textcolor{black!55}{bear-case-first}} & & {\scriptsize\textcolor{black!55}{admit-flags only}} \\
+\end{tabular}
 \end{center}
 
 \begin{itemize}
@@ -976,38 +980,38 @@ satellite).
 \def\yA{0}
 \fill[black!18] (0,\yA) rectangle ({87*\sx},{\yA+\bh});
 \draw[black!55,line width=0.5pt] (0,\yA) rectangle ({87*\sx},{\yA+\bh});
-\node[anchor=east,align=right] at (\lx,{\yA+0.5*\bh}) {\textbf{SOURCE}\\[-1pt]\scriptsize\textcolor{black!55}{Sonnet $\cdot$ cheap}};
+\node[anchor=east,align=left] at (\lx,{\yA+0.5*\bh}) {\textbf{SOURCE}\\[-1pt]\scriptsize\textcolor{black!55}{Sonnet $\cdot$ cheap}};
 \node[anchor=west] at ({87*\sx+0.15},{\yA+0.5*\bh}) {\textbf{87} cards};
 % ---- dedup: 25 unique (LLM-free, white) ----
 \def\yB{-0.80}
 \fill[white] (0,\yB) rectangle ({25*\sx},{\yB+\bh});
 \draw[black!55,line width=0.5pt] (0,\yB) rectangle ({25*\sx},{\yB+\bh});
-\node[anchor=east,align=right] at (\lx,{\yB+0.5*\bh}) {dedup\\[-1pt]\scriptsize\textcolor{black!55}{seen-set $\cdot$ no LLM}};
+\node[anchor=east,align=left] at (\lx,{\yB+0.5*\bh}) {dedup\\[-1pt]\scriptsize\textcolor{black!55}{seen-set $\cdot$ no LLM}};
 \node[anchor=west] at ({25*\sx+0.15},{\yB+0.5*\bh}) {\textbf{25} new symbols};
 % ---- GATE: 24 pass (deterministic, white + hatch) ----
 \def\yC{-1.60}
 \fill[white] (0,\yC) rectangle ({24*\sx},{\yC+\bh});
 \foreach \hx in {0.10,0.24,...,1.20} {\draw[black!25,line width=0.3pt] (\hx,\yC) -- (\hx,{\yC+\bh});}
 \draw[black!55,line width=0.5pt] (0,\yC) rectangle ({24*\sx},{\yC+\bh});
-\node[anchor=east,align=right] at (\lx,{\yC+0.5*\bh}) {\textbf{GATE}\\[-1pt]\scriptsize\textcolor{black!55}{script $\cdot$ no LLM}};
+\node[anchor=east,align=left] at (\lx,{\yC+0.5*\bh}) {\textbf{GATE}\\[-1pt]\scriptsize\textcolor{black!55}{script $\cdot$ no LLM}};
 \node[anchor=west] at ({24*\sx+0.15},{\yC+0.5*\bh}) {\textbf{24} pass};
 % ---- TRIAGE: 24, cheapest (Haiku) ----
 \def\yD{-2.40}
 \fill[black!30] (0,\yD) rectangle ({24*\sx},{\yD+\bh});
 \draw[black!55,line width=0.5pt] (0,\yD) rectangle ({24*\sx},{\yD+\bh});
-\node[anchor=east,align=right] at (\lx,{\yD+0.5*\bh}) {TRIAGE\\[-1pt]\scriptsize\textcolor{black!55}{Haiku $\cdot$ cheapest}};
+\node[anchor=east,align=left] at (\lx,{\yD+0.5*\bh}) {TRIAGE\\[-1pt]\scriptsize\textcolor{black!55}{Haiku $\cdot$ cheapest}};
 \node[anchor=west] at ({24*\sx+0.15},{\yD+0.5*\bh}) {\textbf{24}};
 % ---- EVALUATE: 24 finalists, mid (Sonnet, bear-case-first) ----
 \def\yE{-3.20}
 \fill[black!50] (0,\yE) rectangle ({24*\sx},{\yE+\bh});
 \draw[black!55,line width=0.5pt] (0,\yE) rectangle ({24*\sx},{\yE+\bh});
-\node[anchor=east,align=right] at (\lx,{\yE+0.5*\bh}) {EVALUATE\\[-1pt]\scriptsize\textcolor{black!55}{Sonnet $\cdot$ bear-case}};
+\node[anchor=east,align=left] at (\lx,{\yE+0.5*\bh}) {EVALUATE\\[-1pt]\scriptsize\textcolor{black!55}{Sonnet $\cdot$ bear-case}};
 \node[anchor=west] at ({24*\sx+0.15},{\yE+0.5*\bh}) {\textbf{24} finalists};
 % ---- ADJUDICATE: 0 admitted, expensive (Opus) ----
 \def\yF{-4.00}
 \fill[black!82] (0,\yF) rectangle (0.06,{\yF+\bh});
 \draw[black!82,line width=0.6pt] (0,\yF) rectangle (0.06,{\yF+\bh});
-\node[anchor=east,align=right] at (\lx,{\yF+0.5*\bh}) {\textbf{ADJUDICATE}\\[-1pt]\scriptsize\textcolor{black!55}{Opus $\cdot$ admits only}};
+\node[anchor=east,align=left] at (\lx,{\yF+0.5*\bh}) {\textbf{ADJUDICATE}\\[-1pt]\scriptsize\textcolor{black!55}{Opus $\cdot$ admits only}};
 \node[anchor=west] at (0.22,{\yF+0.5*\bh}) {\textbf{0} admitted \scriptsize\textcolor{black!55}{(3 across build-out)}};
 % ---- compact cost-gradient key ----
 \node[anchor=west,font=\scriptsize,black!55] at (\lx,{\yF-0.62}) {cost};
@@ -1323,26 +1327,26 @@ unanticipated} evidence matters, not as a contribution.
 \fill[black!45] ({-37.5*\sx},\yBKI) rectangle (0,{\yBKI+\bh});
 \draw[black!60,line width=0.4pt] ({-37.5*\sx},\yBKI) rectangle (0,{\yBKI+\bh});
 \node[anchor=east,font=\scriptsize] at ({-37.5*\sx-0.08},{\yBKI+0.5*\bh}) {$-37.5\%$};
-\node[anchor=east,align=right] at (\lx,{\yBKI+0.5*\bh}) {\textbf{Black Knight}\\[-1pt]\scriptsize\textcolor{black!55}{spin orphan}};
+\node[anchor=east,align=left] at (\lx,{\yBKI+0.5*\bh}) {\textbf{Black Knight}\\[-1pt]\scriptsize\textcolor{black!55}{spin orphan}};
 \fill[black!45] ({-35*\sx},\yEFX) rectangle (0,{\yEFX+\bh});
 \draw[black!60,line width=0.4pt] ({-35*\sx},\yEFX) rectangle (0,{\yEFX+\bh});
 \node[anchor=east,font=\scriptsize] at ({-35*\sx-0.08},{\yEFX+0.5*\bh}) {$-35\%$};
-\node[anchor=east,align=right] at (\lx,{\yEFX+0.5*\bh}) {\textbf{Equifax}\\[-1pt]\scriptsize\textcolor{black!55}{breach forced-sale}};
+\node[anchor=east,align=left] at (\lx,{\yEFX+0.5*\bh}) {\textbf{Equifax}\\[-1pt]\scriptsize\textcolor{black!55}{breach forced-sale}};
 \fill[black!45] ({-32*\sx},\yCLVT) rectangle (0,{\yCLVT+\bh});
 \draw[black!60,line width=0.4pt] ({-32*\sx},\yCLVT) rectangle (0,{\yCLVT+\bh});
 \node[anchor=east,font=\scriptsize] at ({-32*\sx-0.08},{\yCLVT+0.5*\bh}) {$-32\%$};
-\node[anchor=east,align=right] at (\lx,{\yCLVT+0.5*\bh}) {\textbf{Clarivate}\\[-1pt]\scriptsize\textcolor{black!55}{PE carve-out}};
+\node[anchor=east,align=left] at (\lx,{\yCLVT+0.5*\bh}) {\textbf{Clarivate}\\[-1pt]\scriptsize\textcolor{black!55}{PE carve-out}};
 % --- recognition bars (hatched) ---
 \fill[white] (0,\yGTN) rectangle ({34*\sx},{\yGTN+\bh});
 \foreach \hx in {0.12,0.26,...,1.68} {\draw[black!30,line width=0.3pt] (\hx,\yGTN) -- (\hx,{\yGTN+\bh});}
 \draw[black!55,line width=0.4pt] (0,\yGTN) rectangle ({34*\sx},{\yGTN+\bh});
 \node[anchor=west,font=\scriptsize] at ({34*\sx+0.08},{\yGTN+0.5*\bh}) {$+34\%$};
-\node[anchor=east,align=right] at (\lx,{\yGTN+0.5*\bh}) {\textbf{Gartner}\\[-1pt]\scriptsize\textcolor{black!55}{recognition}};
+\node[anchor=east,align=left] at (\lx,{\yGTN+0.5*\bh}) {\textbf{Gartner}\\[-1pt]\scriptsize\textcolor{black!55}{recognition}};
 \fill[white] (0,\yFICO) rectangle ({54*\sx},{\yFICO+\bh});
 \foreach \hx in {0.12,0.26,...,2.68} {\draw[black!30,line width=0.3pt] (\hx,\yFICO) -- (\hx,{\yFICO+\bh});}
 \draw[black!55,line width=0.4pt] (0,\yFICO) rectangle ({54*\sx},{\yFICO+\bh});
 \node[anchor=west,font=\scriptsize] at ({54*\sx+0.08},{\yFICO+0.5*\bh}) {$+54\%$};
-\node[anchor=east,align=right] at (\lx,{\yFICO+0.5*\bh}) {\textbf{FICO}\\[-1pt]\scriptsize\textcolor{black!55}{recognition}};
+\node[anchor=east,align=left] at (\lx,{\yFICO+0.5*\bh}) {\textbf{FICO}\\[-1pt]\scriptsize\textcolor{black!55}{recognition}};
 % --- group braces (the outcome) ---
 \draw[decorate,decoration={brace,amplitude=4pt,raise=2pt},black!50]
    (3.60,{\yBKI+\bh}) -- (3.60,\yCLVT)
