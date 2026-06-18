@@ -975,43 +975,44 @@ satellite).
 % LLM-free stages (dedup, GATE) are white/hatched; cost darkens to expensive Opus.
 \def\sx{0.05057}     % 4.4cm / 87 candidates -> cm per candidate
 \def\bh{0.40}        % bar height
-\def\lx{-2.55}       % left label-column anchor (x)
+\def\lx{-2.55}       % (legacy) right-edge label anchor (x)
+\def\lxw{-2.7}       % fixed LEFT x for all label rows -> aligned left edges across rows
 % ---- SOURCE: 87 cards, cheap (Sonnet) ----
 \def\yA{0}
 \fill[black!18] (0,\yA) rectangle ({87*\sx},{\yA+\bh});
 \draw[black!55,line width=0.5pt] (0,\yA) rectangle ({87*\sx},{\yA+\bh});
-\node[anchor=east,align=left] at (\lx,{\yA+0.5*\bh}) {\textbf{SOURCE}\\[-1pt]\scriptsize\textcolor{black!55}{Sonnet $\cdot$ cheap}};
+\node[anchor=west,align=left] at (\lxw,{\yA+0.5*\bh}) {\textbf{SOURCE}\\[-1pt]\scriptsize\textcolor{black!55}{Sonnet $\cdot$ cheap}};
 \node[anchor=west] at ({87*\sx+0.15},{\yA+0.5*\bh}) {\textbf{87} cards};
 % ---- dedup: 25 unique (LLM-free, white) ----
 \def\yB{-0.80}
 \fill[white] (0,\yB) rectangle ({25*\sx},{\yB+\bh});
 \draw[black!55,line width=0.5pt] (0,\yB) rectangle ({25*\sx},{\yB+\bh});
-\node[anchor=east,align=left] at (\lx,{\yB+0.5*\bh}) {dedup\\[-1pt]\scriptsize\textcolor{black!55}{seen-set $\cdot$ no LLM}};
+\node[anchor=west,align=left] at (\lxw,{\yB+0.5*\bh}) {dedup\\[-1pt]\scriptsize\textcolor{black!55}{seen-set $\cdot$ no LLM}};
 \node[anchor=west] at ({25*\sx+0.15},{\yB+0.5*\bh}) {\textbf{25} new symbols};
 % ---- GATE: 24 pass (deterministic, white + hatch) ----
 \def\yC{-1.60}
 \fill[white] (0,\yC) rectangle ({24*\sx},{\yC+\bh});
 \foreach \hx in {0.10,0.24,...,1.20} {\draw[black!25,line width=0.3pt] (\hx,\yC) -- (\hx,{\yC+\bh});}
 \draw[black!55,line width=0.5pt] (0,\yC) rectangle ({24*\sx},{\yC+\bh});
-\node[anchor=east,align=left] at (\lx,{\yC+0.5*\bh}) {\textbf{GATE}\\[-1pt]\scriptsize\textcolor{black!55}{script $\cdot$ no LLM}};
+\node[anchor=west,align=left] at (\lxw,{\yC+0.5*\bh}) {\textbf{GATE}\\[-1pt]\scriptsize\textcolor{black!55}{script $\cdot$ no LLM}};
 \node[anchor=west] at ({24*\sx+0.15},{\yC+0.5*\bh}) {\textbf{24} pass};
 % ---- TRIAGE: 24, cheapest (Haiku) ----
 \def\yD{-2.40}
 \fill[black!30] (0,\yD) rectangle ({24*\sx},{\yD+\bh});
 \draw[black!55,line width=0.5pt] (0,\yD) rectangle ({24*\sx},{\yD+\bh});
-\node[anchor=east,align=left] at (\lx,{\yD+0.5*\bh}) {TRIAGE\\[-1pt]\scriptsize\textcolor{black!55}{Haiku $\cdot$ cheapest}};
+\node[anchor=west,align=left] at (\lxw,{\yD+0.5*\bh}) {TRIAGE\\[-1pt]\scriptsize\textcolor{black!55}{Haiku $\cdot$ cheapest}};
 \node[anchor=west] at ({24*\sx+0.15},{\yD+0.5*\bh}) {\textbf{24}};
 % ---- EVALUATE: 24 finalists, mid (Sonnet, bear-case-first) ----
 \def\yE{-3.20}
 \fill[black!50] (0,\yE) rectangle ({24*\sx},{\yE+\bh});
 \draw[black!55,line width=0.5pt] (0,\yE) rectangle ({24*\sx},{\yE+\bh});
-\node[anchor=east,align=left] at (\lx,{\yE+0.5*\bh}) {EVALUATE\\[-1pt]\scriptsize\textcolor{black!55}{Sonnet $\cdot$ bear-case}};
+\node[anchor=west,align=left] at (\lxw,{\yE+0.5*\bh}) {EVALUATE\\[-1pt]\scriptsize\textcolor{black!55}{Sonnet $\cdot$ bear-case}};
 \node[anchor=west] at ({24*\sx+0.15},{\yE+0.5*\bh}) {\textbf{24} finalists};
 % ---- ADJUDICATE: 0 admitted, expensive (Opus) ----
 \def\yF{-4.00}
 \fill[black!82] (0,\yF) rectangle (0.06,{\yF+\bh});
 \draw[black!82,line width=0.6pt] (0,\yF) rectangle (0.06,{\yF+\bh});
-\node[anchor=east,align=left] at (\lx,{\yF+0.5*\bh}) {\textbf{ADJUDICATE}\\[-1pt]\scriptsize\textcolor{black!55}{Opus $\cdot$ admits only}};
+\node[anchor=west,align=left] at (\lxw,{\yF+0.5*\bh}) {\textbf{ADJUDICATE}\\[-1pt]\scriptsize\textcolor{black!55}{Opus $\cdot$ admits only}};
 \node[anchor=west] at (0.22,{\yF+0.5*\bh}) {\textbf{0} admitted \scriptsize\textcolor{black!55}{(3 across build-out)}};
 % ---- compact cost-gradient key ----
 \node[anchor=west,font=\scriptsize,black!55] at (\lx,{\yF-0.62}) {cost};
@@ -1311,7 +1312,8 @@ unanticipated} evidence matters, not as a contribution.
 % Forced-seller cases (negative gap) = SOLID; recognition cases (premium) = HATCHED.
 \def\sx{0.05}          % cm per percentage point
 \def\bh{0.40}          % bar height
-\def\lx{-3.30}         % left label-column anchor
+\def\lx{-3.30}         % (legacy) right-edge label anchor
+\def\lxw{-5.5}         % fixed LEFT x for all label rows -> aligned left edges across rows
 \def\yBKI{0}
 \def\yEFX{-0.62}
 \def\yCLVT{-1.24}
@@ -1327,26 +1329,26 @@ unanticipated} evidence matters, not as a contribution.
 \fill[black!45] ({-37.5*\sx},\yBKI) rectangle (0,{\yBKI+\bh});
 \draw[black!60,line width=0.4pt] ({-37.5*\sx},\yBKI) rectangle (0,{\yBKI+\bh});
 \node[anchor=east,font=\scriptsize] at ({-37.5*\sx-0.08},{\yBKI+0.5*\bh}) {$-37.5\%$};
-\node[anchor=east,align=left] at (\lx,{\yBKI+0.5*\bh}) {\textbf{Black Knight}\\[-1pt]\scriptsize\textcolor{black!55}{spin orphan}};
+\node[anchor=west,align=left] at (\lxw,{\yBKI+0.5*\bh}) {\textbf{Black Knight}\\[-1pt]\scriptsize\textcolor{black!55}{spin orphan}};
 \fill[black!45] ({-35*\sx},\yEFX) rectangle (0,{\yEFX+\bh});
 \draw[black!60,line width=0.4pt] ({-35*\sx},\yEFX) rectangle (0,{\yEFX+\bh});
 \node[anchor=east,font=\scriptsize] at ({-35*\sx-0.08},{\yEFX+0.5*\bh}) {$-35\%$};
-\node[anchor=east,align=left] at (\lx,{\yEFX+0.5*\bh}) {\textbf{Equifax}\\[-1pt]\scriptsize\textcolor{black!55}{breach forced-sale}};
+\node[anchor=west,align=left] at (\lxw,{\yEFX+0.5*\bh}) {\textbf{Equifax}\\[-1pt]\scriptsize\textcolor{black!55}{breach forced-sale}};
 \fill[black!45] ({-32*\sx},\yCLVT) rectangle (0,{\yCLVT+\bh});
 \draw[black!60,line width=0.4pt] ({-32*\sx},\yCLVT) rectangle (0,{\yCLVT+\bh});
 \node[anchor=east,font=\scriptsize] at ({-32*\sx-0.08},{\yCLVT+0.5*\bh}) {$-32\%$};
-\node[anchor=east,align=left] at (\lx,{\yCLVT+0.5*\bh}) {\textbf{Clarivate}\\[-1pt]\scriptsize\textcolor{black!55}{PE carve-out}};
+\node[anchor=west,align=left] at (\lxw,{\yCLVT+0.5*\bh}) {\textbf{Clarivate}\\[-1pt]\scriptsize\textcolor{black!55}{PE carve-out}};
 % --- recognition bars (hatched) ---
 \fill[white] (0,\yGTN) rectangle ({34*\sx},{\yGTN+\bh});
 \foreach \hx in {0.12,0.26,...,1.68} {\draw[black!30,line width=0.3pt] (\hx,\yGTN) -- (\hx,{\yGTN+\bh});}
 \draw[black!55,line width=0.4pt] (0,\yGTN) rectangle ({34*\sx},{\yGTN+\bh});
 \node[anchor=west,font=\scriptsize] at ({34*\sx+0.08},{\yGTN+0.5*\bh}) {$+34\%$};
-\node[anchor=east,align=left] at (\lx,{\yGTN+0.5*\bh}) {\textbf{Gartner}\\[-1pt]\scriptsize\textcolor{black!55}{recognition}};
+\node[anchor=west,align=left] at (\lxw,{\yGTN+0.5*\bh}) {\textbf{Gartner}\\[-1pt]\scriptsize\textcolor{black!55}{recognition}};
 \fill[white] (0,\yFICO) rectangle ({54*\sx},{\yFICO+\bh});
 \foreach \hx in {0.12,0.26,...,2.68} {\draw[black!30,line width=0.3pt] (\hx,\yFICO) -- (\hx,{\yFICO+\bh});}
 \draw[black!55,line width=0.4pt] (0,\yFICO) rectangle ({54*\sx},{\yFICO+\bh});
 \node[anchor=west,font=\scriptsize] at ({54*\sx+0.08},{\yFICO+0.5*\bh}) {$+54\%$};
-\node[anchor=east,align=left] at (\lx,{\yFICO+0.5*\bh}) {\textbf{FICO}\\[-1pt]\scriptsize\textcolor{black!55}{recognition}};
+\node[anchor=west,align=left] at (\lxw,{\yFICO+0.5*\bh}) {\textbf{FICO}\\[-1pt]\scriptsize\textcolor{black!55}{recognition}};
 % --- group braces (the outcome) ---
 \draw[decorate,decoration={brace,amplitude=4pt,raise=2pt},black!50]
    (3.60,{\yBKI+\bh}) -- (3.60,\yCLVT)
