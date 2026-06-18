@@ -641,26 +641,10 @@ for calibrating the gates on realized outcomes (the self-improvement loop).
 
 \section{System Implementation}
 
-The framework turns open-ended, LLM-driven discovery into \emph{disciplined, auditable, falsifiable}
-research by composing five mechanisms. Each exists to neutralize a specific, well-documented failure
-mode of using LLMs for investment research.
+The framework's five mechanisms are realized as a staged, model-tiered \emph{cascade} --- cheap,
+deterministic filters first, the expensive model last.
 
 \subsection*{The Source\textrightarrow{}Gate\textrightarrow{}Triage\textrightarrow{}Evaluate\textrightarrow{}Adjudicate Cascade}
-
-\begin{table}[h]
-\centering
-\begin{tabularx}{\linewidth}{@{}LL@{}}
-\toprule
-\textbf{Mechanism} & \textbf{Failure mode it neutralizes} \\
-\midrule
-Bottleneck graph + confidence decomposition & ``right theme $\rightarrow$ buy the ticker''; theme-chasing \\
-Cheap-source $\rightarrow$ deterministic-gate $\rightarrow$ expensive-evaluate funnel & cost blow-up; shallow, ungrounded judgment \\
-Bear-case-before-recommendation & sycophancy; one-sided narratives \\
-Forward-QPOP pre-registration & HARKing; data-snooping; backtest overfitting \\
-No-stories discipline + admission restraint & confabulation; over-admission; narrative drift \\
-\bottomrule
-\end{tabularx}
-\end{table}
 
 The discovery pipeline is a five-stage funnel in which each tier hands the next a smaller,
 higher-value candidate set:
