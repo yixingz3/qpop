@@ -54,7 +54,10 @@ uncertainty-about-the-constraint) are *support*, not pillars.
    **short conceptual case study: uncertainty-about-the-constraint** (the Bitcoin-halving example —
    a real but *scheduled, known-magnitude* constraint is arbitraged toward zero edge, unlike a
    physical chokepoint whose binding is discovered late). Framed as an *illustration of why forward,
-   unanticipated evidence matters*, **not** as a contribution.
+   unanticipated evidence matters*, **not** as a contribution. The constraint-uncertainty point now has
+   an **empirical companion**: a cross-substrate negative result — *forced selling, not recognition* —
+   showing involuntary dislocations leave the unpriced gap while anticipated re-pricings (recognition,
+   like the scheduled halving) do not (paper §Discussion, forced-seller figure).
 10. **Limitations** — small sample / wide intervals; no live-money claim; LLM version instability;
     admission rate is necessary, not sufficient, for alpha.
 11. **Conclusion** — disciplined, forward-registered agent-assisted research is reproducible and

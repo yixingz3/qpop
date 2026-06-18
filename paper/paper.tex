@@ -1226,6 +1226,20 @@ policy-substitution tests. A third distant domain therefore reinforces the
 taxonomy transfer --- and the new bypass mode shows the bear case is extensible to
 domain-specific substitution paths rather than fixed to the first domain's.
 
+\paragraph{A fourth probe, across \emph{substrates}.} The three domains above vary the
+node list but share a \emph{physical} substrate --- factories, fill-finish lines, launch
+hardware. As a stronger portability test we ran the same disciplines on a
+\emph{non-physical} substrate: proprietary data and network monopolies, where the
+chokepoint is a dataset an industry cannot rebuild (registration and title histories,
+citation graphs, contributor-fed credit files) rather than a plant. This probe is
+design-and-backtest stage, not live --- we pre-registered the gates, then ran a
+\emph{point-in-time}, public-data-grade backtest over historical, closed dislocations in
+such businesses. The disciplines transferred: the same purity and over-payment gates
+separated genuine data monopolies from contestable look-alikes, and rejected celebrated
+data businesses that were never actually cheap. The probe also surfaced a
+substrate-specific refinement to the \emph{entry} rule and a clean negative result, which
+we take up in the Discussion.
+
 \subsection{What Is Still Pending (Declared)}
 
 \begin{itemize}
@@ -1292,6 +1306,92 @@ the price is, to that extent, not alpha --- and it is why the framework prefers 
 binding is still being discovered. We present it as an illustration of why \emph{forward,
 unanticipated} evidence matters, not as a contribution.
 
+\begin{figure}[t]
+\centering
+\begin{tikzpicture}[
+    x=1cm, y=1cm,
+    font=\footnotesize,
+]
+% Diverging horizontal bar chart, grayscale (print convention, matches Fig. funnel).
+% Bar DIRECTION = sign of valuation gap vs info-services peers at T0.
+% Forced-seller cases (negative gap) = SOLID; recognition cases (premium) = HATCHED.
+\def\sx{0.05}          % cm per percentage point
+\def\bh{0.40}          % bar height
+\def\lx{-3.30}         % left label-column anchor
+\def\yBKI{0}
+\def\yEFX{-0.62}
+\def\yCLVT{-1.24}
+\def\yGTN{-1.86}
+\def\yFICO{-2.48}
+% peer-parity (zero) axis
+\draw[black!70,line width=0.6pt] (0,0.60) -- (0,-2.68);
+\node[anchor=south,font=\scriptsize,black!60] at (0,0.60) {peer parity};
+% pre-registered -20\% entry gate
+\draw[black!55,line width=0.5pt,dashed] (-1.0,0.45) -- (-1.0,-2.68);
+\node[anchor=north,font=\scriptsize,black!60] at (-1.0,-2.72) {$-20\%$ gate};
+% --- forced-seller bars (solid) ---
+\fill[black!45] ({-37.5*\sx},\yBKI) rectangle (0,{\yBKI+\bh});
+\draw[black!60,line width=0.4pt] ({-37.5*\sx},\yBKI) rectangle (0,{\yBKI+\bh});
+\node[anchor=east,font=\scriptsize] at ({-37.5*\sx-0.08},{\yBKI+0.5*\bh}) {$-37.5\%$};
+\node[anchor=east,align=right] at (\lx,{\yBKI+0.5*\bh}) {\textbf{Black Knight}\\[-1pt]\scriptsize\textcolor{black!55}{spin orphan}};
+\fill[black!45] ({-35*\sx},\yEFX) rectangle (0,{\yEFX+\bh});
+\draw[black!60,line width=0.4pt] ({-35*\sx},\yEFX) rectangle (0,{\yEFX+\bh});
+\node[anchor=east,font=\scriptsize] at ({-35*\sx-0.08},{\yEFX+0.5*\bh}) {$-35\%$};
+\node[anchor=east,align=right] at (\lx,{\yEFX+0.5*\bh}) {\textbf{Equifax}\\[-1pt]\scriptsize\textcolor{black!55}{breach forced-sale}};
+\fill[black!45] ({-32*\sx},\yCLVT) rectangle (0,{\yCLVT+\bh});
+\draw[black!60,line width=0.4pt] ({-32*\sx},\yCLVT) rectangle (0,{\yCLVT+\bh});
+\node[anchor=east,font=\scriptsize] at ({-32*\sx-0.08},{\yCLVT+0.5*\bh}) {$-32\%$};
+\node[anchor=east,align=right] at (\lx,{\yCLVT+0.5*\bh}) {\textbf{Clarivate}\\[-1pt]\scriptsize\textcolor{black!55}{PE carve-out}};
+% --- recognition bars (hatched) ---
+\fill[white] (0,\yGTN) rectangle ({34*\sx},{\yGTN+\bh});
+\foreach \hx in {0.12,0.26,...,1.68} {\draw[black!30,line width=0.3pt] (\hx,\yGTN) -- (\hx,{\yGTN+\bh});}
+\draw[black!55,line width=0.4pt] (0,\yGTN) rectangle ({34*\sx},{\yGTN+\bh});
+\node[anchor=west,font=\scriptsize] at ({34*\sx+0.08},{\yGTN+0.5*\bh}) {$+34\%$};
+\node[anchor=east,align=right] at (\lx,{\yGTN+0.5*\bh}) {\textbf{Gartner}\\[-1pt]\scriptsize\textcolor{black!55}{recognition}};
+\fill[white] (0,\yFICO) rectangle ({54*\sx},{\yFICO+\bh});
+\foreach \hx in {0.12,0.26,...,2.68} {\draw[black!30,line width=0.3pt] (\hx,\yFICO) -- (\hx,{\yFICO+\bh});}
+\draw[black!55,line width=0.4pt] (0,\yFICO) rectangle ({54*\sx},{\yFICO+\bh});
+\node[anchor=west,font=\scriptsize] at ({54*\sx+0.08},{\yFICO+0.5*\bh}) {$+54\%$};
+\node[anchor=east,align=right] at (\lx,{\yFICO+0.5*\bh}) {\textbf{FICO}\\[-1pt]\scriptsize\textcolor{black!55}{recognition}};
+% --- group braces (the outcome) ---
+\draw[decorate,decoration={brace,amplitude=4pt,raise=2pt},black!50]
+   (3.60,{\yBKI+\bh}) -- (3.60,\yCLVT)
+   node[midway,right=6pt,align=left,font=\scriptsize,black!60]{forced sellers\\$\rightarrow$ re-rated};
+\draw[decorate,decoration={brace,amplitude=4pt,raise=2pt},black!50]
+   (3.60,{\yGTN+\bh}) -- (3.60,\yFICO)
+   node[midway,right=6pt,align=left,font=\scriptsize,black!60]{recognition\\$\rightarrow$ premium};
+\end{tikzpicture}
+\caption{\textbf{Forced selling, not recognition} (portability probe, fourth substrate).
+Valuation gap to information-services peers at the dislocation date~($T_0$), for
+historical, closed dislocations in proprietary-data businesses; point-in-time,
+public-data grade. Forced-seller dislocations (solid) --- a spin-off orphaned by index
+funds, a post-breach forced sale, a private-equity carve-out --- left real $\sim$30--40\%
+discounts that subsequently re-rated; \emph{recognition} dislocations (hatched), where the
+market belatedly discovered a hidden data business, traded at \emph{premiums} at~$T_0$,
+leaving no gap. The dashed line is the pre-registered $-20\%$ entry gate. Retrospective
+case studies illustrating the entry mechanism --- not assessments of the businesses or
+forward price views.}
+\label{fig:forced-seller}
+\end{figure}
+
+\paragraph{Forced-cheap entry, and a cross-substrate negative result.} The
+constraint-uncertainty principle above has a testable, cross-substrate form. A chokepoint
+is mispriced only when its price is \emph{involuntarily} dislocated, and the dislocation
+mechanism is substrate-specific. Physical chokepoints get cheap on a capital-spending
+\emph{cycle}; proprietary-data chokepoints compound steadily and rarely cycle cheap, so
+their only forced-cheap window is an \emph{observable forced seller} --- a spin-off
+orphaned by index funds, an index deletion, a private-equity exit. A point-in-time
+backtest (public-data grade) sharpens this into a falsifiable claim and yields a negative
+result that mirrors the halving case above (Figure~\ref{fig:forced-seller}):
+\emph{forced-selling} dislocations left real $\sim$30--40\% valuation gaps to
+information-services peers that subsequently re-rated, whereas \emph{recognition}
+dislocations --- the market belatedly discovering a hidden data business --- traded at
+\emph{premiums}, leaving no gap to capture. Recognition is an \emph{anticipated}
+re-pricing, arbitraged just as the pre-announced halving is; only the \emph{involuntary}
+seller leaves the unpriced gap. The result narrows the mechanism rather than broadening
+the claim --- the same kept-disproof discipline as the rejection-quality audit --- and we
+offer it as a generalization probe, not a performance claim.
+
 \section{Limitations}
 The forward sample is small and early; intervals are wide and no live-money track record is claimed.
 LLM outputs are nondeterministic across model versions, so we log the exact model identifier and
@@ -1317,8 +1417,10 @@ See \texttt{ETHICS.md} and \texttt{DISCLAIMER.md}.
 \paragraph{Conflicts of interest and disclosure.} The author maintains a private research book that
 applies this method and may hold positions in names within the example domains discussed here.
 Example names are illustrations of the decision taxonomy --- not endorsements, recommendations, or a
-disclosure of the book; no live positions, weights, or sizes are revealed. The author declares no
-other competing interests.
+disclosure of the book; no live positions, weights, or sizes are revealed. Where example
+cases are named (Figure~\ref{fig:forced-seller}), they are historical, closed dislocations
+presented for their measured valuation facts; current or live candidates are described
+only generically. The author declares no other competing interests.
 
 \section{Conclusion}
 LLMs make thematic research cheap but unreliable as decision engines. We presented a

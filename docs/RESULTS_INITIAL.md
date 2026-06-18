@@ -128,6 +128,24 @@ the first domain, so the probe needed domain-general prompts, not a `bottleneck_
 Config-only portability requires a `{domain}` parameter in the templates (declared next step). The
 evidence is at the *method* level; config-level portability is still to be demonstrated.
 
+### A third domain, and a fourth *substrate*
+
+A third, distant domain — the **launch / satellite-internet supply chain** — transferred the funnel
+unmodified to another **0 admit**, recurring the rejection taxonomy and adding a new bypass mode
+(customer *in-sourcing* the chokepoint). A fourth probe crossed *substrates*: from **physical**
+chokepoints to **non-physical proprietary-data / network monopolies** (datasets an industry cannot
+rebuild). This probe is **design-and-backtest stage, non-live**; we pre-registered the gates and ran a
+point-in-time, public-data-grade backtest over historical, closed dislocations.
+
+**Negative result — forced selling, not recognition.** The valuation gap is a *forced-selling*
+phenomenon, not a *recognition* one. Forced-seller cases left real ~32–38% gaps to information-services
+peers that re-rated (Black Knight −37.5%, Equifax −35%, Clarivate −32%); *recognition* cases traded at
+**premiums** at T₀ (Gartner +34%, FICO +54%), leaving no gap. The entry mechanism is substrate-specific:
+a capex **cycle** de-rate for physical chokepoints, an **observable forced seller** (spin orphan / index
+deletion / sponsor exit) for data chokepoints. A kept-disproof that *narrowed the mechanism* rather than
+broadening the claim. Full record: vault `systematic-trading/generalized-chokepoints.md`; paper
+§Portability + Discussion (forced-seller figure).
+
 ## What is still pending (declared)
 
 - **Remaining baselines** (debate-only, no-Forward-QPOP-lock) — the three run here (ungated,
