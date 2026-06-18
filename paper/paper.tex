@@ -12,6 +12,10 @@
 \usepackage{tikz}
 \usetikzlibrary{positioning,arrows.meta,calc,decorations.pathreplacing}
 \usepackage{float}
+\usepackage[letterpaper,margin=1in]{geometry}
+\usepackage{tabularx}
+\newcolumntype{L}{>{\raggedright\arraybackslash}X}
+\setlength{\emergencystretch}{3em}  % absorb residual overfull from long \texttt{} tokens
 
 \title{Forward-Registered LLM-Assisted Thematic Research:\\
 An Auditable Framework for Investment Hypothesis Generation}
@@ -92,12 +96,13 @@ a thematic thesis into physical chokepoints; a \textbf{confidence decomposition}
 derives a position tier from scored node-and-ticker attributes rather than assertion:
 %
 \[
-  \text{confidence}
-    = \underbrace{\text{bottleneck\_score}}_{\text{node: how binding}}
+  \begin{aligned}
+  \text{confidence} = {}&\underbrace{\text{bottleneck\_score}}_{\text{node: how binding}}
     \times \underbrace{\text{exposure\_purity}}_{\text{ticker: proxy quality}}
-    \times \underbrace{\text{demand\_score}}_{\text{node: order visibility}}
-    \times \underbrace{\text{valuation\_adjustment}}_{\leq 1}
-    \times \underbrace{\text{crowding\_adjustment}}_{\leq 1};
+    \times \underbrace{\text{demand\_score}}_{\text{node: order visibility}} \\
+    &\times \underbrace{\text{valuation\_adjustment}}_{\leq 1}
+    \times \underbrace{\text{crowding\_adjustment}}_{\leq 1}
+  \end{aligned}
 \]
 %
 a \textbf{cheap-source $\to$ deterministic-gate $\to$ expensive-evaluate} funnel that
@@ -328,7 +333,7 @@ research by composing five mechanisms. Each exists to neutralize a specific, wel
 failure mode of using LLMs for investment research.
 
 \begin{center}
-\begin{tabular}{@{}ll@{}}
+\begin{tabularx}{\linewidth}{@{}LL@{}}
 \toprule
 \textbf{Mechanism} & \textbf{Failure mode it neutralizes} \\
 \midrule
@@ -338,7 +343,7 @@ Bear-case-before-recommendation & sycophancy; one-sided narratives \\
 Forward-QPOP pre-registration & HARKing; data-snooping; backtest overfitting \\
 No-stories discipline + admission restraint & confabulation; over-admission; narrative drift \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \end{center}
 
 \subsection{The bottleneck graph (the portable thesis)}
@@ -386,16 +391,13 @@ everyone already trades.
 \subsection{Confidence decomposition (kills theme-chasing)}
 
 \[
-\text{confidence} =
-  \underbrace{\text{bottleneck\_score}}_{\text{NODE: how binding the chokepoint is}}
-  \;\times\;
-  \underbrace{\text{exposure\_purity}}_{\text{TICKER: does this name capture the bottleneck economics}}
-  \;\times\;
-  \underbrace{\text{demand\_score}}_{\text{NODE: order visibility / capex pull}}
-  \;\times\;
-  \underbrace{\text{valuation\_adjustment}}_{\text{TRADE ($\leq 1$): penalize already-priced-in}}
-  \;\times\;
-  \underbrace{\text{crowding\_adjustment}}_{\text{TRADE ($\leq 1$): penalize crowded / overextended}}
+\begin{aligned}
+\text{confidence} = {}&\underbrace{\text{bottleneck\_score}}_{\text{node: how binding}}
+  \times \underbrace{\text{exposure\_purity}}_{\text{ticker: captures economics}}
+  \times \underbrace{\text{demand\_score}}_{\text{node: order visibility}} \\
+  &\times \underbrace{\text{valuation\_adjustment}}_{\le 1\text{: penalize priced-in}}
+  \times \underbrace{\text{crowding\_adjustment}}_{\le 1\text{: penalize crowded}}
+\end{aligned}
 \]
 
 A correct node with a poor proxy (low purity) or a crowded entry yields \emph{low} confidence.
@@ -429,7 +431,7 @@ $\to$ dropped), not asserted (Figure~\ref{fig:confidence}).
 \coordinate (mid) at ($(d.south)!0.5!(v.south)$);
 \node[draw=black!55,rounded corners=2pt,fill=white,align=center,inner sep=4pt,
       below=20mm of mid] (conf) {\textbf{confidence}\\\scriptsize $=$ product of the five};
-\draw[->,black!55] (c.south) |- (conf.east);
+\draw[->,black!55] (c.east) -- ++(0.35,0) |- (conf.east);
 \node[bx,below=12mm of conf,xshift=-3.4cm,minimum height=8mm] (t1) {core\\\scriptsize $\geq 0.22$};
 \node[bx,below=12mm of conf,xshift=-1.15cm,minimum height=8mm] (t2) {basket\\\scriptsize split};
 \node[bx,below=12mm of conf,xshift=1.15cm,minimum height=8mm] (t3) {lottery\\\scriptsize $\geq 0.10$};
@@ -531,6 +533,7 @@ any hold/override path), or the registry's own labels disagree with the book it 
 
 \subsection*{Entry schema (illustrative)}
 
+\noindent\begin{minipage}{\linewidth}\footnotesize
 \begin{verbatim}
 id: H-<DOMAIN>-<NN>
 created: <date>
@@ -565,6 +568,7 @@ content_hash: "<hash of the frozen fields>"
 prev_hash:    "<content_hash of the previous ledger entry>"
 entry_hash:   "<sha256(content_hash + prev_hash)>"
 \end{verbatim}
+\end{minipage}
 
 \subsection*{The hash chain}
 
@@ -602,7 +606,7 @@ not merely a set of independently-hashed rows. Two properties follow:
 Each trigger committed at admission has three mandatory fields:
 
 \begin{center}
-\begin{tabular}{@{}lll@{}}
+\begin{tabularx}{\linewidth}{@{}llL@{}}
 \toprule
 \textbf{Field} & \textbf{Type} & \textbf{Purpose} \\
 \midrule
@@ -612,11 +616,11 @@ Each trigger committed at admission has three mandatory fields:
 \texttt{data\_source.name} & string & named source for the metric \\
 \texttt{data\_source.tier} & enum   & \texttt{primary} $|$ \texttt{secondary} $|$ \texttt{market\_implied} \\
 \midrule
-\multicolumn{3}{@{}l}{\emph{Admission trigger (entry):} hypothesis registered before any capital deployed.} \\
-\multicolumn{3}{@{}l}{\emph{Update trigger (belief update):} posterior revision with cited evidence; tertiary sources alone blocked.} \\
-\multicolumn{3}{@{}l}{\emph{Exit trigger:} pre-committed rule; outcome recorded as Supported/Weakened/Falsified.} \\
+\multicolumn{3}{@{}>{\raggedright\arraybackslash}p{0.92\linewidth}@{}}{\emph{Admission trigger (entry):} hypothesis registered before any capital deployed.} \\
+\multicolumn{3}{@{}>{\raggedright\arraybackslash}p{0.92\linewidth}@{}}{\emph{Update trigger (belief update):} posterior revision with cited evidence; tertiary sources alone blocked.} \\
+\multicolumn{3}{@{}>{\raggedright\arraybackslash}p{0.92\linewidth}@{}}{\emph{Exit trigger:} pre-committed rule; outcome recorded as Supported/Weakened/Falsified.} \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \end{center}
 
 \subsection*{Forward validation and posterior recording}
@@ -645,7 +649,7 @@ mode of using LLMs for investment research.
 
 \begin{table}[h]
 \centering
-\begin{tabular}{ll}
+\begin{tabularx}{\linewidth}{@{}LL@{}}
 \toprule
 \textbf{Mechanism} & \textbf{Failure mode it neutralizes} \\
 \midrule
@@ -655,7 +659,7 @@ Bear-case-before-recommendation & sycophancy; one-sided narratives \\
 Forward-QPOP pre-registration & HARKing; data-snooping; backtest overfitting \\
 No-stories discipline + admission restraint & confabulation; over-admission; narrative drift \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \end{table}
 
 The discovery pipeline is a five-stage funnel in which each tier hands the next a smaller,
@@ -706,11 +710,13 @@ A correct bottleneck node with a poor proxy ticker (low exposure purity) or a cr
 analyst. The decomposition is:
 
 \[
-  \text{confidence} = \underbrace{\text{bottleneck\_score}}_{\text{node: how binding}}
-  \;\times\; \underbrace{\text{exposure\_purity}}_{\text{ticker: captures economics}}
-  \;\times\; \underbrace{\text{demand\_score}}_{\text{node: order visibility}}
-  \;\times\; \underbrace{\text{valuation\_adjustment}}_{\leq 1\text{: penalize priced-in}}
-  \;\times\; \underbrace{\text{crowding\_adjustment}}_{\leq 1\text{: penalize crowded}}
+  \begin{aligned}
+  \text{confidence} = {}&\underbrace{\text{bottleneck\_score}}_{\text{node: how binding}}
+  \times \underbrace{\text{exposure\_purity}}_{\text{ticker: captures economics}}
+  \times \underbrace{\text{demand\_score}}_{\text{node: order visibility}} \\
+  &\times \underbrace{\text{valuation\_adjustment}}_{\leq 1\text{: penalize priced-in}}
+  \times \underbrace{\text{crowding\_adjustment}}_{\leq 1\text{: penalize crowded}}
+  \end{aligned}
 \]
 
 \subsection*{No-Stories Discipline and Forward Validation}
@@ -1118,7 +1124,7 @@ they are explicitly \emph{allowed to reject}, not strawmen forced to admit.
 
 \begin{table}[h]
 \centering
-\begin{tabular}{lcc}
+\begin{tabularx}{\linewidth}{@{}Lcc@{}}
 \toprule
 \textbf{Arm} & \textbf{Admitted} & \textbf{Rate} \\
 \midrule
@@ -1133,7 +1139,7 @@ $-$ bear-case-first (recommend from the bull thesis, no written bear case)
   purity bar, overlap penalty, or bear-case requirement)
   & \textbf{38 / 38} & \textbf{100\%} \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \caption{Ablation results on the 38-candidate batch.}
 \end{table}
 
