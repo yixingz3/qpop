@@ -1,13 +1,14 @@
 # Abstract (draft)
 
-Large language models make open-ended thematic investment research cheap, but unreliable: they can
-generate plausible but unsupported claims, amplify narrative priors, recommend more candidates than
-a disciplined investment process should admit, and — when evaluated by backtest — overfit periods
-that postdate their training data. We present **a forward-registered, agent-assisted research
-framework** that wraps LLM-driven discovery in deterministic gates and a forward pre-registration
-protocol, so that a hypothesis can be admitted to a forward-evaluation portfolio only after
-surviving falsifiable, dated-evidence checks and being evaluated *forward* on paper trading rather
-than by a fragile backtest.
+Large language models are increasingly used as decision engines for open-ended research, but they
+are unreliable in characteristic ways: they generate plausible but unsupported claims, amplify
+narrative priors, over-admit candidates, and — when evaluated retrospectively — overfit data that
+postdate their training. We study this as a problem of **AI reliability and auditability**, using
+open-ended thematic investment research as a concrete, adversarial testbed. We present **a
+forward-registered, agent-assisted research framework** that wraps LLM-driven discovery in
+deterministic gates and a forward pre-registration protocol, so that a hypothesis can be admitted to
+a forward-evaluation portfolio only after surviving falsifiable, dated-evidence checks and being
+evaluated *forward* on paper trading rather than by a fragile backtest.
 
 The framework contributes four components. (1) A **framework**: a domain-agnostic bottleneck graph
 in which nodes are physical chokepoints and a new domain is a configuration file, not new code, with

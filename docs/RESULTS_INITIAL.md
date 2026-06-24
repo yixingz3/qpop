@@ -143,8 +143,7 @@ peers that re-rated (Black Knight −37.5%, Equifax −35%, Clarivate −32%); *
 **premiums** at T₀ (Gartner +34%, FICO +54%), leaving no gap. The entry mechanism is substrate-specific:
 a capex **cycle** de-rate for physical chokepoints, an **observable forced seller** (spin orphan / index
 deletion / sponsor exit) for data chokepoints. A kept-disproof that *narrowed the mechanism* rather than
-broadening the claim. Full record: vault `systematic-trading/generalized-chokepoints.md`; paper
-§Portability + Discussion (forced-seller figure).
+broadening the claim. Full record: private notes; paper §Portability + Appendix A (forced-seller figure).
 
 ## What is still pending (declared)
 

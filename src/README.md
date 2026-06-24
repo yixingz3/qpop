@@ -2,7 +2,7 @@
 
 The engine is organized into six modules with clear boundaries. This `src/` tree defines the
 **interfaces and contracts**; a working reference implementation exists in a private deployment
-(the live AI-supply-chain book) and is being progressively generalized and open-sourced here as
+and is being progressively generalized and open-sourced here as
 domain-agnostic code. Until then, this document is the authoritative spec — a contributor can
 implement against these contracts. The **stage prompts** (the disciplines themselves) are committed
 in [`prompts.md`](prompts.md), and the **deterministic gate** is specified with reference pseudocode

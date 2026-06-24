@@ -1,7 +1,8 @@
 # chokepoint-research-engine
 
-**A pre-registered, agent-assisted research framework for thematic investment hypotheses —
-designed to resist LLM confabulation, narrative drift, over-admission, and backtest overfitting.**
+**A pre-registered, auditable framework for making LLM-assisted research reliable and reproducible —
+designed to resist confabulation, narrative drift, over-admission, and evaluation (look-ahead) leakage.
+Validated on thematic capital-markets research as an adversarial testbed.**
 
 > **What this is not.** This is **not** a trading strategy, a stock-picker, or a claim to beat the
 > market. It is a *methodology and reference framework* for using LLM agents to do disciplined,

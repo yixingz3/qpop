@@ -1,7 +1,7 @@
 # Paper Outline
 
-**Working title:** *Forward-Registered LLM-Assisted Thematic Research: An Auditable Framework for
-Investment Hypothesis Generation*
+**Working title:** *Forward-Registered, Auditable LLM-Assisted Research: A Reliability Methodology,
+with a Capital-Markets Testbed*
 
 **Alternate (punchier):** *No-Stories Investing: Forward-Registered LLM Agents for Auditable
 Thematic Research*

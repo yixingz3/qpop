@@ -1,26 +1,35 @@
 cff-version: 1.2.0
-title: "chokepoint-research-engine: A pre-registered, agent-assisted framework for thematic investment research"
+title: "Forward-Registered, Auditable LLM-Assisted Research: A Reliability Methodology, with a Capital-Markets Testbed"
 message: "If you use this framework, please cite it."
 type: software
 authors:
   - family-names: Zheng
     given-names: Yixing
+    email: yz11739@stern.nyu.edu
+    orcid: "https://orcid.org/0009-0000-0563-2398"
 repository-code: "https://github.com/yixingz3/chokepoint-research-engine"
 abstract: >-
-  A domain-agnostic framework for using LLM agents to conduct disciplined thematic
-  investment research. It wraps open-ended agentic discovery in deterministic gates
-  and a forward pre-registration ("forward-QPOP") protocol to resist confabulation,
-  narrative drift, over-admission, and backtest overfitting. Contributions include a
-  portable bottleneck graph, a decomposed confidence model, a budget-aware
-  cheap-source / deterministic-gate / expensive-evaluate funnel, and forward
-  validation via paper trading and conservative shadow fills.
+  Methods for making AI- and LLM-assisted research reliable, auditable, and
+  reproducible. The framework wraps open-ended agentic discovery in deterministic,
+  independently-auditable gates and a forward pre-registration ("forward-QPOP")
+  protocol, so that each accept/reject decision is verifiable rather than a black-box
+  narrative and is evaluated forward rather than by a leakage-prone backtest. It is
+  validated on high-stakes capital-markets and economic forecasting as an adversarial
+  testbed, and is domain-agnostic by construction. Components include a portable
+  bottleneck graph, a decomposed confidence model, a budget-aware cheap-source /
+  deterministic-gate / expensive-evaluate funnel, a tamper-evident hypothesis ledger,
+  and a held-out rejection-quality audit.
 keywords:
-  - large language models
-  - agentic research
+  - trustworthy AI
+  - AI evaluation
+  - LLM reliability
+  - auditable AI
+  - reproducibility
   - pre-registration
-  - investment research
-  - supply-chain bottlenecks
-  - trustworthy AI in finance
+  - large language models
+  - forward validation
+  - look-ahead bias
+  - ML in finance
 license: MIT
 version: 0.1.0
 date-released: "2026-06-07"
