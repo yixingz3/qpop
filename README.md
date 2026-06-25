@@ -59,20 +59,36 @@ LLM-surfaced candidates and admitted a small single-digit fraction; most weeks a
 That low admission rate is **the empirical finding**, not a failure — it is what separates
 disciplined agent-assisted research from naïve LLM screening, which over-admits by construction.
 
+## Install
+
+The methodology's pre-registration core is open-sourced as a small, dependency-free Python package,
+**`forward-qpop`** — the tamper-evident, append-only QPOP ledger (register a hypothesis before the
+evaluation window; every entry is content-hashed and chained, so tampering/insertion/reorder is
+detectable):
+
+```bash
+pip install forward-qpop
+forward-qpop verify data/synthetic/qpop_ledger_sample.jsonl
+```
+
+See [`src/forward_qpop/`](src/forward_qpop/) and its [README](src/forward_qpop/README.md). The rest of
+the engine (sourcing / gating / evaluation) remains spec + reference pseudocode — see `src/README.md`.
+
 ## Repository layout
 
 ```
 chokepoint-research-engine/
   docs/        METHOD · RESEARCH_RULES · QPOP_PROTOCOL · CANDIDATE_PROCESS · SCOREBOARD · TUNING
                · WRITING_STANDARDS · LITERATURE · RESULTS_INITIAL · PAPER_OUTLINE
-  src/         prompts + deterministic-gate reference spec (engine module contracts — qpop · scoring
-               · discovery · gating · evaluation · validation — specified in src/README.md)
+  src/         forward_qpop/ — runnable QPOP pre-registration ledger (pip install forward-qpop)
+               + prompts + deterministic-gate reference spec (qpop · scoring · discovery · gating
+               · evaluation · validation contracts — see src/README.md)
   examples/    ai_supply_chain/ (worked example) · template_domain/ (copy this to start a new domain)
   paper/       paper.tex + Makefile · references.bib (verified) · abstract · contributions
                · experiment_plan · related_work
   data/        synthetic/ (prices · candidate cards · QPOP ledger · scoreboard — non-sensitive samples)
-  tests/
-  ETHICS.md · DISCLAIMER.md · LICENSE · CITATION.cff
+  tests/       test_ledger.py (forward_qpop)
+  pyproject.toml · ETHICS.md · DISCLAIMER.md · LICENSE · CITATION.cff
 ```
 
 ## Adding a new domain (the flywheel)
