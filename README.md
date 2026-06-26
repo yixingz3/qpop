@@ -1,111 +1,116 @@
-# chokepoint-research-engine
+<div align="center">
 
-**A pre-registered, auditable framework for making LLM-assisted research reliable and reproducible —
-designed to resist confabulation, narrative drift, over-admission, and evaluation (look-ahead) leakage.
-Validated on thematic capital-markets research as an adversarial testbed.**
+# qpop
 
-> **What this is not.** This is **not** a trading strategy, a stock-picker, or a claim to beat the
-> market. It is a *methodology and reference framework* for using LLM agents to do disciplined,
-> auditable, falsifiable thematic research. The headline result is the opposite of most
-> "LLM-picks-stocks" demos: a well-disciplined agent **rejects most of the ideas it surfaces**, and
-> that restraint is the contribution. See [`DISCLAIMER.md`](DISCLAIMER.md).
+**Your AI agent will admit any plausible idea. `qpop` makes it earn each one — gated, pre-registered, and falsifiable.**
 
-## The idea in one line
+A Claude Code plugin that turns an over-eager LLM into a disciplined researcher. The headline result is
+counterintuitive: a well-run agent **rejects most of what it surfaces** — and that restraint, recorded
+in a tamper-evident ledger, is the point.
 
+![Claude Code plugin](https://img.shields.io/badge/Claude%20Code-plugin-d97757)
+![License: MIT](https://img.shields.io/badge/License-MIT-blue)
+![status: v0.1](https://img.shields.io/badge/status-v0.1-lightgrey)
+<!-- ![GitHub stars](https://img.shields.io/github/stars/yixingz3/qpop) -->
+
+</div>
+
+---
+
+## The problem
+
+LLMs are brilliant at *sourcing* ideas and unreliable as *decision* engines. Left ungated, an LLM
+screener **over-admits by construction** — it is rewarded for *finding* ideas, not *refusing* them —
+and it confabulates, agrees with itself (sycophancy), and, when "backtested," already knows the answer
+(look-ahead leakage). The missing piece isn't better prompts. It's **auditable restraint**.
+
+## What `qpop` does
+
+It wraps your agent's research in a discipline and makes every decision auditable:
+
+- **Rejects most candidates, for defensible reasons** — deterministic gates + a bear case written
+  *before* the recommendation.
+- **Pre-registers the survivors** to a tamper-evident, hash-chained ledger — the claim, dated
+  evidence, and measurable exit triggers, committed *before* the outcome is known.
+- **Validates forward**, not by a leaky backtest.
+
+> **Pilot evidence** (the methods paper, [`research/paper/`](research/paper)): removing any single
+> discipline pushed an LLM screener's admission rate from **0% to 66–100%**; a held-out auditor judged
+> **93%** of the rejections justified; "no action" is the modal outcome. *These are pilot metrics —
+> they validate process discipline, not investment performance.*
+
+## Install (Claude Code)
+
+```text
+/plugin marketplace add yixingz3/qpop
+/plugin install qpop@qpop
 ```
-discover  →  gate  →  evaluate  →  pre-register  →  forward-validate  →  record posterior
-(cheap LLM)  (deterministic)  (expensive LLM)   (QPOP ledger)   (paper trading)   (dataset)
-```
 
-Open-ended discovery is powerful but unreliable; LLMs hallucinate, chase narratives, and
-over-admit. This framework wraps agentic discovery in **deterministic gates** and a
-**pre-registration discipline** so that an idea can only move capital after it survives
-falsifiable, dated-evidence checks — and is validated **forward** (on paper trading), not via a
-fragile backtest.
+That's it. The `auditable-research` discipline activates when you screen ideas or act on a finding, and
+the `/qpop:*` commands below are ready. *(Other agents: the discipline is portable markdown — see
+[Other tools](#other-tools).)*
 
-## What the framework provides
+## How it works — the ladder
 
-These are the framework's *components*. The companion methods paper groups them into **four
-contributions** (framework · protocol · forward-QPOP · evaluation-and-release) — see
-`docs/PAPER_OUTLINE.md` and `paper/contributions.md`.
+Apply **in order**; stop at the first failure → **no action** (the correct, modal outcome):
 
-1. **A domain-agnostic bottleneck graph** — nodes are physical chokepoints, edges are dependencies.
-   AI today; rare earth, power, gas, mining, uranium, defense-industrial tomorrow. A new domain is
-   *a config file*, not a new codebase.
-2. **A decomposed confidence model** — `confidence = bottleneck × purity × demand × valuation ×
-   crowding`, with **policy as evidence, not a multiplicative factor** (see `docs/METHOD.md`). This
-   kills "right theme → buy the ticker."
-3. **A budget-aware LLM funnel** — cheap-model **sourcing** (wide, high-volume) → **deterministic
-   gating** (tradeability/liquidity/overlap, no LLM) → expensive-model **evaluation** of finalists
-   only, each with a **bear-case-written-before-the-recommendation**.
-4. **Forward-QPOP** — pre-registered, content-hashed belief updates validated **forward** on paper
-   trading + conservative shadow fills, *not backtested*. Pre-registration is the contract against
-   HARKing and data-snooping for a young / structurally-shifting universe.
-5. **A "no-stories" discipline stack** — source tiers, fact-vs-announcement, overlap penalty,
-   structural-vs-cyclical, admission restraint. A position changes only on a *fired pre-registered
-   trigger, a binding cap, or a risk limit* — never a narrative.
-6. **Literature ingestion with verify-before-cite** — credible published research enters as a SOURCE
-   lens (mechanism + priors) and as a methods literature-watch (related work + gap), but **no paper
-   can move a score or enter `references.bib` until an adversarial, refute-by-default auditor
-   confirms its identifier resolves to the claimed title and author** (see `docs/LITERATURE.md`).
-   A *published, tradeable anomaly* is treated as already-priced crowding evidence, not a buy signal.
-7. **Forward validation** — judged on conservative shadow fills against a benchmark, with the
-   accumulated pre-registration ledger forming a reusable, auditable dataset.
+1. **Story or claim?** State it as something falsifiable, with a mechanism — or reject.
+2. **Deterministic gates** (no LLM): eligibility, and *replace-don't-stack* on duplicates.
+3. **Bear case first** — the strongest case *against*, written before the recommendation.
+4. **Source tiers** — primary > secondary > market-implied > tertiary; tertiary alone never moves a conclusion.
+5. **Pre-register, forward** — claim + dated evidence + exit triggers, hash-chained *before* the window.
+6. **Forward, not backtest** — a backward test of an LLM-scored process is *structurally invalid*.
+7. **On balance** — after overlap, cost, and uncertainty, does admitting beat doing nothing?
 
-## Why "no action" is the result
+## Commands
 
-Across early runs in the AI-supply-chain example domain, the pipeline evaluated dozens of
-LLM-surfaced candidates and admitted a small single-digit fraction; most weeks are "no action."
-That low admission rate is **the empirical finding**, not a failure — it is what separates
-disciplined agent-assisted research from naïve LLM screening, which over-admits by construction.
+| Command | What it does |
+|---|---|
+| **`auditable-research`** | *(auto)* the full discipline, applied when you screen ideas or evaluate a finding |
+| **`/qpop:preregister`** | register a hypothesis to the tamper-evident ledger *before* evaluating |
+| **`/qpop:review`** | audit current claims / a diff for stories, leakage, over-admission, missing pre-registration |
+| **`/qpop:verify`** | verify a ledger's integrity — detect any post-hoc edit, insertion, or reorder |
 
-## Install
+The ledger is a real hash chain (`entry_hash = sha256(content_hash ‖ prev_hash)`): edit a past entry,
+insert one, delete one, or reorder them, and `verify` fails (and exits non-zero — drop it in CI).
 
-The methodology's pre-registration core is open-sourced as a small, dependency-free Python package,
-**`forward-qpop`** — the tamper-evident, append-only QPOP ledger (register a hypothesis before the
-evaluation window; every entry is content-hashed and chained, so tampering/insertion/reorder is
-detectable):
+## Two pillars
+
+- **The tool** — this plugin: the discipline + a runnable, tamper-evident ledger engine.
+- **The paper** — *Forward-Registered, Auditable LLM-Assisted Research* in [`research/`](research):
+  the theory and pilot evidence behind the method. If you build on it, please cite
+  ([`CITATION.cff`](CITATION.cff)).
+
+## Use the ledger without Claude Code (Python)
+
+The pre-registration engine is a dependency-free package, bundled here and importable directly:
 
 ```bash
-pip install forward-qpop
-forward-qpop verify data/synthetic/qpop_ledger_sample.jsonl
+python scripts/qpop.py verify ledger.jsonl     # from a clone; no install needed
+# (a PyPI release, `pip install forward-qpop`, is planned)
 ```
 
-See [`src/forward_qpop/`](src/forward_qpop/) and its [README](src/forward_qpop/README.md). The rest of
-the engine (sourcing / gating / evaluation) remains spec + reference pseudocode — see `src/README.md`.
-
-## Repository layout
-
-```
-chokepoint-research-engine/
-  docs/        METHOD · RESEARCH_RULES · QPOP_PROTOCOL · CANDIDATE_PROCESS · SCOREBOARD · TUNING
-               · WRITING_STANDARDS · LITERATURE · RESULTS_INITIAL · PAPER_OUTLINE
-  src/         forward_qpop/ — runnable QPOP pre-registration ledger (pip install forward-qpop)
-               + prompts + deterministic-gate reference spec (qpop · scoring · discovery · gating
-               · evaluation · validation contracts — see src/README.md)
-  examples/    ai_supply_chain/ (worked example) · template_domain/ (copy this to start a new domain)
-  paper/       paper.tex + Makefile · references.bib (verified) · abstract · contributions
-               · experiment_plan · related_work
-  data/        synthetic/ (prices · candidate cards · QPOP ledger · scoreboard — non-sensitive samples)
-  tests/       test_ledger.py (forward_qpop)
-  pyproject.toml · ETHICS.md · DISCLAIMER.md · LICENSE · CITATION.cff
+```python
+from forward_qpop import Ledger
+led = Ledger("ledger.jsonl")
+led.register("H-01", claim="…", prior=0.5,
+             evidence=[{"summary": "…", "tier": "primary", "date": "2026-06-24"}])
+led.verify()   # ok=True — any later edit/insert/reorder flips it to False
 ```
 
-## Adding a new domain (the flywheel)
+## Other tools
 
-1. Copy `examples/template_domain/` → `examples/<your_domain>/`.
-2. Author `bottleneck_map.yml` (nodes = chokepoints, edges = dependencies, per-node scores +
-   measurable exit triggers with a data source) and `benchmark_config.yml`.
-3. Run the funnel; pre-register admissions in the QPOP ledger; forward-validate.
-4. Each domain reuses the *same engine* — the value compounds as domains and forward records accrue.
+Claude Code is supported today. The discipline lives as portable markdown in [`skills/`](skills), so
+Codex / other agents can adopt it by pointing at the skill files; first-class support for more agents
+is planned.
 
-## Status
+## What this is not
 
-**v0 — framework + worked example. No live track record is claimed.** The reference implementation
-(a live paper-trading deployment) is maintained privately; this repository is the *method*, the
-*schema*, and *reproducible templates*. A methods paper is in `paper/` (see `docs/PAPER_OUTLINE.md`).
+Not investment advice, not a stock-picker, not a claim to beat the market. The finance domain is a
+deliberately *adversarial testbed* (markets punish wishful thinking); `qpop` is a research
+**discipline**. See [`DISCLAIMER.md`](DISCLAIMER.md) and [`ETHICS.md`](ETHICS.md).
 
-## License & citation
+## License
 
-[MIT](LICENSE). If you use this framework, please cite it — see [`CITATION.cff`](CITATION.cff).
-**Not investment advice** — [`DISCLAIMER.md`](DISCLAIMER.md).
+[MIT](LICENSE). Implements the **Forward-QPOP** protocol — see [`research/`](research) and
+[`CITATION.cff`](CITATION.cff).

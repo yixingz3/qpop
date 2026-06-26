@@ -14,7 +14,7 @@ not exist yet, so it's "pending" until the first upload creates it):
 |-------|-------|
 | PyPI Project Name | `forward-qpop` |
 | Owner | `yixingz3` |
-| Repository name | `chokepoint-research-engine` |
+| Repository name | `qpop` |
 | Workflow name | `publish.yml` |
 | Environment name | `pypi` |
 

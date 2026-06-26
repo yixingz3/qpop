@@ -71,4 +71,4 @@ that no past entry was silently changed.
 
 ## License
 
-MIT. Part of <https://github.com/yixingz3/chokepoint-research-engine>.
+MIT. Part of <https://github.com/yixingz3/qpop>.

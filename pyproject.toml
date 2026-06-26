@@ -27,9 +27,9 @@ classifiers = [
 dependencies = []
 
 [project.urls]
-Homepage = "https://github.com/yixingz3/chokepoint-research-engine"
-Repository = "https://github.com/yixingz3/chokepoint-research-engine"
-Paper = "https://github.com/yixingz3/chokepoint-research-engine/tree/main/paper"
+Homepage = "https://github.com/yixingz3/qpop"
+Repository = "https://github.com/yixingz3/qpop"
+Paper = "https://github.com/yixingz3/qpop/tree/main/paper"
 
 [project.scripts]
 forward-qpop = "forward_qpop.cli:main"

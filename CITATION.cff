@@ -7,7 +7,7 @@ authors:
     given-names: Yixing
     email: yz11739@stern.nyu.edu
     orcid: "https://orcid.org/0009-0000-0563-2398"
-repository-code: "https://github.com/yixingz3/chokepoint-research-engine"
+repository-code: "https://github.com/yixingz3/qpop"
 abstract: >-
   Methods for making AI- and LLM-assisted research reliable, auditable, and
   reproducible. The framework wraps open-ended agentic discovery in deterministic,
