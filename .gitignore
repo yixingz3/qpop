@@ -33,11 +33,11 @@ Thumbs.db
 !examples/**/*sample*
 !examples/**/*template*
 
-# LaTeX build artifacts
-paper/*.aux
-paper/*.log
-paper/*.bbl
-paper/*.blg
-paper/*.out
-paper/*.pdf
-paper/*.toc
+# LaTeX build artifacts (paper now lives under research/)
+research/paper/*.aux
+research/paper/*.log
+research/paper/*.bbl
+research/paper/*.blg
+research/paper/*.out
+research/paper/*.pdf
+research/paper/*.toc
