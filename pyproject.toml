@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "forward-qpop"
-version = "0.1.1"
+version = "0.1.2"
 description = "Tamper-evident, append-only forward pre-registration ledger for auditable, leakage-resistant research (the Forward-QPOP protocol)."
 readme = "src/forward_qpop/README.md"
 requires-python = ">=3.9"

@@ -17,7 +17,7 @@ in a tamper-evident ledger, is the point.
 
 ---
 
-> **Two audiences.** **Claude Code users:** [install the plugin](#install-claude-code) — that's the whole setup. **Researchers / citers:** see [the paper](#two-pillars). *One project, three names: the plugin & repo `qpop`, the Python package `forward-qpop`, and the method, **Forward-QPOP**.*
+> **Two audiences.** **Claude Code users:** [install the plugin](#install-claude-code) — that's the whole setup. **Researchers / citers:** jump to the paper in [Learn more](#learn-more). *One project, three names: the plugin & repo `qpop`, the Python package `forward-qpop`, and the method, **Forward-QPOP**.*
 
 ## The problem
 
@@ -39,31 +39,8 @@ It wraps your agent's research in a discipline and makes every decision auditabl
 > **Pilot evidence** (the methods paper, [`research/paper/`](research/paper)): removing any single
 > discipline pushed an LLM screener's admission rate from **0% to 66–100%**; a held-out **LLM-auditor**
 > judged **93%** of the rejections justified (n=14; an LLM-on-LLM diagnostic, not a human audit);
-> "no action" is the modal outcome. *These are pilot metrics —
-> they validate process discipline, not investment performance.*
-
-## Status — what's runnable today
-
-`qpop` is **auditable research infrastructure**, not a turnkey trading engine. What ships in this repo:
-
-| Area | Status |
-|---|---|
-| Claude Code plugin discipline (`auditable-research` + `/qpop:*`) | **Working — v0.1** |
-| Hash-chained Python ledger (`forward_qpop`) + CLI | **Working** (21/21 tests) |
-| External timestamp anchor (`anchor` / `verify-anchor`) | **Working** — manifest + drift-detection + git / OpenTimestamps |
-| JSON Schemas for cards / entries / runs | **Included** ([`schemas/`](schemas)) |
-| Synthetic fixtures + worked examples | **Included** |
-| Methods paper — theory + pilot evidence | **Included** ([PDF](research/paper/paper.pdf)) |
-| Full `SOURCE → GATE → EVALUATE` engine (AI-supply-chain) | **Specified** — interfaces/contracts in [`src/`](src); the reference implementation is private and being generalized |
-| PyPI package (`forward-qpop`) | **Published** — `pip install forward-qpop` |
-| Forward performance results | **Pending — not claimed** |
-
-Nothing here is finance-specific: the discipline and the ledger are domain-agnostic, and finance is a
-deliberately *adversarial* testbed. The same flow fits an agentic literature review, an ML-eval claim,
-or any forecast you want to pre-register — and the metric the ablations measure, the **over-admission
-rate** (how often an agent admits plausible-but-weak ideas), is itself a reusable reliability
-benchmark. *Reviewers:* see [`repro/`](repro) for a one-command-per-claim reproduction path (tests,
-tamper demo, schema validation, the anchor round-trip, and the paper build), each with expected output.
+> "no action" is the modal outcome. *These are pilot metrics — they validate process discipline, not
+> investment performance.*
 
 ## Install (Claude Code)
 
@@ -74,7 +51,7 @@ tamper demo, schema validation, the anchor round-trip, and the paper build), eac
 
 That's it. The `auditable-research` discipline activates when you screen ideas or act on a finding, and
 the `/qpop:*` commands below are ready. *(Other agents: the discipline is portable markdown — see
-[Other tools](#other-tools).)*
+[Learn more](#learn-more).)*
 
 ## 60-second demo
 
@@ -92,20 +69,8 @@ A disciplined run looks like this (illustrative):
 verify: OK — 1 entry, chain intact
 ```
 
-"2 of 3 rejected" is the feature, not a bug — **no action** is the correct, modal outcome. Want to
-feel the ledger without Claude Code? `make verify-sample` (or the Python snippet below).
-
-## How it works — the ladder
-
-Apply **in order**; stop at the first failure → **no action** (the correct, modal outcome):
-
-1. **Story or claim?** State it as something falsifiable, with a mechanism — or reject.
-2. **Deterministic gates** (no LLM): eligibility, and *replace-don't-stack* on duplicates.
-3. **Bear case first** — the strongest case *against*, written before the recommendation.
-4. **Source tiers** — primary > secondary > market-implied > tertiary; tertiary alone never moves a conclusion.
-5. **Pre-register, forward** — claim + dated evidence + exit triggers, hash-chained *before* the window.
-6. **Forward, not backtest** — a backward test of an LLM-scored process is *structurally invalid*.
-7. **On balance** — after overlap, cost, and uncertainty, does admitting beat doing nothing?
+"2 of 3 rejected" is the feature, not a bug — **no action** is the correct, modal outcome. No Claude
+Code? `pip install forward-qpop` gives you the same ledger from the command line (see [Learn more](#learn-more)).
 
 ## Commands
 
@@ -118,6 +83,27 @@ Apply **in order**; stop at the first failure → **no action** (the correct, mo
 
 The ledger is a real hash chain (`entry_hash = sha256(content_hash ‖ prev_hash)`): edit a past entry,
 insert one, delete one, or reorder them, and `verify` fails (and exits non-zero — drop it in CI).
+
+## Status — what's runnable today
+
+`qpop` is **auditable research infrastructure**, not a turnkey trading engine. What ships in this repo:
+
+| Area | Status |
+|---|---|
+| Claude Code plugin discipline (`auditable-research` + `/qpop:*`) | **Working — v0.1** |
+| Hash-chained Python ledger (`forward_qpop`) + CLI | **Working** (21/21 tests) |
+| External timestamp anchor (`anchor` / `verify-anchor`) | **Working** — manifest + drift-detection + git / OpenTimestamps |
+| JSON Schemas for cards / entries / runs | **Included** ([`schemas/`](schemas)) |
+| Synthetic fixtures + worked examples | **Included** ([`examples/`](examples)) |
+| Methods paper — theory + pilot evidence | **Included** ([PDF](research/paper/paper.pdf)) |
+| Full `SOURCE → GATE → EVALUATE` engine (AI-supply-chain) | **Specified** — interfaces/contracts in [`src/`](src); the reference implementation is private and being generalized |
+| PyPI package (`forward-qpop`) | **Published** — `pip install forward-qpop` |
+| Forward performance results | **Pending — not claimed** |
+
+Nothing here is finance-specific: the discipline and the ledger are domain-agnostic, and finance is a
+deliberately *adversarial* testbed. The same flow fits an agentic literature review or an
+[ML-eval claim](examples/ml_benchmark) — and the metric the ablations measure, the **over-admission
+rate** (how often an agent admits plausible-but-weak ideas), is itself a reusable reliability benchmark.
 
 ## What the ledger proves (and what it doesn't)
 
@@ -132,47 +118,20 @@ The hash chain is **tamper-evidence, not a clock.** Be precise about the guarant
 | The strategy is profitable | ❌ no | a forward window + the validity checklist |
 
 The "before the outcome" guarantee needs an **external anchor** — and `qpop` ships one:
-`python scripts/qpop.py anchor <ledger>` writes a manifest committing to the ledger head, and
-`verify-anchor` detects any drift since. Bind it to time by committing the manifest to a public repo (the commit date
-*is* the anchor) or with `--ots` ([OpenTimestamps](https://opentimestamps.org)); a turnkey Sigstore/Rekor
-backend is on the roadmap.
+`forward-qpop anchor <ledger>` writes a manifest committing to the ledger head, and `verify-anchor`
+detects any drift since. Bind it to time by committing the manifest to a public repo (the commit date
+*is* the anchor) or with `--ots` ([OpenTimestamps](https://opentimestamps.org)); a turnkey
+Sigstore/Rekor backend is on the roadmap.
 
-## Two pillars
+## Learn more
 
-- **The tool** — this plugin: the discipline + a runnable, tamper-evident ledger engine.
-- **The paper** — *Forward-Registered, Auditable LLM-Assisted Research* — [**read the PDF**](research/paper/paper.pdf),
-  or the LaTeX source in [`research/`](research). The theory and pilot evidence behind the method; if you
-  build on it, please cite ([`CITATION.cff`](CITATION.cff)).
-
-## Use the ledger without Claude Code (Python)
-
-The pre-registration engine is a dependency-free package, bundled here and importable directly:
-
-```bash
-python scripts/qpop.py verify ledger.jsonl          # from a clone; no install needed
-python scripts/qpop.py anchor ledger.jsonl          # manifest committing to the head…
-python scripts/qpop.py verify-anchor ledger.jsonl   # …then detect any drift since
-# or install it: pip install forward-qpop
-```
-
-```python
-# pip install -e .  (or set PYTHONPATH=src) so `forward_qpop` imports from a clone
-from forward_qpop import Ledger
-led = Ledger("ledger.jsonl")
-led.register("H-01", claim="…", prior=0.5,
-             evidence=[{"summary": "…", "tier": "primary", "date": "2026-06-24"}])
-led.verify()   # ok=True — any later edit/insert/reorder flips it to False
-```
-
-## Other tools
-
-Claude Code is supported today. The discipline lives as portable markdown in [`skills/`](skills), so
-Codex / other agents can adopt it by pointing at the skill files; first-class support for more agents
-is planned.
-
-**Roadmap:** first-class adapters for Codex and Cursor; an MCP server exposing `preregister` / `verify`;
-a LangChain / LangGraph wrapper; a turnkey Sigstore/Rekor anchor backend (the git + OpenTimestamps
-anchor ships today).
+- **The method** — the 7-step admission ladder (falsifiable claim → deterministic gates → bear-case-first → source tiers → forward pre-registration → forward-not-backtest → on-balance). Auto-applied by the [`auditable-research`](skills/auditable-research/SKILL.md) skill.
+- **Reproduce every claim** — [`repro/`](repro): tests, tamper demo, schema validation, the anchor round-trip, and the paper build — each with expected output.
+- **Data contracts** — [`schemas/`](schemas): JSON Schema for candidate cards, ledger entries, evidence, exit triggers, and run manifests.
+- **Python library** — `pip install forward-qpop` (or run [`scripts/qpop.py`](scripts/qpop.py) from a clone): the dependency-free ledger + anchor. API in [the package README](src/forward_qpop/README.md).
+- **The paper** — [PDF](research/paper/paper.pdf) / [source](research): theory, pilot evidence, and the **over-admission-rate (OAR)** benchmark. If you build on it, please cite [`CITATION.cff`](CITATION.cff).
+- **Worked examples** — [`examples/`](examples): the AI-supply-chain funnel, a portable [template](examples/template_domain), and a non-finance [ML-benchmark pre-registration](examples/ml_benchmark).
+- **Other agents & roadmap** — the discipline is portable markdown in [`skills/`](skills) (Codex / other agents can adopt it). Next: Codex/Cursor adapters, an MCP server, a LangChain/LangGraph wrapper, a turnkey Sigstore/Rekor anchor.
 
 ## What this is not
 
