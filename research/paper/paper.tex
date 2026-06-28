@@ -21,7 +21,10 @@
 
 \title{Forward-Registered, Auditable LLM-Assisted Research:\\
 A Reliability Methodology, with a Capital-Markets Testbed}
-\author{Yixing Zheng}
+\author{Yixing Zheng\thanks{The author maintains a private research book applying this method and
+may hold positions in names within the example domains discussed here. Example names are illustrative
+of the decision taxonomy --- not disclosures, endorsements, or recommendations. See
+\S\,``Ethics and Responsible Use.''}}
 \date{June 2026}
 
 \begin{document}
@@ -72,9 +75,10 @@ candidate flow, and a template for new domains.
 
 \section{Introduction}
 
-Large language models have dramatically lowered the cost of thematic investment research.
-A practitioner can now surface dozens of candidate ideas---bottleneck plays, supply-chain
-theses, policy-driven opportunities---within minutes of a prompt.
+Large language models have made one kind of work almost free: open-ended, agent-assisted research.
+A practitioner can surface dozens of candidate hypotheses in minutes --- in any domain, and, in the
+testbed of this paper, thematic-investment ideas such as bottleneck plays, supply-chain theses, or
+policy-driven opportunities.
 The danger, however, is symmetric: the same fluency that makes LLMs productive \emph{sourcing}
 tools makes them unreliable \emph{decision engines}.
 LLMs are rewarded, by training and by user expectation, for producing confident, coherent
@@ -121,7 +125,8 @@ It is the \textbf{admission rate}: a disciplined agent \emph{rejects most of wha
 surfaces}.
 In our initial pilot batch, fewer than 10\% of LLM-surfaced candidates were admitted to the
 forward ledger; the remainder were rejected via deterministic gates or bear-case evaluation,
-with an auditor-verified rejection precision of 0.93 on a 14-rejection sample.
+with an \emph{LLM-auditor} rejection precision of 0.93 on a 14-rejection sample (Wilson 95\% CI
+$[0.69,0.99]$; an LLM-on-LLM diagnostic, not a human audit).
 We report this restraint figure alongside ablation comparisons---ungated screener,
 debate-only, no-\textsc{QPOP}-lock, no-overlap-penalty---where removing each mechanism
 raises the admission rate \emph{and} degrades rejection precision.
@@ -364,33 +369,15 @@ Each node carries: a physical rationale, \texttt{bottleneck\_dims}
 and \textbf{measurable \texttt{exit\_triggers}, each with a checkable \texttt{data\_source}} (an
 admission rejects any trigger you cannot actually check).
 
-\subsubsection*{What makes a chokepoint an \emph{edge}: uncertainty about the constraint}
+\subsubsection*{Scoring unpriced scarcity: the valuation and crowding adjustments}
 
-A binding chokepoint is necessary but \textbf{not sufficient} for a tradeable edge. The edge lives
-in the \textbf{uncertainty about the constraint} --- how much of the scarcity is \emph{not yet known
-or priced}. The question is not only \emph{``is this a chokepoint?''} but \emph{``how anticipated
-is it?''}
-
-\begin{itemize}
-  \item \textbf{Physical chokepoints} (refining capacity, fab lead-times, permits, ore grades) keep
-    their pricing power because their magnitude and timing are \textbf{uncertain and discovered
-    late} --- the market learns the bottleneck is binding only as lead-times stretch and inventories
-    empty. The \texttt{capacity\_lead\_time} and \texttt{supplier\_concentration} dims are proxies
-    for exactly this \emph{unpriced} scarcity.
-  \item A \textbf{synthetic / scheduled constraint} with a \emph{known date and a known, shrinking
-    magnitude} gets \textbf{arbitraged toward zero edge} --- the market prices it in earlier each
-    time it recurs. The canonical case is Bitcoin's \emph{halving}: a real algorithmic supply cut,
-    but the most pre-announced supply event in finance, whose marginal shock shrinks each cycle
-    (${\approx}1.7\% \to 0.83\% \to 0.41\%$ of supply) \emph{and} which the market now front-runs
-    (a pre-halving all-time-high in 2024). Real constraint, no durable edge.
-\end{itemize}
-
-This is the same principle as \textbf{policy-as-evidence}: an event \emph{already in the price} is
-sunk information, not alpha (a signed award that has already fired, an extended/anticipated cycle).
-It is why the \texttt{valuation\_adjustment} and \texttt{crowding\_adjustment} exist --- they
-discount a constraint the market has already learned. \textbf{Prefer chokepoints whose binding is
-still being discovered} (lead-times stretching, the re-rate ahead) over ones whose schedule
-everyone already trades.
+A binding chokepoint is necessary but \textbf{not sufficient}: what the engine must score is how much
+of the scarcity is \emph{not yet priced in}. This is what the \texttt{valuation\_adjustment} and
+\texttt{crowding\_adjustment} factors capture --- they discount a constraint the market has already
+learned, so the engine prefers chokepoints whose binding is still being discovered over ones whose
+schedule everyone already trades. (The underlying ``uncertainty about the constraint'' principle is a
+conceptual illustration --- developed, with examples, in the Discussion --- not a contribution of this
+methods framework.)
 
 \subsection{Confidence decomposition (kills theme-chasing)}
 
@@ -760,8 +747,9 @@ But a low admission rate is \textbf{not, by itself, evidence of quality} --- a s
     justified --- not merely that gates reduce the count.
 \end{itemize}
 
-Outcome decisions over many triggers and positions use a \textbf{sequential test with explicit
-Type-I control} (an anytime-valid / e-value formulation), so monitoring many exit triggers does not
+Outcome decisions over many triggers and positions are governed by a \textbf{sequential test with
+explicit Type-I control} (an anytime-valid / e-value formulation, specified in the pre-registered
+Experiment Plan), so monitoring many exit triggers does not
 inflate false ``Falsified'' calls --- the prospective analogue of the factor-zoo
 multiple-comparisons problem.
 
@@ -862,8 +850,9 @@ Edit only by appending dated amendments.
   \item A position's outcome is recorded \textbf{Supported / Weakened / Falsified} strictly by
     its pre-registered exit triggers --- never by an after-the-fact narrative. Because a thesis is
     judged against \emph{several} triggers over time, outcome decisions use a \textbf{sequential
-    test with explicit Type-I error control} (an e-value / anytime-valid formulation,
-    \citep{huang2025popper}), so that monitoring many triggers across many positions does not
+    test with explicit Type-I error control} (an anytime-valid / e-value formulation from the
+    safe-testing literature; specified in the pre-registered plan, not yet implemented in the pilot),
+    so that monitoring many triggers across many positions does not
     inflate false ``Falsified'' calls --- the multiple-comparisons analogue of the factor-zoo
     problem, controlled \emph{prospectively}.
 \end{itemize}
@@ -921,7 +910,7 @@ additive amendment.
 
 Small sample / wide intervals early; LLM nondeterminism across model versions; survivorship in
 which domains get built; the admission-rate metric is \emph{necessary but not sufficient} for
-alpha. The paper reports these rather than hiding them.
+forward predictive performance. The paper reports these rather than hiding them.
 
 \section{Worked Example: AI Supply Chain}
 We instantiate the framework on the AI-accelerator supply chain. One discovery round, end to end:
@@ -1309,13 +1298,18 @@ a point-in-time backtest on proprietary-data businesses indicates the unpriced g
 \emph{involuntary forced selling}, not from the market's belated \emph{recognition} of a hidden data
 business --- a generalization probe with a clean negative result, not a performance claim.
 
+\paragraph{On the illustrations in this section.} The constraint-uncertainty, Bitcoin-halving, and
+forced-seller discussions above sharpen the framework's concepts (e.g.\ why the valuation and crowding
+adjustments exist); they are \emph{not} additional empirical contributions, and should not be read as
+investment analysis or advice.
+
 \section{Limitations}
 The forward sample is small and early; intervals are wide and no live-money track record is claimed.
 LLM outputs are nondeterministic across model versions, so we log the exact model identifier and
 prompt commit per run and treat a version change as a dated amendment. Survivorship enters through
 which domains get built. Most importantly, the admission rate is \emph{necessary but not sufficient}
-for alpha: a disciplined rejection process is a precondition for, not a guarantee of, forward
-performance, which only the pre-registered forward log can establish. Finally, a screening engine's
+for forward predictive performance: a disciplined rejection process is a precondition for, not a
+guarantee of it, and only the pre-registered forward log can establish that. Finally, a screening engine's
 \emph{coverage} (which chokepoints the SOURCE stage surfaces) is a separate failure mode from its
 \emph{judgment} (whether the gates correctly accept or reject a surfaced candidate). In the
 third-domain probe a blind comparison against an external expert reading list revealed a genuine
@@ -1323,6 +1317,15 @@ chokepoint the SOURCE stage had missed even though the gates rejected it correct
 surfaced --- a coverage gap, not a judgment gap. We treat that distinction as load-bearing: a coverage
 gap is closed by adding a source lens, never by loosening the gates, and we use blind held-out
 comparisons against external lists as the way to detect coverage gaps when entering a new domain.
+
+\paragraph{What the ledger proves --- and what it does not.} The hash chain establishes
+\emph{tamper-evidence}: any post-hoc edit, insertion, deletion, or reorder of a closed entry is
+detectable. It does \emph{not}, on its own, establish \emph{wall-clock time} --- a ledger written
+later could carry a backdated \texttt{created} field. A full ``registered \emph{before} the outcome''
+guarantee therefore requires an external timestamp anchor: a signed Git commit or release, a public
+CI artifact, or a public append-only timestamp service (e.g.\ OpenTimestamps, or a Sigstore/Rekor
+transparency-log entry). We treat external anchoring as a recommended deployment step and a near-term
+addition, and do not claim cryptographic proof-of-time from the chain alone.
 
 \section{Ethics and Responsible Use}
 This is a research framework, not investment advice, and we make no performance claim. The system is

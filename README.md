@@ -37,9 +37,29 @@ It wraps your agent's research in a discipline and makes every decision auditabl
 - **Validates forward**, not by a leaky backtest.
 
 > **Pilot evidence** (the methods paper, [`research/paper/`](research/paper)): removing any single
-> discipline pushed an LLM screener's admission rate from **0% to 66–100%**; a held-out auditor judged
-> **93%** of the rejections justified; "no action" is the modal outcome. *These are pilot metrics —
+> discipline pushed an LLM screener's admission rate from **0% to 66–100%**; a held-out **LLM-auditor**
+> judged **93%** of the rejections justified (n=14; an LLM-on-LLM diagnostic, not a human audit);
+> "no action" is the modal outcome. *These are pilot metrics —
 > they validate process discipline, not investment performance.*
+
+## Status — what's runnable today
+
+`qpop` is **auditable research infrastructure**, not a turnkey trading engine. What ships in this repo:
+
+| Area | Status |
+|---|---|
+| Claude Code plugin discipline (`auditable-research` + `/qpop:*`) | **Working — v0.1** |
+| Hash-chained Python ledger (`forward_qpop`) + CLI | **Working** (9/9 tests) |
+| Synthetic fixtures + worked examples | **Included** |
+| Methods paper — theory + pilot evidence | **Included** ([PDF](research/paper/paper.pdf)) |
+| Full `SOURCE → GATE → EVALUATE` engine (AI-supply-chain) | **Specified** — interfaces/contracts in [`src/`](src); the reference implementation is private and being generalized |
+| PyPI package (`forward-qpop`) | **Planned** — install from source today |
+| Forward performance results | **Pending — not claimed** |
+
+Nothing here is finance-specific: the discipline and the ledger are domain-agnostic, and finance is a
+deliberately *adversarial* testbed. The same flow fits an agentic literature review, an ML-eval claim,
+or any forecast you want to pre-register. *Reviewers:* `make test`, `make verify-sample`, and
+`make paper` reproduce the core claims from a clean clone.
 
 ## Install (Claude Code)
 
@@ -51,6 +71,25 @@ It wraps your agent's research in a discipline and makes every decision auditabl
 That's it. The `auditable-research` discipline activates when you screen ideas or act on a finding, and
 the `/qpop:*` commands below are ready. *(Other agents: the discipline is portable markdown — see
 [Other tools](#other-tools).)*
+
+## 60-second demo
+
+After installing, ask Claude Code:
+
+> *"Screen these 3 research claims with qpop and pre-register only the survivors."*
+
+A disciplined run looks like this (illustrative):
+
+```text
+3 candidates screened
+2 rejected  — tertiary-only evidence / fails replace-don't-stack
+1 preregistered — H-001
+   entry_hash: sha256:9f3c…  (chained to prev)
+verify: OK — 1 entry, chain intact
+```
+
+"2 of 3 rejected" is the feature, not a bug — **no action** is the correct, modal outcome. Want to
+feel the ledger without Claude Code? `make verify-sample` (or the Python snippet below).
 
 ## How it works — the ladder
 
@@ -75,6 +114,23 @@ Apply **in order**; stop at the first failure → **no action** (the correct, mo
 
 The ledger is a real hash chain (`entry_hash = sha256(content_hash ‖ prev_hash)`): edit a past entry,
 insert one, delete one, or reorder them, and `verify` fails (and exits non-zero — drop it in CI).
+
+## What the ledger proves (and what it doesn't)
+
+The hash chain is **tamper-evidence, not a clock.** Be precise about the guarantee:
+
+| Claim | Chain alone? | What closes the gap |
+|---|---|---|
+| A past entry was edited | ✅ detected | hash verification |
+| An entry was inserted / deleted / reordered | ✅ detected | hash-chain verification |
+| An entry existed *before* the outcome | ⚠️ partial | an external timestamp anchor |
+| The LLM's reasoning was correct | ❌ no | human / source review |
+| The strategy is profitable | ❌ no | a forward window + the validity checklist |
+
+The "before the outcome" guarantee needs an **external anchor** — a signed Git commit/release, a public
+CI artifact, or a public timestamp service ([OpenTimestamps](https://opentimestamps.org), Sigstore/Rekor).
+That's on the near-term roadmap; today, anchor by committing the ledger to a public repo so its history
+is externally dated.
 
 ## Two pillars
 
@@ -105,6 +161,10 @@ led.verify()   # ok=True — any later edit/insert/reorder flips it to False
 Claude Code is supported today. The discipline lives as portable markdown in [`skills/`](skills), so
 Codex / other agents can adopt it by pointing at the skill files; first-class support for more agents
 is planned.
+
+**Roadmap:** first-class adapters for Codex and Cursor; an MCP server exposing `preregister` / `verify`;
+a LangChain / LangGraph wrapper; an external timestamp anchor for the ledger; and the `forward-qpop`
+PyPI release.
 
 ## What this is not
 
