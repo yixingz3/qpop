@@ -6,7 +6,7 @@ and is being progressively generalized and open-sourced here as
 domain-agnostic code. Until then, this document is the authoritative spec — a contributor can
 implement against these contracts. **Now open-sourced:** the QPOP pre-registration ledger (the
 `qpop/` contract) ships as the runnable, dependency-free [`forward_qpop`](forward_qpop/) package
-(install from source today; a `forward-qpop` PyPI release is planned) — the first engine module
+(`pip install forward-qpop`) — the first engine module
 generalized out of the private deployment, now with an external timestamp
 [`anchor`](forward_qpop/anchor.py) (`anchor` / `verify-anchor`).
 The **stage prompts** (the disciplines themselves) are committed

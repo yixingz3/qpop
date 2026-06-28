@@ -55,7 +55,7 @@ It wraps your agent's research in a discipline and makes every decision auditabl
 | Synthetic fixtures + worked examples | **Included** |
 | Methods paper — theory + pilot evidence | **Included** ([PDF](research/paper/paper.pdf)) |
 | Full `SOURCE → GATE → EVALUATE` engine (AI-supply-chain) | **Specified** — interfaces/contracts in [`src/`](src); the reference implementation is private and being generalized |
-| PyPI package (`forward-qpop`) | **Planned** — install from source today |
+| PyPI package (`forward-qpop`) | **Published** — `pip install forward-qpop` |
 | Forward performance results | **Pending — not claimed** |
 
 Nothing here is finance-specific: the discipline and the ledger are domain-agnostic, and finance is a
@@ -152,7 +152,7 @@ The pre-registration engine is a dependency-free package, bundled here and impor
 python scripts/qpop.py verify ledger.jsonl          # from a clone; no install needed
 python scripts/qpop.py anchor ledger.jsonl          # manifest committing to the head…
 python scripts/qpop.py verify-anchor ledger.jsonl   # …then detect any drift since
-# (a PyPI release, `pip install forward-qpop`, is planned)
+# or install it: pip install forward-qpop
 ```
 
 ```python
@@ -172,7 +172,7 @@ is planned.
 
 **Roadmap:** first-class adapters for Codex and Cursor; an MCP server exposing `preregister` / `verify`;
 a LangChain / LangGraph wrapper; a turnkey Sigstore/Rekor anchor backend (the git + OpenTimestamps
-anchor ships today); and the `forward-qpop` PyPI release.
+anchor ships today).
 
 ## What this is not
 
