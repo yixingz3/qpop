@@ -41,3 +41,6 @@ research/paper/*.blg
 research/paper/*.out
 research/paper/*.pdf
 research/paper/*.toc
+
+# session / local agent data (never publish)
+.remember/

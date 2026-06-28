@@ -1,14 +1,21 @@
-name: Publish to PyPI
+name: Release
 
-# Trusted publishing (OIDC) — no API token is stored anywhere.
-# - Publish a GitHub *Release*  -> build + upload to PyPI.
-# - Manually run this workflow  -> build + upload to TestPyPI (a safe dry run).
-# One-time setup is required on PyPI/TestPyPI and GitHub — see .github/workflows/RELEASING.md.
+# Publishing a GitHub *Release* builds the package and attaches the sdist + wheel to the release.
+# PyPI is opt-in (it's currently backlog — the primary distribution is the Claude Code plugin):
+#   - to publish to PyPI on release, set repo variable PUBLISH_TO_PYPI = true (and configure the
+#     PyPI trusted publisher — see RELEASING.md);
+#   - or run this workflow manually with target = testpypi | pypi for a one-off.
 
 on:
   release:
     types: [published]
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      target:
+        description: "Manual publish target"
+        type: choice
+        options: [none, testpypi, pypi]
+        default: none
 
 permissions:
   contents: read
@@ -17,34 +24,40 @@ jobs:
   build:
     name: Build sdist + wheel
     runs-on: ubuntu-latest
+    permissions:
+      contents: write          # to attach artifacts to the release
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Build distributions
+      - name: Build + check
         run: |
-          python -m pip install --upgrade build
+          python -m pip install --upgrade build twine
           python -m build
-      - name: Check metadata
-        run: |
-          python -m pip install --upgrade twine
           python -m twine check dist/*
       - uses: actions/upload-artifact@v4
         with:
           name: dist
           path: dist/
+      - name: Attach artifacts to the release
+        if: github.event_name == 'release'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload "${{ github.event.release.tag_name }}" dist/* --clobber
 
   publish-pypi:
-    name: Publish to PyPI
+    name: Publish to PyPI (opt-in)
     needs: build
-    if: github.event_name == 'release'
+    if: >-
+      (github.event_name == 'release' && vars.PUBLISH_TO_PYPI == 'true') ||
+      (github.event_name == 'workflow_dispatch' && inputs.target == 'pypi')
     runs-on: ubuntu-latest
     environment:
       name: pypi
       url: https://pypi.org/p/forward-qpop
     permissions:
-      id-token: write          # OIDC token for trusted publishing
+      id-token: write          # OIDC trusted publishing — no token stored
     steps:
       - uses: actions/download-artifact@v4
         with:
@@ -53,9 +66,9 @@ jobs:
       - uses: pypa/gh-action-pypi-publish@release/v1
 
   publish-testpypi:
-    name: Publish to TestPyPI (manual dry run)
+    name: Publish to TestPyPI (manual)
     needs: build
-    if: github.event_name == 'workflow_dispatch'
+    if: github.event_name == 'workflow_dispatch' && inputs.target == 'testpypi'
     runs-on: ubuntu-latest
     environment:
       name: testpypi

@@ -1,42 +1,31 @@
-# Releasing `forward-qpop` to PyPI
+# Releasing
 
-This repo publishes with **trusted publishing (OIDC)** — no API tokens are stored. The workflow is
-[`publish.yml`](publish.yml): publishing a GitHub **Release** uploads to PyPI; a manual run uploads to
-**TestPyPI** (a dry run).
+The primary distribution is the **Claude Code plugin** (`/plugin marketplace add yixingz3/qpop`), which
+tracks `main` — no release step is needed for plugin users to get updates. The release workflow
+([`publish.yml`](publish.yml)) is for **version tags + the Python package**.
 
-## One-time setup
+## Cut a release (tag + build)
 
-### 1. Configure the trusted publisher on PyPI
-On <https://pypi.org> → account menu → **Publishing** → **Add a pending publisher** (the project does
-not exist yet, so it's "pending" until the first upload creates it):
+1. Bump the version in `.claude-plugin/plugin.json`, `pyproject.toml`, and
+   `src/forward_qpop/__init__.py` (keep them equal); commit and push.
+2. Create a **GitHub Release** with tag `v<version>` (e.g. `v0.1.0`).
+3. The workflow builds the sdist + wheel, runs `twine check`, and **attaches them to the release**.
+   PyPI is **not** touched by default (it's backlog — see below).
 
-| Field | Value |
-|-------|-------|
-| PyPI Project Name | `forward-qpop` |
-| Owner | `yixingz3` |
-| Repository name | `qpop` |
-| Workflow name | `publish.yml` |
-| Environment name | `pypi` |
+## Publishing to PyPI (opt-in, when you're ready)
 
-### 2. (Optional) Same on TestPyPI
-Repeat on <https://test.pypi.org> with **Environment name `testpypi`** to enable the dry-run path.
+PyPI uses **trusted publishing (OIDC)** — no API token. One-time setup:
 
-### 3. Create the GitHub environments
-Repo → **Settings → Environments** → create `pypi` (and `testpypi`). Optional but recommended: add
-yourself as a **required reviewer** on `pypi` so each real publish needs a one-click approval.
+1. **PyPI → Publishing → Add a pending publisher:** project `forward-qpop`, owner `yixingz3`,
+   repo `qpop`, workflow `publish.yml`, environment `pypi`. (Optional: same on TestPyPI, env `testpypi`.)
+2. **GitHub → Settings → Environments → create `pypi`** (optional: require yourself as a reviewer).
 
-> The repo can be private during setup, but make it **public before the first release** so the PyPI
-> page's repository links resolve.
-
-## Cut a release
-
-1. Bump the version in **`pyproject.toml`** *and* **`src/forward_qpop/__init__.py`** (keep them equal),
-   commit, and push.
-2. (Optional dry run) Actions → **Publish to PyPI** → **Run workflow** → uploads to TestPyPI;
-   verify with `pip install -i https://test.pypi.org/simple/ forward-qpop`.
-3. Create a **GitHub Release** with tag `v<version>` (e.g. `v0.1.0`). The workflow builds, runs
-   `twine check`, and publishes to PyPI.
+Then either:
+- set repo variable **`PUBLISH_TO_PYPI = true`** (Settings → Secrets and variables → Actions → Variables)
+  so every release also publishes to PyPI, **or**
+- run the workflow manually (Actions → Release → Run workflow) with **target = `testpypi`** (dry run)
+  or **`pypi`**.
 
 ## Notes
-- A published version is **immutable** — you cannot overwrite it; bump the version for any fix.
-- `python -m build` + `twine check` already pass locally, so the build step is verified.
+- A published PyPI version is immutable — bump the version for any fix.
+- `python -m build` + `twine check` pass locally, so the build is verified.
