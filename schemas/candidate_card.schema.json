@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/yixingz3/qpop/schemas/candidate_card.schema.json",
+  "title": "Candidate card",
+  "description": "A SOURCE-stage candidate surfaced for screening - the unit the deterministic gate and bear-case evaluation consume. A card is a proposal, not an admission; most cards are rejected.",
+  "type": "object",
+  "required": ["symbol", "proposed_node", "kind", "why_fit", "evidence"],
+  "additionalProperties": false,
+  "properties": {
+    "symbol": {"type": "string", "minLength": 1, "description": "Ticker / instrument identifier."},
+    "company": {"type": "string", "description": "Issuer name."},
+    "proposed_node": {"type": "string", "description": "Bottleneck-graph node this name is proposed against."},
+    "kind": {"type": "string", "description": "Card kind, e.g. 'new_ticker', 'new_node'."},
+    "proposed_role": {
+      "enum": ["direct", "second_order", "adjacent", "satellite"],
+      "description": "How the name relates to the chokepoint: direct beneficiary, second-order, adjacent, or satellite."
+    },
+    "why_fit": {"type": "string", "description": "One-paragraph case for why the card fits the node."},
+    "evidence": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/evidence"},
+      "description": "Dated, tiered facts supporting the card."
+    },
+    "known_risks": {"type": "string", "description": "The strongest case against, stated up front."},
+    "missing_info": {"type": "string", "description": "What a dated source could not confirm."},
+    "suggested_next_step": {"type": "string", "description": "GATE, EVALUATE, watchlist, or reject."}
+  },
+  "$defs": {
+    "evidence": {
+      "type": "object",
+      "required": ["summary", "tier"],
+      "additionalProperties": false,
+      "description": "Mirror of evidence.schema.json (embedded so this schema validates without an external resolver).",
+      "properties": {
+        "summary": {"type": "string", "minLength": 1},
+        "tier": {"enum": ["primary", "secondary", "market_implied", "tertiary"]},
+        "date": {"type": "string", "format": "date"},
+        "source": {"type": "string"},
+        "url": {"type": "string"}
+      }
+    }
+  }
+}

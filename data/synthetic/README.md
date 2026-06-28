@@ -10,5 +10,6 @@ is published as **aggregated** discipline/performance statistics — not as posi
 Suggested contents:
 - `prices_synthetic.csv` — deterministic synthetic price series for a handful of fake tickers.
 - `candidate_cards_sample.jsonl` — example SOURCE output (the card schema).
-- `qpop_ledger_sample.jsonl` — example pre-registration entries with content hashes.
+- `qpop_ledger_sample.jsonl` — example pre-registration entries with content hashes (admission → belief-update → outcome).
+- `run_manifest_sample.json` — example SOURCE→GATE→EVALUATE run manifest (funnel counts + admission rate).
 - `scoreboard_sample.csv` — example discipline metrics (counts, admission rate) over a fake window.

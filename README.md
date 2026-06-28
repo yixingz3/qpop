@@ -49,7 +49,9 @@ It wraps your agent's research in a discipline and makes every decision auditabl
 | Area | Status |
 |---|---|
 | Claude Code plugin discipline (`auditable-research` + `/qpop:*`) | **Working — v0.1** |
-| Hash-chained Python ledger (`forward_qpop`) + CLI | **Working** (9/9 tests) |
+| Hash-chained Python ledger (`forward_qpop`) + CLI | **Working** (21/21 tests) |
+| External timestamp anchor (`anchor` / `verify-anchor`) | **Working** — manifest + drift-detection + git / OpenTimestamps |
+| JSON Schemas for cards / entries / runs | **Included** ([`schemas/`](schemas)) |
 | Synthetic fixtures + worked examples | **Included** |
 | Methods paper — theory + pilot evidence | **Included** ([PDF](research/paper/paper.pdf)) |
 | Full `SOURCE → GATE → EVALUATE` engine (AI-supply-chain) | **Specified** — interfaces/contracts in [`src/`](src); the reference implementation is private and being generalized |
@@ -58,8 +60,10 @@ It wraps your agent's research in a discipline and makes every decision auditabl
 
 Nothing here is finance-specific: the discipline and the ledger are domain-agnostic, and finance is a
 deliberately *adversarial* testbed. The same flow fits an agentic literature review, an ML-eval claim,
-or any forecast you want to pre-register. *Reviewers:* `make test`, `make verify-sample`, and
-`make paper` reproduce the core claims from a clean clone.
+or any forecast you want to pre-register — and the metric the ablations measure, the **over-admission
+rate** (how often an agent admits plausible-but-weak ideas), is itself a reusable reliability
+benchmark. *Reviewers:* see [`repro/`](repro) for a one-command-per-claim reproduction path (tests,
+tamper demo, schema validation, the anchor round-trip, and the paper build), each with expected output.
 
 ## Install (Claude Code)
 
@@ -123,14 +127,15 @@ The hash chain is **tamper-evidence, not a clock.** Be precise about the guarant
 |---|---|---|
 | A past entry was edited | ✅ detected | hash verification |
 | An entry was inserted / deleted / reordered | ✅ detected | hash-chain verification |
-| An entry existed *before* the outcome | ⚠️ partial | an external timestamp anchor |
+| An entry existed *before* the outcome | ⚠️ partial | `anchor` + a public commit or OpenTimestamps |
 | The LLM's reasoning was correct | ❌ no | human / source review |
 | The strategy is profitable | ❌ no | a forward window + the validity checklist |
 
-The "before the outcome" guarantee needs an **external anchor** — a signed Git commit/release, a public
-CI artifact, or a public timestamp service ([OpenTimestamps](https://opentimestamps.org), Sigstore/Rekor).
-That's on the near-term roadmap; today, anchor by committing the ledger to a public repo so its history
-is externally dated.
+The "before the outcome" guarantee needs an **external anchor** — and `qpop` ships one:
+`python scripts/qpop.py anchor <ledger>` writes a manifest committing to the ledger head, and
+`verify-anchor` detects any drift since. Bind it to time by committing the manifest to a public repo (the commit date
+*is* the anchor) or with `--ots` ([OpenTimestamps](https://opentimestamps.org)); a turnkey Sigstore/Rekor
+backend is on the roadmap.
 
 ## Two pillars
 
@@ -144,11 +149,14 @@ is externally dated.
 The pre-registration engine is a dependency-free package, bundled here and importable directly:
 
 ```bash
-python scripts/qpop.py verify ledger.jsonl     # from a clone; no install needed
+python scripts/qpop.py verify ledger.jsonl          # from a clone; no install needed
+python scripts/qpop.py anchor ledger.jsonl          # manifest committing to the head…
+python scripts/qpop.py verify-anchor ledger.jsonl   # …then detect any drift since
 # (a PyPI release, `pip install forward-qpop`, is planned)
 ```
 
 ```python
+# pip install -e .  (or set PYTHONPATH=src) so `forward_qpop` imports from a clone
 from forward_qpop import Ledger
 led = Ledger("ledger.jsonl")
 led.register("H-01", claim="…", prior=0.5,
@@ -163,8 +171,8 @@ Codex / other agents can adopt it by pointing at the skill files; first-class su
 is planned.
 
 **Roadmap:** first-class adapters for Codex and Cursor; an MCP server exposing `preregister` / `verify`;
-a LangChain / LangGraph wrapper; an external timestamp anchor for the ledger; and the `forward-qpop`
-PyPI release.
+a LangChain / LangGraph wrapper; a turnkey Sigstore/Rekor anchor backend (the git + OpenTimestamps
+anchor ships today); and the `forward-qpop` PyPI release.
 
 ## What this is not
 

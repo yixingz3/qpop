@@ -9,6 +9,8 @@ Usage:
   python scripts/qpop.py verify   ledger.jsonl
   python scripts/qpop.py register ledger.jsonl --json '{...}'
   python scripts/qpop.py close    ledger.jsonl --id H-01 --outcome supported
+  python scripts/qpop.py anchor   ledger.jsonl
+  python scripts/qpop.py verify-anchor ledger.jsonl
 """
 import os
 import sys

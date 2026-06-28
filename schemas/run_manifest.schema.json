@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/yixingz3/qpop/schemas/run_manifest.schema.json",
+  "title": "Run manifest",
+  "description": "Provenance and funnel counts for a single SOURCE -> GATE -> EVALUATE run, recorded so the run (and its admission rate) is reproducible and auditable. Pairs with the ledger: the manifest is the run; the ledger holds the admitted hypotheses.",
+  "type": "object",
+  "required": ["run_id", "domain", "model", "prompt_commit", "funnel"],
+  "additionalProperties": false,
+  "properties": {
+    "run_id": {"type": "string", "minLength": 1, "description": "Stable id for this run."},
+    "created": {"type": "string", "format": "date", "description": "ISO-8601 date of the run."},
+    "domain": {"type": "string", "description": "Domain key, e.g. 'ai_supply_chain', 'glp1_injectables'."},
+    "bottleneck_map": {"type": "string", "description": "Path/ref of the bottleneck_map.yml used."},
+    "model": {
+      "type": "object",
+      "description": "Exact model identifier(s) used per stage (logged per run for reproducibility).",
+      "minProperties": 1,
+      "additionalProperties": {"type": "string"}
+    },
+    "temperature": {"type": "number", "minimum": 0},
+    "prompt_commit": {"type": "string", "description": "Git commit of src/prompts.md used for this run."},
+    "funnel": {
+      "type": "object",
+      "description": "Counts at each stage of the cheap-source -> deterministic-gate -> expensive-evaluate funnel.",
+      "required": ["sourced", "admitted"],
+      "additionalProperties": false,
+      "properties": {
+        "sourced": {"type": "integer", "minimum": 0, "description": "Candidate cards surfaced by SOURCE."},
+        "tradeable": {"type": "integer", "minimum": 0, "description": "Cards with a tradeable instrument."},
+        "gate_pass": {"type": "integer", "minimum": 0},
+        "gate_fail": {"type": "integer", "minimum": 0},
+        "admitted": {"type": "integer", "minimum": 0, "description": "Pre-registered to the ledger."},
+        "watchlist": {"type": "integer", "minimum": 0},
+        "rejected": {"type": "integer", "minimum": 0}
+      }
+    },
+    "admission_rate": {"type": "number", "minimum": 0, "maximum": 1, "description": "admitted / sourced; the headline restraint metric."},
+    "ledger": {"type": "string", "description": "Path of the ledger the admitted hypotheses were written to."},
+    "notes": {"type": "string"}
+  }
+}

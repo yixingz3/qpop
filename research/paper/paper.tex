@@ -1158,6 +1158,17 @@ ablation shows the rejections come from \emph{specific, removable disciplines}
 (not blanket conservatism), and the audit shows they are \emph{justified}.
 \end{quote}
 
+\paragraph{Over-admission rate as a reusable benchmark.} We name the quantity these ablations
+measure --- the \textbf{over-admission rate} (OAR): the share of LLM-surfaced candidates a screener
+\emph{admits} when a disciplined process would reject --- and propose it as a portable reliability
+metric for agentic research, beyond finance. Operationally OAR is read straight from the ablation: the
+ungated screener admitted $100\%$ of the $38$-candidate batch, the full discipline drove it to $0\%$, and removing
+any single discipline moved OAR by far more than H2's pre-registered threshold ($\geq 25\%$ relative or
+$\geq 5$\,pp). A meaningful benchmark pairs OAR with a \emph{rejection-quality} audit (here $0.93$):
+driving OAR down matters only if the rejections are justified rather than blanket conservatism. We
+report a single-domain pilot; a multi-domain OAR benchmark --- many candidate sets, blinded auditors,
+and a shared task format --- is future work, and an explicit invitation to build on this release.
+
 \subsection{Portability (H3): A Second Domain}
 
 To probe H3 we ran the \emph{same} funnel on a deliberately distant domain ---

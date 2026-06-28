@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/yixingz3/qpop/schemas/exit_trigger.schema.json",
+  "title": "Exit trigger",
+  "description": "A pre-committed, checkable condition that updates or closes a hypothesis. Every trigger must name a data_source you can actually check; an admission rejects any trigger you cannot verify.",
+  "type": "object",
+  "required": ["id", "metric", "op", "data_source"],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Stable identifier for the trigger, e.g. 'supply_easing'."
+    },
+    "metric": {
+      "type": "string",
+      "minLength": 1,
+      "description": "The observable being watched, e.g. 'lead times normalize'."
+    },
+    "op": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Relation that fires the trigger, e.g. '>', '<', 'reverses'."
+    },
+    "threshold": {
+      "type": ["number", "string"],
+      "description": "Optional comparison value for op."
+    },
+    "data_source": {
+      "type": "object",
+      "required": ["tier"],
+      "additionalProperties": true,
+      "description": "Where the metric is checked; must be a verifiable tier.",
+      "properties": {
+        "tier": {
+          "enum": ["primary", "secondary", "market_implied", "tertiary"]
+        }
+      }
+    }
+  }
+}

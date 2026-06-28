@@ -6,10 +6,14 @@ and is being progressively generalized and open-sourced here as
 domain-agnostic code. Until then, this document is the authoritative spec — a contributor can
 implement against these contracts. **Now open-sourced:** the QPOP pre-registration ledger (the
 `qpop/` contract) ships as the runnable, dependency-free [`forward_qpop`](forward_qpop/) package
-(`pip install forward-qpop`) — the first engine module generalized out of the private deployment.
+(install from source today; a `forward-qpop` PyPI release is planned) — the first engine module
+generalized out of the private deployment, now with an external timestamp
+[`anchor`](forward_qpop/anchor.py) (`anchor` / `verify-anchor`).
 The **stage prompts** (the disciplines themselves) are committed
 in [`prompts.md`](prompts.md), and the **deterministic gate** is specified with reference pseudocode
 in [`gate_reference.md`](gate_reference.md) — so the method is reproducible from this repo alone.
+Machine-readable contracts for candidate cards, ledger entries, and run manifests are published as
+JSON Schema in [`../schemas`](../schemas).
 
 ```
 src/

@@ -11,6 +11,16 @@ research, not only the finance testbed in the paper.
 
 Pure standard library; no third-party dependencies.
 """
+from .anchor import (
+    AnchorResult,
+    build_manifest,
+    git_committed_time,
+    ledger_head,
+    manifest_path_for,
+    ots_available,
+    verify_anchor,
+    write_manifest,
+)
 from .ledger import (
     ADMISSION,
     BELIEF_UPDATE,
@@ -37,6 +47,14 @@ __all__ = [
     "OUTCOME",
     "TERMINAL_STATUSES",
     "GENESIS",
+    "AnchorResult",
+    "build_manifest",
+    "write_manifest",
+    "verify_anchor",
+    "manifest_path_for",
+    "ledger_head",
+    "ots_available",
+    "git_committed_time",
 ]
 
 __version__ = "0.1.0"

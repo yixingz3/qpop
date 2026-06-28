@@ -30,6 +30,9 @@ keywords:
   - forward validation
   - look-ahead bias
   - ML in finance
+  - over-admission rate
+  - tamper-evident timestamping
+  - JSON Schema
 license: MIT
 version: 0.1.0
 date-released: "2026-06-07"

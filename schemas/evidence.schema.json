@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/yixingz3/qpop/schemas/evidence.schema.json",
+  "title": "Evidence",
+  "description": "A single dated, tiered piece of evidence cited by a candidate card, a ledger admission, or a belief update. The source tier governs whether it may move confidence: tertiary (social/forum) is idea-seed only and can never move a conclusion on its own.",
+  "type": "object",
+  "required": ["summary", "tier"],
+  "additionalProperties": false,
+  "properties": {
+    "summary": {
+      "type": "string",
+      "minLength": 1,
+      "description": "One-line factual claim the source supports."
+    },
+    "tier": {
+      "enum": ["primary", "secondary", "market_implied", "tertiary"],
+      "description": "primary = filings/official; secondary = trade press/analyst; market_implied = prices/positioning; tertiary = social/forum (idea-seed only, cannot move a conclusion alone)."
+    },
+    "date": {
+      "type": "string",
+      "format": "date",
+      "description": "ISO-8601 date the fact is as-of (YYYY-MM-DD)."
+    },
+    "source": {
+      "type": "string",
+      "description": "Human-readable source name, e.g. '10-Q', 'Trade press'."
+    },
+    "url": {
+      "type": "string",
+      "description": "Optional source URL."
+    }
+  }
+}

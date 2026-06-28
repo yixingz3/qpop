@@ -47,3 +47,7 @@ research/paper/*.toc
 
 # track the built paper PDF for readers / citers
 !research/paper/paper.pdf
+
+# generated anchor artifacts (run `forward-qpop anchor`)
+*.anchor.json
+*.ots

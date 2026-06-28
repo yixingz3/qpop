@@ -2,12 +2,15 @@
 # Everything here works from a clean clone with only Python 3.9+ (the ledger has no deps).
 PY ?= python
 
-.PHONY: help test verify-sample demo paper
+.PHONY: help test verify-sample tamper validate anchor-demo demo paper
 
 help:
 	@echo "qpop targets:"
-	@echo "  make test           run the ledger test suite (pytest; 9 tests)"
+	@echo "  make test           run the test suite (pytest; 16 ledger + anchor tests)"
 	@echo "  make verify-sample  verify the bundled synthetic ledger's hash chain"
+	@echo "  make tamper         demo: edit a frozen field and watch verification fail"
+	@echo "  make validate       validate data/synthetic/* against schemas/ (needs jsonschema)"
+	@echo "  make anchor-demo    write + verify an external-timestamp anchor for the sample"
 	@echo "  make demo           verify-sample + explain what the chain does / does not prove"
 	@echo "  make paper          build research/paper/paper.pdf (needs pdflatex + bibtex)"
 
@@ -16,6 +19,16 @@ test:
 
 verify-sample:
 	$(PY) scripts/qpop.py verify data/synthetic/qpop_ledger_sample.jsonl
+
+tamper:
+	$(PY) repro/tamper_demo.py
+
+validate:
+	$(PY) repro/validate_samples.py
+
+anchor-demo:
+	$(PY) scripts/qpop.py anchor data/synthetic/qpop_ledger_sample.jsonl
+	$(PY) scripts/qpop.py verify-anchor data/synthetic/qpop_ledger_sample.jsonl
 
 demo: verify-sample
 	@echo ""
