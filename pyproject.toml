@@ -29,7 +29,7 @@ dependencies = []
 [project.urls]
 Homepage = "https://github.com/yixingz3/qpop"
 Repository = "https://github.com/yixingz3/qpop"
-Paper = "https://github.com/yixingz3/qpop/tree/main/paper"
+Paper = "https://github.com/yixingz3/qpop/tree/main/research/paper"
 
 [project.scripts]
 forward-qpop = "forward_qpop.cli:main"
@@ -39,3 +39,6 @@ packages = ["src/forward_qpop"]
 
 [tool.hatch.build.targets.sdist]
 include = ["src/forward_qpop", "README.md", "LICENSE"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]

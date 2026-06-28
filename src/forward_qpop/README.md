@@ -20,7 +20,9 @@ work (ML experiments, forecasts, studies), not only the finance testbed in the p
 ## Install
 
 ```bash
-pip install forward-qpop
+# from source (not yet on PyPI):
+pip install "git+https://github.com/yixingz3/qpop"
+# a PyPI release of `forward-qpop` is planned
 ```
 
 ## Quickstart

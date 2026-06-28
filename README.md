@@ -17,6 +17,8 @@ in a tamper-evident ledger, is the point.
 
 ---
 
+> **Two audiences.** **Claude Code users:** [install the plugin](#install-claude-code) — that's the whole setup. **Researchers / citers:** see [the paper](#two-pillars). *One project, three names: the plugin & repo `qpop`, the Python package `forward-qpop`, and the method, **Forward-QPOP**.*
+
 ## The problem
 
 LLMs are brilliant at *sourcing* ideas and unreliable as *decision* engines. Left ungated, an LLM
@@ -77,9 +79,9 @@ insert one, delete one, or reorder them, and `verify` fails (and exits non-zero 
 ## Two pillars
 
 - **The tool** — this plugin: the discipline + a runnable, tamper-evident ledger engine.
-- **The paper** — *Forward-Registered, Auditable LLM-Assisted Research* in [`research/`](research):
-  the theory and pilot evidence behind the method. If you build on it, please cite
-  ([`CITATION.cff`](CITATION.cff)).
+- **The paper** — *Forward-Registered, Auditable LLM-Assisted Research* — [**read the PDF**](research/paper/paper.pdf),
+  or the LaTeX source in [`research/`](research). The theory and pilot evidence behind the method; if you
+  build on it, please cite ([`CITATION.cff`](CITATION.cff)).
 
 ## Use the ledger without Claude Code (Python)
 

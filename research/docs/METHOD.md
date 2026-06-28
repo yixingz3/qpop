@@ -105,17 +105,17 @@ wide        script, no LLM  drop obvious   bear-case-first  admit-flags only
 - **ADJUDICATE** (expensive model, *admit-flags only*): a capital-at-risk re-judgment of the names the
   EVALUATE pass flags to admit/replace. Reserve the scarce model for exactly the irreversible call.
 
-**Model allocation is a tunable cascade** (`docs/TUNING.md`): each tier hands the next a smaller,
+**Model allocation is a tunable cascade** (`TUNING.md`): each tier hands the next a smaller,
 higher-value set, so the cheapest models do the volume and the expensive model only ever judges
 admits. The asymmetry is safe throughout — a false-watchlist merely delays a name, while a
 false-admit is caught downstream. (This same asymmetry is why the *audit of rejections* uses a cheap
-bull-only screen escalated to an expensive adjudication — see `docs/RESULTS_INITIAL.md`.)
+bull-only screen escalated to an expensive adjudication — see `RESULTS_INITIAL.md`.)
 
 ## 4. Forward-QPOP (pre-registration without a backtest)
 
 For a young or structurally-shifting universe, a long backtest is fragile (regime change,
 survivorship, lookahead). Instead, every admission and belief change is a **pre-registered,
-content-hashed entry** in a forward ledger (`docs/QPOP_PROTOCOL.md`): the binding-chokepoint claim,
+content-hashed entry** in a forward ledger (`QPOP_PROTOCOL.md`): the binding-chokepoint claim,
 dated evidence + source tier, the expected return driver, **measurable exit triggers committed in
 advance**, and the decomposed confidence. Outcomes are recorded forward (Supported / Weakened /
 Falsified) as triggers fire or the thesis ages. Pre-registration is the contract against HARKing —

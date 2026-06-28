@@ -85,7 +85,7 @@ An ungated LLM admits *literally everything*; removing any single discipline rai
 past a "beyond noise" threshold; the full stack drives 100% → 0%. Paired with the rejection-quality
 audit (an independent reviewer judged the rejections **0.93 justified**, rising to **1.00** after a
 capital-at-risk adjudication overturned the one flagged false-rejection), this is the evidence that
-the restraint is *discipline*, not blanket conservatism. Full write-up: `../../docs/RESULTS_INITIAL.md`.
+the restraint is *discipline*, not blanket conservatism. Full write-up: `../../research/docs/RESULTS_INITIAL.md`.
 
 ## Reproducing the method (not the positions)
 

@@ -44,3 +44,6 @@ research/paper/*.toc
 
 # session / local agent data (never publish)
 .remember/
+
+# track the built paper PDF for readers / citers
+!research/paper/paper.pdf

@@ -24,18 +24,18 @@ uncertainty-about-the-constraint) are *support*, not pillars.
 1. **Introduction** — LLMs make thematic research cheap but unreliable; existing financial agents
    over-focus on backtests and recommendations; the need is *auditable restraint, not better
    prompts*. We report that a disciplined agent *rejects most of what it surfaces*.
-2. **Related Work** — see `paper/related_work.md`: financial LLMs / trading agents; LLM failure
+2. **Related Work** — see `../paper/related_work.md`: financial LLMs / trading agents; LLM failure
    modes; structural-validity & leakage critiques of LLM trading agents (forward-vs-backtest);
    pre-registration / research integrity; agent verification / judge bias; thematic investing &
    crowding; responsible/auditable AI in finance.
 3. **Framework** — the bottleneck graph; confidence decomposition; **policy-as-dated-evidence (not a
-   multiplier)**; source tiers and deterministic gates. (Mirrors `docs/METHOD.md` §1–2.)
+   multiplier)**; source tiers and deterministic gates. (Mirrors `METHOD.md` §1–2.)
 4. **Forward-QPOP Protocol** — content hash; append-only ledger; dated admission / belief-update /
-   exit triggers; paper trading and conservative shadow fills. (Mirrors `docs/QPOP_PROTOCOL.md`.)
+   exit triggers; paper trading and conservative shadow fills. (Mirrors `QPOP_PROTOCOL.md`.)
 5. **System Implementation** — cheap-source → deterministic-gate → expensive-evaluate; bear case
    before recommendation; model-tier split (incl. cheap-first-pass / adjudication) and
-   reproducibility. (Mirrors `docs/METHOD.md` §3.)
-6. **Experiment Plan (pre-registered)** — see `paper/experiment_plan.md`: H1 admission restraint,
+   reproducibility. (Mirrors `METHOD.md` §3.)
+6. **Experiment Plan (pre-registered)** — see `../paper/experiment_plan.md`: H1 admission restraint,
    H2 ablations, H3 portability, H4 descriptive forward performance, H5 rejection quality (audited
    precision) — with the testable thresholds
    and the fixed implementation details (models, prompts, timestamps, price source, fill rule,
@@ -45,7 +45,7 @@ uncertainty-about-the-constraint) are *support*, not pillars.
    an integrated-energy-major "helium chokepoint" reject, an overlap-penalized duplicate of a held bet).
 8. **Results / Forward Log** — *discipline metrics first* (candidate count, gate-pass rate,
    **admission rate < 10%**, no-action rate, **rejection precision** from the H5 audit, source-tier &
-   overlap distributions, ledger integrity) — initial real-batch numbers in `docs/RESULTS_INITIAL.md`
+   overlap distributions, ledger integrity) — initial real-batch numbers in `RESULTS_INITIAL.md`
    (rejection precision 0.93 on a 14-rejection sample, one reported false rejection); *ablations vs
    baselines* (ungated screener / debate-only / no-QPOP-lock / no-overlap → admission rate rises AND
    rejection precision falls); *forward performance only when enough time passes* (excess return, IR,

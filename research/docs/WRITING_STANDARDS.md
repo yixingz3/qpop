@@ -38,7 +38,7 @@ contribution — so language, citations, figures, reproducibility, and ethics al
 
 - Follow the standard arc (Intro · Related Work · Method · System · Pre-registered Experiment Design ·
   Results · Limitations · Ethics · Conclusion) — see `PAPER_OUTLINE.md`.
-- The experiment design is **pre-registered** (`paper/experiment_plan.md`): metrics and decision
+- The experiment design is **pre-registered** (`../paper/experiment_plan.md`): metrics and decision
   rules committed before the forward data is read. Do not change a metric after seeing results;
   amendments are dated and additive.
 - Ship a reproducibility appendix: model versions/dates, prompts (or a representative sample),

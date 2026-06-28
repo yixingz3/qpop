@@ -1,5 +1,5 @@
-% paper.tex -- methods paper. First prose port from the paper/*.md + docs/*.md sources
-% (auto-assembled, then hand-polished). Build: pdflatex paper && bibtex paper && pdflatex paper x2.
+% Forward-QPOP methods paper — SSRN submission draft (v0.1).
+% Build: pdflatex paper && bibtex paper && pdflatex paper x2.
 \documentclass[11pt]{article}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
@@ -7,7 +7,7 @@
 \usepackage{amsmath,amssymb}
 \usepackage{booktabs}
 \usepackage{graphicx}
-\usepackage[numbers,sort&compress]{natbib}
+\usepackage[authoryear,round]{natbib}
 \usepackage{hyperref}
 \usepackage{tikz}
 \usetikzlibrary{positioning,arrows.meta,calc,decorations.pathreplacing}
@@ -22,7 +22,7 @@
 \title{Forward-Registered, Auditable LLM-Assisted Research:\\
 A Reliability Methodology, with a Capital-Markets Testbed}
 \author{Yixing Zheng}
-\date{\today}
+\date{June 2026}
 
 \begin{document}
 \maketitle
@@ -61,7 +61,8 @@ Rather than a return claim, our central contribution is methodological: \textbf{
 process discipline, not investment profitability} (which awaits the forward window). We test whether
 a disciplined, forward-registered agent \textbf{rejects most of the candidates it surfaces}
 \emph{for defensible reasons}. We report \emph{pilot} discipline metrics from early candidate batches
---- a low admission rate and a \textbf{held-out rejection-quality audit} (raw precision 0.93) ---
+--- a low admission rate and a \textbf{held-out LLM-auditor rejection-quality check} (raw
+precision 0.93, $n{=}14$, Wilson 95\% CI $[0.69,0.99]$; an LLM-on-LLM diagnostic, not a human audit) ---
 which \emph{motivate} the pre-registered forward evaluation, not confirm it; forward returns are not
 yet observed. The method makes each admitted position
 explainable from its content-hashed ledger entry, whereas ungated LLM screeners lack an

@@ -3,7 +3,7 @@
 These are the load-bearing prompts of the funnel, sanitized to the generic framework (no live
 positions, no broker calls, no paid-data text). The experiment plan commits to publishing the prompts
 by reference; this is that reference. The exact production strings are versioned in the private
-implementation and pinned by commit hash per run (see `docs/RESULTS_INITIAL.md` → implementation
+implementation and pinned by commit hash per run (see `../research/docs/RESULTS_INITIAL.md` → implementation
 details). `{...}` are fill-ins.
 
 ## 0. Research contract (prepended to every LLM stage)
@@ -80,7 +80,7 @@ a triage failure escalates (never a silent drop).
 
 A flagged FALSE_REJECTION is not final — it is escalated to a capital-at-risk adjudication (§5), which
 can uphold the rejection (the cheap-screen → expensive-adjudicate asymmetry applied to the audit
-itself; see `docs/RESULTS_INITIAL.md`).
+itself; see `../research/docs/RESULTS_INITIAL.md`).
 
 ## 7. CITATION VERIFICATION (refute-by-default, before any reference is used)
 

@@ -37,7 +37,7 @@ nodes:
         exposure_purity: 0.0           # 0..1: does this name capture the node's economics?
         beta_role: "<benchmark_beta_role>"
         note: "<one line: what it is, why this purity>"
-    # Policy is EVIDENCE, not a scoring factor (docs/METHOD.md). The engine does NOT consume `policy:`;
+    # Policy is EVIDENCE, not a scoring factor (../../research/docs/METHOD.md). The engine does NOT consume `policy:`;
     # it documents durability + what would break it (see the policy_reversal exit trigger).
     # policy:
     #   ticker: "<TICKER>"

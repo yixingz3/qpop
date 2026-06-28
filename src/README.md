@@ -47,7 +47,7 @@ model only ever judges admits): **SOURCE** (cheap, wide — one lens per node + 
 literature, deduped against a seen-set) → GATE → **TRIAGE** (cheapest — drop obvious low-purity) →
 **EVALUATE** (mid — bear-case-before-recommendation on survivors) → **ADJUDICATE** (expensive — only
 the admit-flags). Each stage's exact prompt is in [`prompts.md`](prompts.md); the model tier is a
-**knob** (`docs/TUNING.md`). The asymmetry that makes the cascade safe — a false watchlist only
+**knob** (`../research/docs/TUNING.md`). The asymmetry that makes the cascade safe — a false watchlist only
 delays, a false admit is caught downstream — also governs the audit of rejections.
 
 ### `qpop/`

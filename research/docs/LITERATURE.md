@@ -57,7 +57,7 @@ exists — only deterministic score × purity × adjustments × caps × a dated 
 
 ## Mode A — domain literature lens (SOURCE)
 
-Runs as one more SOURCE lens in the budget-aware funnel (`docs/METHOD.md` §3). It searches the
+Runs as one more SOURCE lens in the budget-aware funnel (`METHOD.md` §3). It searches the
 credible published record for the active domain — for AI supply chain: semiconductor-economics,
 critical-materials, power-systems, and supply-chain-bottleneck literature — and emits candidate
 cards with:

@@ -58,7 +58,7 @@ layer of the same demand cycle* — the evaluator corrects for that qualitativel
 Each finalist gets: a **bear case written before the recommendation**, an explicit answer to *"does
 this improve the portfolio after overlap, purity, valuation, and crowding?"*, measurable exit
 triggers, and a falsifiable decision (reject / watchlist / satellite-probation / replace / admit).
-Reserve the scarce model here (see `docs/TUNING.md` for the cheap-first-pass option).
+Reserve the scarce model here (see `TUNING.md` for the cheap-first-pass option).
 
 ## Stage 4 — policy / strategic-autonomy lens (evidence, not a factor)
 
