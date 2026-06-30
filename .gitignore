@@ -1,0 +1,53 @@
+# Secrets / credentials — NEVER commit
+.env
+.env.*
+*.key
+*_secret*
+**/secrets/**
+
+# Live / private artifacts — keep this repo methods-only
+**/live/**
+**/brokerage/**
+**/paid_data/**
+*_live_*.jsonl
+*_trades_*.csv
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+*.egg-info/
+build/
+dist/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Allow synthetic / sample data explicitly (it is non-sensitive)
+!data/synthetic/**
+!examples/**/*sample*
+!examples/**/*template*
+
+# LaTeX build artifacts (paper now lives under research/)
+research/paper/*.aux
+research/paper/*.log
+research/paper/*.bbl
+research/paper/*.blg
+research/paper/*.out
+research/paper/*.pdf
+research/paper/*.toc
+
+# session / local agent data (never publish)
+.remember/
+
+# track the built paper PDF for readers / citers
+!research/paper/paper.pdf
+
+# generated anchor artifacts (run `forward-qpop anchor`)
+*.anchor.json
+*.ots

@@ -1,0 +1,18 @@
+{
+  "name": "qpop",
+  "displayName": "Forward-QPOP — auditable research discipline",
+  "version": "0.1.2",
+  "description": "Turns an over-eager LLM into a disciplined researcher: gate and reject most ideas for defensible reasons, pre-register the rest to a tamper-evident ledger, and validate forward instead of leaking a backtest. Implements the Forward-QPOP protocol.",
+  "author": {
+    "name": "Yixing Zheng",
+    "email": "yz11739@stern.nyu.edu",
+    "url": "https://github.com/yixingz3"
+  },
+  "homepage": "https://github.com/yixingz3/qpop",
+  "repository": "https://github.com/yixingz3/qpop",
+  "license": "MIT",
+  "keywords": [
+    "llm", "agents", "research", "pre-registration", "reproducibility",
+    "trustworthy-ai", "auditability", "hypothesis", "forward-validation", "look-ahead-bias"
+  ]
+}

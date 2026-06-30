@@ -1,0 +1,37 @@
+cff-version: 1.2.0
+title: "Forward-Registered, Auditable LLM-Assisted Research: A Reliability Methodology, with a Capital-Markets Testbed"
+message: "If you use this framework, please cite it."
+type: software
+authors:
+  - family-names: Zheng
+    given-names: Yixing
+    email: yz11739@stern.nyu.edu
+    orcid: "https://orcid.org/0009-0000-0563-2398"
+repository-code: "https://github.com/yixingz3/qpop"
+abstract: >-
+  Methods for making AI- and LLM-assisted research reliable, auditable, and
+  reproducible. The framework wraps open-ended agentic discovery in deterministic,
+  independently-auditable gates and a forward pre-registration ("forward-QPOP")
+  protocol, so that each accept/reject decision is verifiable rather than a black-box
+  narrative and is evaluated forward rather than by a leakage-prone backtest. It is
+  validated on high-stakes capital-markets and economic forecasting as an adversarial
+  testbed, and is domain-agnostic by construction. Components include a portable
+  bottleneck graph, a decomposed confidence model, a budget-aware cheap-source /
+  deterministic-gate / expensive-evaluate funnel, a tamper-evident hypothesis ledger,
+  and a held-out rejection-quality audit.
+keywords:
+  - large language models
+  - LLM agents
+  - AI reliability
+  - auditable AI
+  - trustworthy AI
+  - pre-registration
+  - forward validation
+  - over-admission rate
+  - reproducibility
+  - backtest overfitting
+  - look-ahead bias
+  - machine learning in finance
+license: MIT
+version: 0.1.0
+date-released: "2026-06-07"

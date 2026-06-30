@@ -1,0 +1,63 @@
+# bottleneck_map.template.yml — copy and fill in for your domain.
+# A node is a PHYSICAL chokepoint (hard to bypass, capacity-constrained, supplier-concentrated).
+# Tier is DERIVED from the decomposed confidence, not asserted here.
+
+meta:
+  domain: "<your_domain>"            # e.g. rare_earth, power_grid, lng, uranium
+  thesis: "Chase the physical, hard-to-bypass chokepoints; size by confidence; exit when the constraint eases."
+  last_reviewed: "<YYYY-MM-DD>"
+  default_stale_after_days: 30
+
+# Optional: dependency edges (upstream -> downstream) for documentation / graph views.
+graph_edges:
+  - { from: "<node_a>", to: "<node_b>" }
+
+nodes:
+  example_node:
+    layer: "<layer>"
+    chokepoint: "<what the binding physical constraint is, in one line>"
+    physical_rationale: "<why it is hard to bypass: capacity lead time, supplier concentration, no substitute>"
+    beneficiary_type: scarcity_price_setter   # | volume | capex | platform | financing_sensitive
+    bottleneck_dims:
+      physical_indispensability: 0.0   # 0..1
+      substitutability: 0.0            # 0..1 (INVERTED inside the score: easy-to-substitute => weak)
+      capacity_lead_time: 0.0          # 0..1 (longer to add capacity => stronger)
+      supplier_concentration: 0.0      # 0..1 (fewer suppliers => stronger)
+      pricing_power: 0.0               # 0..1
+    demand_score: 0.0                  # order visibility / capex pull
+    valuation_adjustment: 1.0          # <=1, penalize already-priced-in
+    crowding_adjustment: 1.0           # <=1, penalize crowded / overextended
+    key_customers: []
+    key_suppliers: []
+    last_reviewed: "<YYYY-MM-DD>"
+    stale_after_days: 30
+    tickers:
+      - sym: "<TICKER>"
+        role: direct                   # direct | second_order | etf_proxy
+        exposure_purity: 0.0           # 0..1: does this name capture the node's economics?
+        beta_role: "<benchmark_beta_role>"
+        note: "<one line: what it is, why this purity>"
+    # Policy is EVIDENCE, not a scoring factor (../../research/docs/METHOD.md). The engine does NOT consume `policy:`;
+    # it documents durability + what would break it (see the policy_reversal exit trigger).
+    # policy:
+    #   ticker: "<TICKER>"
+    #   thesis: "<a signed/dated/material award or strategic-autonomy role>"
+    #   awards: ["<signed award $ + date + source>"]
+    #   stance: durability_tailwind     # documents conviction; does NOT resize the name
+    exit_triggers:                      # MEASURABLE; each needs a checkable data_source
+      - id: supply_easing
+        metric: "<lead times normalize / capacity outruns demand>"
+        op: reverses
+        data_source: { source_name: "<source>", source_tier: secondary, update_frequency: quarterly, manually_reviewed: true }
+      - id: demand_slowing
+        metric: "<order / capex guide cut>"
+        op: cut
+        data_source: { source_name: "<source>", source_tier: primary, update_frequency: quarterly, manually_reviewed: true }
+      - id: crowding
+        metric: "price vs estimate-revision gap extreme"
+        op: ">"
+        data_source: { source_name: "price/vol", source_tier: market_implied, update_frequency: daily, machine_readable: true }
+      # - id: policy_reversal      # only if a `policy:` block above documents a signed award
+      #   metric: "award clawback / milestone miss / policy or export-control reversal"
+      #   op: exists
+      #   data_source: { source_name: "<gov source> + filings", source_tier: primary, update_frequency: event, manually_reviewed: true }

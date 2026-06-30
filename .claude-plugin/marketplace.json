@@ -1,0 +1,15 @@
+{
+  "name": "qpop",
+  "owner": {
+    "name": "Yixing Zheng",
+    "url": "https://github.com/yixingz3"
+  },
+  "plugins": [
+    {
+      "name": "qpop",
+      "source": "./",
+      "description": "Auditable research discipline for AI agents — gate, reject, pre-register (tamper-evident), and verify. Implements the Forward-QPOP protocol.",
+      "keywords": ["llm", "research", "pre-registration", "trustworthy-ai", "agents"]
+    }
+  ]
+}

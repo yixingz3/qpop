@@ -1,0 +1,13 @@
+{
+  "run_id": "ai_supply_chain-2026-01-pilot",
+  "created": "2026-01-16",
+  "domain": "ai_supply_chain",
+  "bottleneck_map": "examples/ai_supply_chain/bottleneck_map.yml",
+  "model": {"source": "synthetic", "evaluate": "synthetic", "audit": "synthetic"},
+  "temperature": 0.0,
+  "prompt_commit": "0000000",
+  "funnel": {"sourced": 38, "admitted": 0, "watchlist": 0, "rejected": 38},
+  "admission_rate": 0.0,
+  "ledger": "data/synthetic/qpop_ledger_sample.jsonl",
+  "notes": "Synthetic manifest mirroring the paper's 38-candidate ablation; the full pipeline admitted 0/38 (over-admission rate driven to 0%). Numbers are illustrative, not a live run."
+}
