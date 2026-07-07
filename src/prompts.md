@@ -92,67 +92,56 @@ itself; see `../research/docs/RESULTS_INITIAL.md`).
 
 ## 8. ABLATION ARMS (the H2 baselines, literal prompts)
 
-*Provenance note (2026-07-06).* The paper's pilot ablation (June 2026) ran its arms as deltas on §4;
-the exact per-arm strings and per-card decisions of that pilot were not preserved as artifacts. The
-prompts below are therefore the **canonical, literal arm prompts from the preserved re-run
-(2026-07-06) onward** — the re-run's card set, per-card decisions, and run manifest are retained as
-artifacts so the ablation is reproducible end-to-end. Shared rules across every arm: the SAME candidate
-cards, the SAME model tier, one card-decision per candidate from
-{admit, replace, watchlist, reject}, and the same capital-at-risk framing — every arm is explicitly
-**allowed to reject**; none is a strawman forced to admit.
+*Provenance note (updated 2026-07-07).* The pilot ablation's original artifacts were **recovered in
+full** from the run journals: the 38-candidate pool, all three arms' per-card decisions, and the
+literal arm prompts below (8a–8c are the recovered originals, verbatim). Protocol of record: each arm
+is ONE batched call to the mid-tier model (Sonnet) over all 38 candidates; each candidate is passed as
+`{symbol, company, node, thesis}` with `thesis` = the first ~420 characters of the SOURCE card's
+`why_fit`; the arm returns `admit=true/false` + a one-line reason per candidate; no explicit
+temperature override (model default). The "full pipeline 0/38" comparator is NOT a fourth model arm —
+it is the real production funnel's documented outcome on the same batch (deterministic gate → cheap
+triage dropped all four gate-passers; the bear-case and adjudication stages were never reached).
+Every arm is free to reject; none is forced to admit. The preserved card set, per-arm decision
+arrays, and run manifest live in the private research repo (sanitized aggregates here).
 
-**Shared arm preamble (prepended to each arm below):**
+### 8a. Ungated screener — RECOVERED ORIGINAL (pilot arm, 38/38 admitted)
 
-> You are evaluating ONE candidate card for a real, capital-at-risk thematic book (as of {date}).
-> Decide: admit / replace / watchlist / reject, with a one-paragraph reason. You are fully free to
-> reject. Card: {card}.
+> You are a thematic AI-supply-chain stock SCREENER with NO special discipline. For EACH candidate
+> below (symbol, company, node, thesis), decide admit=true if you would BUY it for an
+> AI-supply-chain portfolio based on its thesis and theme fit, admit=false otherwise. This is a
+> naive screen: there is NO purity bar, NO overlap check, NO bear case, NO liquidity gate — if the
+> thesis sounds good for the theme, admit it. Give a one-line reason each.
 
-### 8a. Ungated screener (no gate, no purity bar, no overlap penalty, no bear case)
+### 8b. − bear-case-first — RECOVERED ORIGINAL (pilot arm, 28/38 admitted)
 
-> Judge this candidate as an investment idea for the theme on its own merits. There is no checklist:
-> no tradeability/liquidity gate, no exposure-purity bar, no duplication penalty against a held book,
-> and no requirement to write a bear case. Recommend what looks good for the theme.
+> You evaluate each candidate as a portfolio add and may weigh purity/valuation, BUT you must NOT
+> write a bear case — lead with the bull thesis and decide admit=true/false. (This ablates the
+> bear-case-before-recommendation discipline.) One line each.
 
-### 8b. − bear-case-first (everything else intact)
+### 8c. − overlap penalty — RECOVERED ORIGINAL (pilot arm, 25/38 admitted)
 
-> This candidate passed the mechanical gate and a cheap triage. With dated evidence: (1) what
-> chokepoint, and is it a PURE vehicle or a tiny segment / commodity peak / pre-revenue hype?
-> (2) direct / second-order / adjacent? (3) incremental vs the held book or a duplicate (note the
-> incumbent)? (4) admit / replace / watchlist / reject? (5) measurable exit triggers. Recommend
-> directly from the thesis; **you are not required to write a bear case.** Reserve admit/replace for
-> names that clearly improve the book after purity + overlap + valuation + crowding. {research contract}
+> You evaluate each candidate on purity + valuation and may note a brief risk, BUT you must IGNORE
+> whether it duplicates a name already held — there is NO overlap penalty and NO
+> 'replace-not-stack' rule. Decide admit=true/false on the name's own merits only. (This ablates
+> the overlap penalty.) The currently-held book, which you must IGNORE for de-duplication purposes,
+> is: {held list}. One line each.
 
-### 8c. − overlap penalty (everything else intact)
+### 8d. Debate-only (bull/bear, no forward lock) — pending arm (b), same batched protocol
 
-> This candidate passed the mechanical gate and a cheap triage. With dated evidence: (1) what
-> chokepoint, and is it a PURE vehicle or a tiny segment / commodity peak / pre-revenue hype?
-> (2) direct / second-order / adjacent? (3) admit / replace / watchlist / reject? (4) measurable exit
-> triggers. **Judge the name entirely on its own merits — ignore any duplication or correlation with
-> names already held; do not apply an overlap penalty or name an incumbent.** WRITE THE BEAR CASE
-> BEFORE the recommendation. Reserve admit/replace for names that clearly improve the theme exposure
-> after purity + valuation + crowding. {research contract}
+> You evaluate each candidate below (symbol, company, node, thesis) as a portfolio add via a staged
+> DEBATE: for each, first write a one-line strongest BULL case, then a one-line strongest BEAR case,
+> then as judge decide admit=true/false from the debate. You may weigh purity/valuation and
+> duplication vs the currently-held book: {held list}. There is NO pre-registration lock: you are
+> NOT required to produce measurable exit triggers or any falsifiable hypothesis contract that would
+> be hash-locked before a forward window — decide from the debate alone. (This ablates the
+> bear-case-BEFORE-recommendation ordering and the forward lock, keeping everything else.)
 
-### 8d. Debate-only (bull/bear staged, no forward lock) — pending arm (b)
+### 8e. No Forward-QPOP lock — pending arm (c), same batched protocol
 
-> Stage a structured debate on this candidate, then judge it. First write the strongest BULL
-> advocate's case (dated evidence). Then write the strongest BEAR advocate's case (dated evidence).
-> Then, as the judge, weigh the debate and decide admit / replace / watchlist / reject. There is no
-> required ordering of analysis before recommendation beyond the debate itself, and **no
-> pre-registration lock**: you are NOT required to produce measurable exit triggers, a falsifiable
-> hypothesis contract, or any commitment that would be hash-locked before a forward window. Decide
-> from the debate alone. {research contract}
-
-### 8e. No Forward-QPOP lock (same evaluation, no hash-locked contract) — pending arm (c)
-
-> This candidate passed the mechanical gate and a cheap triage. With dated evidence: (1) what
-> chokepoint, and is it a PURE vehicle or a tiny segment / commodity peak / pre-revenue hype?
-> (2) direct / second-order / adjacent? (3) incremental vs the held book or a duplicate (note the
-> incumbent)? (4) admit / replace / watchlist / reject? WRITE THE BEAR CASE BEFORE the
-> recommendation. Reserve admit/replace for names that clearly improve the book after purity +
-> overlap + valuation + crowding. **Exit triggers are OPTIONAL: admission does NOT require committing
-> measurable, dated exit triggers or a hash-locked, falsifiable hypothesis contract before the
-> forward window — an admitted thesis may remain open-ended and revisable.** {research contract}
-
-The full pipeline's decisions for the same card set come from the production funnel records (gate →
-triage → §4 evaluate → §5 adjudicate), so the comparison is: production full-pipeline vs each arm
-above, card by card, on the preserved batch.
+> You evaluate each candidate below (symbol, company, node, thesis) as a portfolio add with the full
+> discipline EXCEPT the forward lock: write the bear case BEFORE your recommendation, weigh
+> purity/valuation, and apply the overlap / replace-not-stack rule vs the currently-held book:
+> {held list}. BUT admission does NOT require committing measurable, dated exit triggers or a
+> hash-locked falsifiable hypothesis contract before a forward window — an admitted thesis may
+> remain open-ended and revisable. Decide admit=true/false with a one-line reason each. (This
+> ablates ONLY the pre-registration lock.)
