@@ -17,7 +17,11 @@ Capital-Markets Testbed* — Yixing Zheng (NYU Stern). Source: [`paper.tex`](pap
 ## Planned v2 (target ~2026-12)
 
 Scheduled by the paper's own declared-pending list (§9.5 + Limitations): H4 forward read-out with the
-structural-validity checklist; forward-scoring-registry first cohort; remaining ablation arms
-(debate-only, no-forward-lock); expanded rejection-quality audit (n≥40 + human lane); `{domain}`
-prompt parameterization → config-only portability demo; external timestamp anchor; aggregates
-regenerated from the run ledger (not by hand).
+structural-validity checklist; forward-scoring-registry first cohort; ~~remaining ablation arms
+(debate-only, no-forward-lock)~~ **DONE 2026-07-07** (both support H2; see
+[../docs/RESULTS_V2_WORKING.md](../docs/RESULTS_V2_WORKING.md)); ~~expanded rejection-quality audit
+(n≥40)~~ **DONE 2026-07-07** (raw 0.775 [0.625, 0.877], adjudicated 9/9 upheld; human lane packet
+prepared, pending operator); `{domain}` prompt parameterization → config-only portability demo;
+external timestamp anchor; aggregates regenerated from the run ledger (not by hand). Pilot ablation
+artifacts (38-card batch, per-arm decisions, literal prompts) recovered and preserved 2026-07-07;
+arm prompts released in `src/prompts.md` §8.
