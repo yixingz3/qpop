@@ -89,3 +89,70 @@ itself; see `../research/docs/RESULTS_INITIAL.md`).
 > non-existent id, or different topic = REJECT. Treat near-misses as REJECT. Report
 > CONFIRM / REJECT / UNRESOLVABLE with the actual title + author found. Only CONFIRMED entries may be
 > cited.
+
+## 8. ABLATION ARMS (the H2 baselines, literal prompts)
+
+*Provenance note (2026-07-06).* The paper's pilot ablation (June 2026) ran its arms as deltas on §4;
+the exact per-arm strings and per-card decisions of that pilot were not preserved as artifacts. The
+prompts below are therefore the **canonical, literal arm prompts from the preserved re-run
+(2026-07-06) onward** — the re-run's card set, per-card decisions, and run manifest are retained as
+artifacts so the ablation is reproducible end-to-end. Shared rules across every arm: the SAME candidate
+cards, the SAME model tier, one card-decision per candidate from
+{admit, replace, watchlist, reject}, and the same capital-at-risk framing — every arm is explicitly
+**allowed to reject**; none is a strawman forced to admit.
+
+**Shared arm preamble (prepended to each arm below):**
+
+> You are evaluating ONE candidate card for a real, capital-at-risk thematic book (as of {date}).
+> Decide: admit / replace / watchlist / reject, with a one-paragraph reason. You are fully free to
+> reject. Card: {card}.
+
+### 8a. Ungated screener (no gate, no purity bar, no overlap penalty, no bear case)
+
+> Judge this candidate as an investment idea for the theme on its own merits. There is no checklist:
+> no tradeability/liquidity gate, no exposure-purity bar, no duplication penalty against a held book,
+> and no requirement to write a bear case. Recommend what looks good for the theme.
+
+### 8b. − bear-case-first (everything else intact)
+
+> This candidate passed the mechanical gate and a cheap triage. With dated evidence: (1) what
+> chokepoint, and is it a PURE vehicle or a tiny segment / commodity peak / pre-revenue hype?
+> (2) direct / second-order / adjacent? (3) incremental vs the held book or a duplicate (note the
+> incumbent)? (4) admit / replace / watchlist / reject? (5) measurable exit triggers. Recommend
+> directly from the thesis; **you are not required to write a bear case.** Reserve admit/replace for
+> names that clearly improve the book after purity + overlap + valuation + crowding. {research contract}
+
+### 8c. − overlap penalty (everything else intact)
+
+> This candidate passed the mechanical gate and a cheap triage. With dated evidence: (1) what
+> chokepoint, and is it a PURE vehicle or a tiny segment / commodity peak / pre-revenue hype?
+> (2) direct / second-order / adjacent? (3) admit / replace / watchlist / reject? (4) measurable exit
+> triggers. **Judge the name entirely on its own merits — ignore any duplication or correlation with
+> names already held; do not apply an overlap penalty or name an incumbent.** WRITE THE BEAR CASE
+> BEFORE the recommendation. Reserve admit/replace for names that clearly improve the theme exposure
+> after purity + valuation + crowding. {research contract}
+
+### 8d. Debate-only (bull/bear staged, no forward lock) — pending arm (b)
+
+> Stage a structured debate on this candidate, then judge it. First write the strongest BULL
+> advocate's case (dated evidence). Then write the strongest BEAR advocate's case (dated evidence).
+> Then, as the judge, weigh the debate and decide admit / replace / watchlist / reject. There is no
+> required ordering of analysis before recommendation beyond the debate itself, and **no
+> pre-registration lock**: you are NOT required to produce measurable exit triggers, a falsifiable
+> hypothesis contract, or any commitment that would be hash-locked before a forward window. Decide
+> from the debate alone. {research contract}
+
+### 8e. No Forward-QPOP lock (same evaluation, no hash-locked contract) — pending arm (c)
+
+> This candidate passed the mechanical gate and a cheap triage. With dated evidence: (1) what
+> chokepoint, and is it a PURE vehicle or a tiny segment / commodity peak / pre-revenue hype?
+> (2) direct / second-order / adjacent? (3) incremental vs the held book or a duplicate (note the
+> incumbent)? (4) admit / replace / watchlist / reject? WRITE THE BEAR CASE BEFORE the
+> recommendation. Reserve admit/replace for names that clearly improve the book after purity +
+> overlap + valuation + crowding. **Exit triggers are OPTIONAL: admission does NOT require committing
+> measurable, dated exit triggers or a hash-locked, falsifiable hypothesis contract before the
+> forward window — an admitted thesis may remain open-ended and revisable.** {research contract}
+
+The full pipeline's decisions for the same card set come from the production funnel records (gate →
+triage → §4 evaluate → §5 adjudicate), so the comparison is: production full-pipeline vs each arm
+above, card by card, on the preserved batch.
