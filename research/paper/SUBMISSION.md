@@ -22,6 +22,6 @@ structural-validity checklist; forward-scoring-registry first cohort; ~~remainin
 [../docs/RESULTS_V2_WORKING.md](../docs/RESULTS_V2_WORKING.md)); ~~expanded rejection-quality audit
 (n≥40)~~ **DONE 2026-07-07** (raw 0.775 [0.625, 0.877], adjudicated 9/9 upheld; human lane packet
 prepared, pending operator); ~~`{domain}` prompt parameterization → config-only portability demo~~ **DONE 2026-07-07** (mechanism + a full uranium-fuel-cycle funnel run from one new config file, zero code edits — H3 clause (c) demonstrated; see [../docs/RESULTS_V2_WORKING.md](../docs/RESULTS_V2_WORKING.md));
-external timestamp anchor; aggregates regenerated from the run ledger (not by hand). Pilot ablation
+~~external timestamp anchor~~ **DONE 2026-07-08** (OpenTimestamps anchor external / verify-external + sidecar receipt); **e-value sequential test DONE 2026-07-08** (anytime-valid Type-I control, 18 tests, methods note); aggregates regenerated from the run ledger (not by hand). Pilot ablation
 artifacts (38-card batch, per-arm decisions, literal prompts) recovered and preserved 2026-07-07;
 arm prompts released in `src/prompts.md` §8.
