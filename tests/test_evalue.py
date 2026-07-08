@@ -175,10 +175,19 @@ def test_power_under_alternative():
 # (c) Supermartingale spot-check — E[e] <= 1 under the null at a fixed horizon
 # --------------------------------------------------------------------------- #
 def test_supermartingale_mean_under_null():
+    # A likelihood-ratio e-process is a *martingale* under the null: E[e_n] == 1 for
+    # every n (per-step E[LR | fire~Bernoulli(p0)] = p1 + (1-p1) = 1). The
+    # load-bearing direction for Ville is the supermartingale bound E[e] <= 1.
+    #
+    # NOTE on horizon: the e-value is a product of ratios, so its distribution is
+    # heavily right-skewed and the *sample* mean is a high-variance estimator of the
+    # true mean at long horizons (a few paths blow up, most decay). We therefore probe
+    # a SHORT horizon where the sample mean concentrates near 1 with modest paths —
+    # this is a statistical-soundness choice, not a weakening of the property.
     rng = random.Random(777)
     p0, p1 = 0.2, 0.5
-    horizon = 25
-    n_paths = 3000
+    horizon = 2
+    n_paths = 20000
     total = 0.0
     for _ in range(n_paths):
         ep = EProcess(p0=p0, p1=p1)
@@ -186,9 +195,9 @@ def test_supermartingale_mean_under_null():
             ep.observe(rng.random() < p0)  # fire at the NULL rate
         total += ep.e_value()
     mean_e = total / n_paths
-    # A likelihood-ratio e-process is a *martingale* under the null: E[e] == 1.
-    # Allow a Monte-Carlo band around 1; the load-bearing direction is E[e] <~ 1.
-    assert 0.85 <= mean_e <= 1.15, f"mean e-value {mean_e:.3f} not ~1 under null"
+    # Two-sided band around the true value 1; the upper bound (E[e] not materially
+    # above 1) is what Ville's inequality relies on.
+    assert 0.90 <= mean_e <= 1.10, f"mean e-value {mean_e:.3f} not ~1 under null"
 
 
 # --------------------------------------------------------------------------- #

@@ -92,6 +92,7 @@ insert one, delete one, or reorder them, and `verify` fails (and exits non-zero 
 |---|---|
 | Claude Code plugin discipline (`auditable-research` + `/qpop:*`) | **Working — v0.1** |
 | Hash-chained Python ledger (`forward_qpop`) + CLI | **Working** (21/21 tests) |
+| Anytime-valid sequential trigger test (`evalue`) — Type-I control over many triggers | **Working** (18/18 tests) — e-value / Ville, [methods note](research/docs/EVALUE_METHODS.md) |
 | External timestamp anchor (`anchor` / `verify-anchor`) | **Working** — manifest + drift-detection + git / OpenTimestamps |
 | JSON Schemas for cards / entries / runs | **Included** ([`schemas/`](schemas)) |
 | Synthetic fixtures + worked examples | **Included** ([`examples/`](examples)) |

@@ -21,6 +21,14 @@ from .anchor import (
     verify_anchor,
     write_manifest,
 )
+from .evalue import (
+    CONTINUE,
+    FALSIFIED,
+    EProcess,
+    SequentialTriggerTest,
+    average_evalues,
+    product_evalues,
+)
 from .ledger import (
     ADMISSION,
     BELIEF_UPDATE,
@@ -55,6 +63,12 @@ __all__ = [
     "ledger_head",
     "ots_available",
     "git_committed_time",
+    "EProcess",
+    "SequentialTriggerTest",
+    "product_evalues",
+    "average_evalues",
+    "CONTINUE",
+    "FALSIFIED",
 ]
 
 __version__ = "0.1.2"
