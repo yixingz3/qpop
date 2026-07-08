@@ -42,6 +42,14 @@ research/paper/*.out
 research/paper/*.pdf
 research/paper/*.toc
 
+# arXiv submission copy (research/paper/arxiv/): ignore transient build artifacts;
+# paper.tex / references.bib / Makefile / paper.bbl / paper.pdf stay tracked (self-contained upload bundle)
+research/paper/arxiv/*.aux
+research/paper/arxiv/*.log
+research/paper/arxiv/*.blg
+research/paper/arxiv/*.out
+research/paper/arxiv/*.toc
+
 # session / local agent data (never publish)
 .remember/
 
