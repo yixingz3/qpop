@@ -60,6 +60,31 @@ bull-only auditor could not see. Flags split evenly across the funnel's cheap-dr
 stages (5/4 against a 20/20 sample), so the disagreement rate is not a sample-composition artifact.
 A human-auditor lane (same 40 records, bull-only packet) is prepared and pending.
 
+## Portability H3 clause (c) — config-only domain swap DEMONSTRATED (2026-07-07)
+
+v1 honestly reported clause (c) as not met (prompt templates embedded the first domain's framing).
+After the `domain` profile was threaded through the templates (byte-identical golden tests on the
+live config), a full funnel run on the **uranium fuel cycle** — a domain v1's Discussion names as a
+candidate — required **one new configuration file and zero prompt-construction code changes**
+(verified: the change set is added-files-only; no generated prompt contains any first-domain string).
+
+Funnel (live run): 20 cards sourced across 5 lenses → 10 unique symbols → deterministic gate 8 pass
+/ 2 mechanical rejections (one foreign-OTC sub-liquidity, one min-price) → cheap triage 4 pursue /
+3 drop (commodity-priced, two pre-revenue) → bear-case-first evaluation: 1 admit-class flag,
+2 watchlist, 1 reject → expensive adjudication **upheld the single flag at probationary half-size**
+with five dated exit triggers (a recorded disposition — the demo book is unfunded).
+
+What transferred: the full rejection-category taxonomy, unprompted (no-domestic-vehicle,
+low-purity-conglomerate, pre-revenue-hype, commodity-cycle, valuation/crowding); source-tier and
+citation-verification discipline (the social lens held all its cards at tertiary-idea-seed; the
+literature lens DOI-verified and downgraded a conflicted paper); and the escalation asymmetry in
+BOTH directions — the mid tier corrected a cheap-tier purity misread (facility uniqueness ≠ ticker
+exposure), and the expensive tier overturned two factual errors in the mid tier's bear case (an
+inverted crowding read; an overstated single-customer claim) while still capping size. The one
+upheld disposition is a de-rated sole-domestic-capacity chokepoint with a signed primary-source
+contract — the forced-cheap-entry principle firing outside the first domain, and the funnel's first
+admit-class outcome in any second-domain probe (restraint is not blanket conservatism).
+
 ## v2 to-do this enables
 
 - §9.3: extend the ablation table (+ replicate agreement); correct the "all arm prompts are
