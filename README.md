@@ -91,8 +91,9 @@ insert one, delete one, or reorder them, and `verify` fails (and exits non-zero 
 | Area | Status |
 |---|---|
 | Claude Code plugin discipline (`auditable-research` + `/qpop:*`) | **Working — v0.1** |
-| Hash-chained Python ledger (`forward_qpop`) + CLI | **Working** (21/21 tests) |
-| External timestamp anchor (`anchor` / `verify-anchor`) | **Working** — manifest + drift-detection + git / OpenTimestamps |
+| Hash-chained Python ledger (`forward_qpop`) + CLI | **Working** (31/31 tests, 1 network test skipped by default) |
+| Local anchor manifest (`anchor` / `verify-anchor`) | **Working** — manifest + drift-detection + git / local OpenTimestamps stamp |
+| External timestamp anchor (`anchor external` / `verify-external`) | **Working** — submits to OpenTimestamps, sidecar receipt + drift-detection ([details](#external-anchor-what-it-proves-and-what-it-doesnt)) |
 | JSON Schemas for cards / entries / runs | **Included** ([`schemas/`](schemas)) |
 | Synthetic fixtures + worked examples | **Included** ([`examples/`](examples)) |
 | Methods paper — theory + pilot evidence | **Included** ([PDF](research/paper/paper.pdf)) |
@@ -113,15 +114,48 @@ The hash chain is **tamper-evidence, not a clock.** Be precise about the guarant
 |---|---|---|
 | A past entry was edited | ✅ detected | hash verification |
 | An entry was inserted / deleted / reordered | ✅ detected | hash-chain verification |
-| An entry existed *before* the outcome | ⚠️ partial | `anchor` + a public commit or OpenTimestamps |
+| An entry existed *before* the outcome | ⚠️ partial | `anchor external` + OpenTimestamps (or a pushed public commit) |
 | The LLM's reasoning was correct | ❌ no | human / source review |
 | The strategy is profitable | ❌ no | a forward window + the validity checklist |
 
 The "before the outcome" guarantee needs an **external anchor** — and `qpop` ships one:
-`forward-qpop anchor <ledger>` writes a manifest committing to the ledger head, and `verify-anchor`
-detects any drift since. Bind it to time by committing the manifest to a public repo (the commit date
-*is* the anchor) or with `--ots` ([OpenTimestamps](https://opentimestamps.org)); a turnkey
-Sigstore/Rekor backend is on the roadmap.
+`forward-qpop anchor <ledger>` writes a local manifest committing to the ledger head, and
+`verify-anchor` detects any drift since. Bind it to time by committing the manifest to a public repo
+(the commit date *is* the anchor) or by submitting it to a public, append-only timestamp service.
+
+### External anchor: what it proves, and what it doesn't
+
+`forward-qpop anchor external <ledger> --method ots` submits the manifest's head digest to
+[OpenTimestamps](https://opentimestamps.org) (a public, append-only Bitcoin-backed timestamp
+service) and records the outcome — method, service, digest, submission time, status — in a
+`<ledger>.external-anchor.json` sidecar next to the ledger. `verify-external` re-checks that
+sidecar's digest against the *current* ledger head, so any rewrite after submission is loud, not
+silent:
+
+```bash
+forward-qpop anchor   <ledger>                          # local manifest first (always required)
+forward-qpop anchor external <ledger> --method ots       # submit the head digest externally
+forward-qpop verify-external <ledger>                    # detect drift since the external submission
+```
+
+**Route chosen: OpenTimestamps, not Sigstore/Rekor.** Both were evaluated:
+
+- **OpenTimestamps** — one optional dependency (`pip install forward-qpop[anchor]`, wraps
+  `opentimestamps-client`), stdlib-only integration (`subprocess`), and reuses this repo's existing
+  local `ots_stamp` scaffolding. Honest caveat: a fresh stamp is **"submitted," not yet
+  "confirmed"** — the Bitcoin attestation completes over hours, and the receipt is upgradeable
+  later with `ots upgrade`.
+- **Sigstore/Rekor** (`hashedrekord`) — would give an immediate inclusion proof + log index, but
+  needs an ephemeral-key-signed entry, pulling in `cryptography`/`sigstore` for a payload this
+  project otherwise has no use for (no code signing here). Passed on for now given the
+  dependency weight; may revisit if Rekor's immediacy becomes worth the tradeoff.
+
+**Degradation is always loud.** No `ots` binary on `PATH`, a network failure, or an unreachable
+calendar server all exit non-zero with a specific message — `anchor external` never writes a
+sidecar claiming success it didn't get. The unit tests exercise this against a faked backend (no
+network needed for `pytest`); a true-network round-trip test exists but only runs when you
+explicitly opt in (`QPOP_TEST_LIVE_OTS=1`) — see [`repro/`](repro) and
+[`tests/test_external_anchor.py`](src/forward_qpop) for both.
 
 ## Learn more
 
@@ -131,7 +165,7 @@ Sigstore/Rekor backend is on the roadmap.
 - **Python library** — `pip install forward-qpop` (or run [`scripts/qpop.py`](scripts/qpop.py) from a clone): the dependency-free ledger + anchor. API in [the package README](src/forward_qpop/README.md).
 - **The paper** — [PDF](research/paper/paper.pdf) / [source](research): theory, pilot evidence, and the **over-admission-rate (OAR)** benchmark. If you build on it, please cite [`CITATION.cff`](CITATION.cff).
 - **Worked examples** — [`examples/`](examples): the AI-supply-chain funnel, a portable [template](examples/template_domain), and a non-finance [ML-benchmark pre-registration](examples/ml_benchmark).
-- **Other agents & roadmap** — the discipline is portable markdown in [`skills/`](skills) (Codex / other agents can adopt it). Next: Codex/Cursor adapters, an MCP server, a LangChain/LangGraph wrapper, a turnkey Sigstore/Rekor anchor.
+- **Other agents & roadmap** — the discipline is portable markdown in [`skills/`](skills) (Codex / other agents can adopt it). Next: Codex/Cursor adapters, an MCP server, a LangChain/LangGraph wrapper. (The external timestamp anchor, previously roadmapped as "turnkey Sigstore/Rekor," shipped via OpenTimestamps instead — see [above](#external-anchor-what-it-proves-and-what-it-doesnt) for the tradeoff.)
 
 ## What this is not
 
