@@ -13,12 +13,16 @@ Pure standard library; no third-party dependencies.
 """
 from .anchor import (
     AnchorResult,
+    ExternalAnchorError,
     build_manifest,
+    external_anchor,
+    external_anchor_path_for,
     git_committed_time,
     ledger_head,
     manifest_path_for,
     ots_available,
     verify_anchor,
+    verify_external_anchor,
     write_manifest,
 )
 from .ledger import (
@@ -55,6 +59,10 @@ __all__ = [
     "ledger_head",
     "ots_available",
     "git_committed_time",
+    "ExternalAnchorError",
+    "external_anchor",
+    "external_anchor_path_for",
+    "verify_external_anchor",
 ]
 
 __version__ = "0.1.2"

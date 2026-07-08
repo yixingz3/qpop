@@ -26,6 +26,9 @@ classifiers = [
 ]
 dependencies = []
 
+[project.optional-dependencies]
+anchor = ["opentimestamps-client>=0.7.0"]
+
 [project.urls]
 Homepage = "https://github.com/yixingz3/qpop"
 Repository = "https://github.com/yixingz3/qpop"
