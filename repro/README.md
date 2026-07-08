@@ -12,9 +12,11 @@ needs `pdflatex` + `bibtex`. Total time is under a minute, excluding the paper b
 make test            # or: python -m pytest -q
 ```
 
-Expected: **`21 passed`** — 9 ledger + 7 anchor + 5 schema tests covering field-tamper, insert,
-delete, reorder, terminal re-registration, tertiary-only blocking, anchor drift-detection, and
-schema/fixture validation (with `format: date` enforced).
+Expected: **`31 passed, 1 skipped`** — 9 ledger + 7 local-anchor + 11 external-anchor (WI-19;
+1 skipped by default — a true-network OpenTimestamps round-trip, opt in with
+`QPOP_TEST_LIVE_OTS=1`) + 5 schema tests, covering field-tamper, insert, delete, reorder,
+terminal re-registration, tertiary-only blocking, local- and external-anchor drift-detection,
+and schema/fixture validation (with `format: date` enforced).
 
 ## 2. Verify the shipped sample ledger (~1s)
 
@@ -43,6 +45,22 @@ python scripts/qpop.py verify-anchor data/synthetic/qpop_ledger_sample.jsonl
 Expected: **`anchor OK`**. Now append or edit an entry and re-run `verify-anchor`: it reports
 the head/digest drift and exits non-zero. The `.anchor.json` is gitignored; add `--ots` to
 also OpenTimestamps-stamp it if the client is installed.
+
+The local manifest above proves *what* is anchored, not *when* — for a "registered before the
+outcome" claim you need an external, publicly-dated service too:
+
+```bash
+python scripts/qpop.py anchor external data/synthetic/qpop_ledger_sample.jsonl --method ots
+python scripts/qpop.py verify-external data/synthetic/qpop_ledger_sample.jsonl
+```
+
+Expected (with `pip install forward-qpop[anchor]` installed and network access): a
+`<ledger>.external-anchor.json` sidecar with `"status": "submitted"`, then **`external anchor
+OK`**. Without the `ots` client on `PATH` (or offline), the first command exits non-zero with a
+clear "not found" / network-failure message and writes no sidecar — it never silently claims
+anchored. This step isn't part of `make test` (see [CI: OpenTimestamps live round-trip
+(manual)](../.github/workflows/ci.yml), `workflow_dispatch`-gated, since calendar-server
+reachability is outside this repo's control).
 
 ## 5. Fixtures match the published schemas (~1s, needs `pip install jsonschema`)
 

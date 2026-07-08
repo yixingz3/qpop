@@ -7,7 +7,8 @@ Register a hypothesis — a claim, dated evidence, measurable exit triggers, and
 *before* the evaluation window opens. Each entry is content-hashed over its frozen fields and
 chained to its predecessor, so the record proves **what was predicted** and that no entry was later
 edited, inserted, deleted, or reordered. Proving it was registered *before* an outcome (wall-clock
-time) needs an external anchor — see [`anchor` / `verify-anchor`](#cli).
+time) needs an external anchor — see [`anchor` / `verify-anchor` / `anchor external` /
+`verify-external`](#cli).
 
 This is the domain-agnostic core of the **Forward-QPOP** protocol from the methods paper
 *Forward-Registered, Auditable LLM-Assisted Research* — useful for any pre-registered
@@ -22,6 +23,9 @@ work (ML experiments, forecasts, studies), not only the finance testbed in the p
 
 ```bash
 pip install forward-qpop
+
+# optional: adds `opentimestamps-client`, needed for `anchor external --method ots`
+pip install "forward-qpop[anchor]"
 ```
 
 ## Quickstart
@@ -60,9 +64,17 @@ print(res.ok, res.n_entries, res.problems)
 ```bash
 forward-qpop verify ledger.jsonl          # exit 0 if intact, 1 (with details) if tampered
 forward-qpop show   ledger.jsonl          # list entries
-forward-qpop anchor ledger.jsonl          # manifest committing to the head (bind to a public commit / OpenTimestamps)
+forward-qpop anchor ledger.jsonl          # local manifest committing to the head
 forward-qpop verify-anchor ledger.jsonl   # detect any drift since anchoring
+
+# external anchor -- a publicly-dated, append-only submission (WI-19)
+forward-qpop anchor external ledger.jsonl --method ots   # submit the head digest to OpenTimestamps
+forward-qpop verify-external ledger.jsonl                # detect drift since the external submission
 ```
+
+`anchor external` requires the `anchor` extra (`pip install forward-qpop[anchor]`) and network
+access; a missing `ots` binary or a network failure exits non-zero with a clear message and never
+writes a sidecar that falsely claims success.
 
 ## Why forward, and why a chain
 
@@ -70,8 +82,11 @@ A backward test of an LLM-scored process is structurally invalid (the outcomes a
 already in the model's training data). Pre-registration replaces "fit the past" with
 "commit, then observe the future"; the hash chain makes that commitment **auditable** — an external
 reviewer can confirm that no past entry was silently changed. Proving the entry existed *before* its
-outcome additionally requires binding the ledger head to an external, publicly-dated record (a pushed
-Git commit, or OpenTimestamps) via `anchor` / `verify-anchor`.
+outcome additionally requires binding the ledger head to an external, publicly-dated record: a
+pushed Git commit (via `anchor` / `verify-anchor`), or a submission to a public timestamp service
+(via `anchor external` / `verify-external`, currently OpenTimestamps — see the [main repo
+README](https://github.com/yixingz3/qpop#external-anchor-what-it-proves-and-what-it-doesnt) for the
+OTS-vs-Sigstore/Rekor tradeoff).
 
 ## License
 

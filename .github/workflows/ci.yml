@@ -4,6 +4,16 @@ on:
   push:
     branches: [main]
   pull_request:
+  workflow_dispatch:
+    inputs:
+      run_live_ots_roundtrip:
+        description: >-
+          Also run the live OpenTimestamps external-anchor round-trip (real network call to
+          the public calendar servers). Off by default: calendar-server reachability is
+          outside this repo's control, so it's excluded from the required push/PR triggers
+          to keep required CI deterministic.
+        type: boolean
+        default: false
 
 jobs:
   test:
@@ -52,3 +62,30 @@ jobs:
           python -m pip install dist/*.whl
           forward-qpop --help
           forward-qpop verify data/synthetic/qpop_ledger_sample.jsonl
+
+  external-anchor-live:
+    name: External anchor -- live OpenTimestamps round-trip (manual, non-blocking)
+    if: github.event_name == 'workflow_dispatch' && inputs.run_live_ots_roundtrip
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install with the anchor extra (opentimestamps-client)
+        run: python -m pip install --upgrade pip -e ".[anchor]" pytest
+
+      - name: Live external-anchor round-trip against a scratch ledger
+        run: |
+          cp data/synthetic/qpop_ledger_sample.jsonl /tmp/live_ledger.jsonl
+          python scripts/qpop.py anchor /tmp/live_ledger.jsonl
+          python scripts/qpop.py anchor external /tmp/live_ledger.jsonl --method ots
+          python scripts/qpop.py verify-external /tmp/live_ledger.jsonl
+          cat /tmp/live_ledger.jsonl.external-anchor.json
+
+      - name: Live network test (QPOP_TEST_LIVE_OTS=1)
+        env:
+          QPOP_TEST_LIVE_OTS: "1"
+        run: python -m pytest -q tests/test_external_anchor.py -k live -v
