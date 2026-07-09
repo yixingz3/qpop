@@ -5,7 +5,9 @@ triggers and positions use a sequential test with explicit Type-I error control 
 anytime-valid / e-value formulation from the safe-testing literature), so that monitoring
 many triggers across many positions does not inflate false "Falsified" calls.* Module:
 [`src/forward_qpop/evalue.py`](../../src/forward_qpop/evalue.py); tests:
-[`tests/test_evalue.py`](../../tests/test_evalue.py).
+[`tests/test_evalue.py`](../../tests/test_evalue.py) (the standalone e-process, 18 tests)
+and [`tests/test_evalue_ledger.py`](../../tests/test_evalue_ledger.py) (the ledger wiring,
+17 tests — see [§"How the ledger integrates it"](#how-the-ledger-integrates-it-wi-29-wired-2026-07-09) below).
 
 ## The problem it solves
 
@@ -84,24 +86,71 @@ shared evidence and break Type-I control; averaging stays valid regardless of th
 dependence structure. We therefore **default to averaging** and expose product only for
 the genuinely-independent case, to be chosen explicitly at the call site.
 
-## How the ledger integrates it
+## How the ledger integrates it (WI-29, wired 2026-07-09)
 
 The exit triggers are already the pre-registered contract in the admission entry
 (`exit_triggers`, see [`schemas/exit_trigger.schema.json`](../../schemas/exit_trigger.schema.json)).
-The sequential test rides on top of that contract:
+The sequential test rides on top of that contract via two additive, schema-compatible
+fields (neither requires a breaking schema change — the ledger's `admission` /
+`belief_update` entry variants don't set `additionalProperties: false`, so both are
+ordinary domain-specific payload, hashed like every other frozen field):
 
-1. **At registration** — fix `p0`, `p1`, `α`, and the combiner in the admission entry
-   (they are pre-registration parameters, hashed like every other frozen field). A
-   `SequentialTriggerTest(p0, p1, combine)` is instantiated with empty state.
-2. **At each monitoring step** — for every trigger whose contract was checked, call
-   `test.observe(trigger_id, fired)`. The per-entry test state is a plain dict from
-   `test.to_state()` and is persisted alongside the entry (round-trips via
-   `SequentialTriggerTest.from_state`), so monitoring can resume across runs.
-3. **At close** — `test.decision(α)` returns `"falsified"` iff the merged e-value crosses
-   `1/α`; the ledger's `close(id, "falsified", observed={...})` records the terminal
-   outcome with the e-value and per-trigger state in `observed`. If the window ends
-   without crossing, the outcome is decided by the other pre-registered gates
-   (Supported / Weakened), never by an after-the-fact narrative.
+1. **At registration** — pass `p0`, `p1`, and the combiner as a top-level `"evalue"`
+   field via `fields`:
+
+   ```python
+   led.register(
+       "H-1", "claim", ...,
+       exit_triggers=[{"id": "supply_easing", "metric": "...", "op": "reverses",
+                       "data_source": {"tier": "secondary"}}],
+       fields={"evalue": {"p0": 0.1, "p1": 0.6, "combine": "average"}},
+   )
+   ```
+
+   This is the pre-registration commitment: `p0`/`p1`/`combine` are frozen into the
+   admission entry's content hash, so they cannot be tuned after the window opens.
+2. **At each monitoring step** — record a belief_update with a top-level
+   `"trigger_checks"` field mapping the triggers checked this step to whether they fired:
+
+   ```python
+   led.update("H-1", evidence=[...], fields={"trigger_checks": {"supply_easing": False}})
+   ```
+
+   Every trigger id named here must already be in the admission's `exit_triggers`
+   contract — an unregistered id is a loud `EvalueLedgerError`, not a silent no-op.
+3. **`forward-qpop evalue <ledger.jsonl>`** (or `run_ledger_evalue()` from Python) walks
+   the ledger, replays each hypothesis's `trigger_checks` stream through its own
+   `SequentialTriggerTest`, and reports the merged e-value, the `1/α` threshold
+   (`--alpha`, default `0.05`), and the decision (`continue` / `falsified`). Hypotheses
+   with no `"evalue"` config are reported as `no_config` — **skipped, not fabricated**.
+4. **State resumes across invocations, never mutating the ledger.** Each run persists
+   `SequentialTriggerTest.to_state()` plus the last-processed `entry_hash` per hypothesis
+   in a JSON **sidecar** (`<ledger>.evalue-state.json` by default — `--state` to
+   override). The next run loads that sidecar via `SequentialTriggerTest.from_state()`
+   and folds in only the belief_update entries appended since, so the anytime-valid
+   guarantee holds across repeated command invocations, not just within one process. If
+   the ledger is ever rewritten/truncated out from under a sidecar (its recorded
+   `last_entry_hash` can no longer be found), the command fails loudly rather than
+   silently re-deriving or double-counting.
+5. **The decision is advisory, not self-executing.** A `"falsified"` report is a signal
+   for the operator (or an automation) to `close(id, "falsified", observed={...})` with
+   the e-value and per-trigger state recorded in `observed` — `run_ledger_evalue` never
+   calls `close()` itself. If the window ends without crossing `1/α`, the outcome is
+   still decided by the other pre-registered gates (Supported / Weakened), never by an
+   after-the-fact narrative.
+
+```bash
+forward-qpop evalue ledger.jsonl                       # table report, default alpha=0.05
+forward-qpop evalue ledger.jsonl --alpha 0.1 --json     # JSON report to stdout
+forward-qpop evalue ledger.jsonl --out report.json      # also write the JSON report to a file
+forward-qpop evalue ledger.jsonl --no-persist            # dry run: compute, don't touch the sidecar
+```
+
+Tests: [`tests/test_evalue_ledger.py`](../../tests/test_evalue_ledger.py) — fresh run,
+resumed run (state round-trip, including "resume matches a from-scratch replay"),
+falsified-at-threshold, and five loud-failure cases (missing `p0`/`p1`, malformed
+`trigger_checks`, unregistered trigger id, invalid `alpha`, rewritten-ledger/sidecar
+mismatch), plus CLI-level table/JSON/`--out`/failure-exit-code coverage.
 
 ## Limitations (v1)
 
@@ -114,6 +163,16 @@ The sequential test rides on top of that contract:
 - **Directionality** — the null is "the trigger rarely fires if the thesis holds," so the
   test accrues evidence *against* the thesis as fires accumulate. Triggers whose *absence*
   falsifies a thesis must be encoded so that the falsifying event is the "fire."
+- **`alpha` is a report-time parameter, not a frozen one** — `decision(alpha)` (and the CLI's
+  `--alpha`) can be re-evaluated at any threshold without touching the ledger, matching
+  Ville's inequality (valid at any `alpha` simultaneously); it is not itself hashed into
+  the admission entry the way `p0`/`p1`/`combine` are. Treat the reporting `alpha` as
+  operationally pre-registered in the surrounding process (e.g. a fixed project-wide
+  default) rather than picked after seeing the data.
+- **The `"evalue"` / `"trigger_checks"` fields are a convention, not schema-enforced** —
+  `schemas/qpop_entry.schema.json` permits them (no `additionalProperties: false` at the
+  top level) but doesn't require or validate their shape; malformed input is caught by
+  `run_ledger_evalue`'s own checks (`EvalueLedgerError`), not by JSON Schema validation.
 
 ## References (mark for citation-verification before paper use)
 

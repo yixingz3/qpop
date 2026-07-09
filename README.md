@@ -91,8 +91,8 @@ insert one, delete one, or reorder them, and `verify` fails (and exits non-zero 
 | Area | Status |
 |---|---|
 | Claude Code plugin discipline (`auditable-research` + `/qpop:*`) | **Working — v0.1** |
-| Hash-chained Python ledger (`forward_qpop`) + CLI | **Working** (49/50 tests, 1 network test skipped by default) |
-| Anytime-valid sequential trigger test (`evalue`) — Type-I control over many triggers | **Working** (18/18 tests) — e-value / Ville, [methods note](research/docs/EVALUE_METHODS.md) |
+| Hash-chained Python ledger (`forward_qpop`) + CLI | **Working** (66/67 tests, 1 network test skipped by default) |
+| Anytime-valid sequential trigger test (`evalue`) — Type-I control over many triggers, wired to the ledger (`forward-qpop evalue`) | **Working** (18 e-process + 17 ledger-integration tests) — e-value / Ville, [methods note](research/docs/EVALUE_METHODS.md) |
 | Local anchor manifest (`anchor` / `verify-anchor`) | **Working** — manifest + drift-detection + git / local OpenTimestamps stamp |
 | External timestamp anchor (`anchor external` / `verify-external`) | **Working** — submits to OpenTimestamps, sidecar receipt + drift-detection ([details](#external-anchor-what-it-proves-and-what-it-doesnt)) |
 | JSON Schemas for cards / entries / runs | **Included** ([`schemas/`](schemas)) |

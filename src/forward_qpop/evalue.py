@@ -65,11 +65,42 @@ References (verify titles/authors/venues before citing in the paper):
       Ann. Statist. 49(3):1736-1754 (arithmetic averaging is the admissible merge
       under arbitrary dependence).
 See research/docs/EVALUE_METHODS.md for the one-page methods note.
+
+## Ledger integration (WI-29)
+
+The rest of this module (above) is the standalone e-process; the section below wires it
+onto a real :class:`forward_qpop.ledger.Ledger` without any schema-breaking change:
+
+* **Pre-registration parameters** (``p0``, ``p1``, ``combine``) live in the *admission*
+  entry under a top-level ``"evalue"`` key -- an ordinary domain-specific field (like
+  ``"node"`` or ``"decomposed_confidence"`` in the existing schema), passed via
+  ``Ledger.register(..., fields={"evalue": {"p0": ..., "p1": ..., "combine": ...}})``.
+  It is hashed like every other frozen field, so the bet is pre-committed, not tunable
+  after the fact.
+* **Per-step trigger observations** live in *belief_update* entries under a top-level
+  ``"trigger_checks"`` key: ``{trigger_id: fired_bool, ...}``, passed via
+  ``Ledger.update(..., fields={"trigger_checks": {...}})``. Each belief_update is one
+  monitoring step; the triggers it names must already be in the admission's
+  ``exit_triggers`` contract.
+* :func:`run_ledger_evalue` walks a ledger, replays each hypothesis's belief_update
+  stream through its own :class:`SequentialTriggerTest`, and reports the merged e-value,
+  the ``1/alpha`` threshold, and the decision. State (the e-process, not the ledger) is
+  persisted in a JSON **sidecar** file next to the ledger (``<ledger>.evalue-state.json``
+  by default) so repeated invocations resume rather than silently re-deriving --
+  anytime-valid across runs, never mutating a ledger row.
+* Hypotheses with no ``"evalue"`` config are reported as ``no_config`` (skipped, not
+  fabricated) -- see :data:`EVALUE_CONFIG_FIELD`.
+
+CLI: ``forward-qpop evalue <ledger.jsonl> [--alpha 0.05] [--state <path>] [--json] [--out <path>]``.
 """
 from __future__ import annotations
 
-from dataclasses import dataclass, field
-from typing import Dict, Iterable, List
+import json
+from dataclasses import asdict, dataclass, field
+from pathlib import Path
+from typing import Any, Dict, Iterable, List, Optional, Tuple, Union
+
+from .ledger import Ledger
 
 __all__ = [
     "EProcess",
@@ -78,11 +109,25 @@ __all__ = [
     "average_evalues",
     "CONTINUE",
     "FALSIFIED",
+    "EVALUE_CONFIG_FIELD",
+    "TRIGGER_CHECKS_FIELD",
+    "EVALUE_STATE_SCHEMA",
+    "EvalueLedgerError",
+    "EvalueReportRow",
+    "default_state_path_for",
+    "load_evalue_state",
+    "save_evalue_state",
+    "run_ledger_evalue",
 ]
 
 CONTINUE: str = "continue"
 FALSIFIED: str = "falsified"
 _COMBINERS = ("product", "average")
+
+# Ledger integration (WI-29): field names for the two additive, schema-compatible hooks.
+EVALUE_CONFIG_FIELD: str = "evalue"          # admission entry: {"p0", "p1", "combine"?}
+TRIGGER_CHECKS_FIELD: str = "trigger_checks"  # belief_update entry: {trigger_id: fired_bool}
+EVALUE_STATE_SCHEMA: str = "forward-qpop/evalue-state@1"
 
 
 def _check_p0_p1(p0: float, p1: float) -> None:
@@ -204,6 +249,10 @@ class SequentialTriggerTest:
     def trigger_ids(self) -> List[str]:
         return list(self._procs.keys())
 
+    def total_observations(self) -> int:
+        """Total observe() calls folded in across every trigger id."""
+        return sum(p.n for p in self._procs.values())
+
     def e_value(self) -> float:
         """The merged e-value across every trigger's e-process (1.0 if none seen)."""
         es = [p.e_value() for p in self._procs.values()]
@@ -236,3 +285,201 @@ class SequentialTriggerTest:
             tid: EProcess.from_state(ps) for tid, ps in state.get("procs", {}).items()
         }
         return st
+
+
+# --------------------------------------------------------------------------------------
+# Ledger integration (WI-29): replay a ledger's belief_update stream through a
+# SequentialTriggerTest per hypothesis, resuming from a persisted sidecar.
+# --------------------------------------------------------------------------------------
+
+
+class EvalueLedgerError(RuntimeError):
+    """Raised when the ledger's e-value wiring is malformed -- loud, never silent.
+
+    Covers: an ``"evalue"`` admission config missing ``p0``/``p1``; a ``"trigger_checks"``
+    payload that isn't a ``{trigger_id: bool}`` mapping; a trigger id not present in the
+    hypothesis's registered ``exit_triggers``; or a state sidecar whose ``last_entry_hash``
+    can no longer be found in the ledger (the ledger was rewritten out from under the
+    sidecar -- resuming would silently skip or double-count observations).
+    """
+
+
+@dataclass
+class EvalueReportRow:
+    """One report line: a hypothesis's e-value decision, or why it was skipped."""
+
+    id: str
+    status: str  # "ok" | "no_config"
+    p0: Optional[float] = None
+    p1: Optional[float] = None
+    combine: Optional[str] = None
+    n_triggers: int = 0
+    n_observations: int = 0
+    e_value: Optional[float] = None
+    threshold: Optional[float] = None
+    decision: Optional[str] = None
+    ledger_outcome: Optional[str] = None
+
+    def to_dict(self) -> Dict[str, Any]:
+        return asdict(self)
+
+
+def default_state_path_for(ledger_path: Union[str, Path]) -> Path:
+    p = Path(ledger_path)
+    return p.with_name(p.name + ".evalue-state.json")
+
+
+def load_evalue_state(state_path: Union[str, Path]) -> dict:
+    """Load the e-value state sidecar, or a fresh empty one if it doesn't exist yet."""
+    p = Path(state_path)
+    if not p.exists():
+        return {"schema": EVALUE_STATE_SCHEMA, "hypotheses": {}}
+    return json.loads(p.read_text(encoding="utf-8"))
+
+
+def save_evalue_state(state_path: Union[str, Path], state: dict) -> None:
+    """Write the e-value state sidecar. Never touches the ledger file itself."""
+    p = Path(state_path)
+    p.parent.mkdir(parents=True, exist_ok=True)
+    p.write_text(json.dumps(state, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+
+
+def _group_by_id(entries: Iterable[dict]) -> Dict[str, List[dict]]:
+    out: Dict[str, List[dict]] = {}
+    for e in entries:
+        out.setdefault(e["id"], []).append(e)
+    return out
+
+
+def _evalue_config(admission: dict) -> Tuple[float, float, str]:
+    cfg = admission.get(EVALUE_CONFIG_FIELD)
+    if not isinstance(cfg, dict):
+        raise EvalueLedgerError(
+            f"internal: _evalue_config called without a valid {EVALUE_CONFIG_FIELD!r} config"
+        )
+    try:
+        p0 = float(cfg["p0"])
+        p1 = float(cfg["p1"])
+    except (KeyError, TypeError, ValueError) as exc:
+        raise EvalueLedgerError(
+            f"{admission.get('id', '?')}: {EVALUE_CONFIG_FIELD!r} admission config must "
+            f"include numeric 'p0' and 'p1' (got {cfg!r})"
+        ) from exc
+    combine = cfg.get("combine", "average")
+    return p0, p1, combine
+
+
+def run_ledger_evalue(
+    ledger_path: Union[str, Path],
+    *,
+    alpha: float = 0.05,
+    state_path: Optional[Union[str, Path]] = None,
+    persist: bool = True,
+) -> Tuple[List[EvalueReportRow], dict]:
+    """Fold newly-recorded trigger checks into each hypothesis's e-process and report.
+
+    Anytime-valid across repeated invocations: the merged e-value only ever grows by
+    folding in observations once each (tracked via ``last_entry_hash`` in the sidecar),
+    so re-running after new belief_update entries land resumes rather than re-derives.
+    The ledger file itself is read-only here -- state lives entirely in the sidecar.
+
+    Returns ``(rows, state)``; ``state`` is the (possibly updated) sidecar dict, already
+    written to disk unless ``persist=False`` (dry run).
+    """
+    if not (0.0 < alpha < 1.0):
+        raise ValueError(f"alpha must be in (0, 1), got {alpha!r}")
+
+    entries = Ledger(ledger_path).entries()
+    by_id = _group_by_id(entries)
+    sp = Path(state_path) if state_path else default_state_path_for(ledger_path)
+    state = load_evalue_state(sp)
+    hyps_state: Dict[str, dict] = state.setdefault("hypotheses", {})
+
+    rows: List[EvalueReportRow] = []
+    for hid, hentries in by_id.items():
+        admission = next((e for e in hentries if e.get("type") == "admission"), None)
+        if admission is None:
+            continue  # every hypothesis id roots at an admission entry; nothing to do
+
+        ledger_outcome = next(
+            (e.get("status") for e in hentries if e.get("type") == "outcome"), None
+        )
+        cfg_present = isinstance(admission.get(EVALUE_CONFIG_FIELD), dict)
+        saved = hyps_state.get(hid)
+
+        if not cfg_present and saved is None:
+            rows.append(EvalueReportRow(id=hid, status="no_config", ledger_outcome=ledger_outcome))
+            continue
+
+        registered_trigger_ids = {t["id"] for t in admission.get("exit_triggers", []) if "id" in t}
+
+        if saved is not None:
+            test = SequentialTriggerTest.from_state(saved["test_state"])
+            resume_after_hash = saved.get("last_entry_hash")
+            skipping = resume_after_hash is not None
+        else:
+            p0, p1, combine = _evalue_config(admission)
+            test = SequentialTriggerTest(p0=p0, p1=p1, combine=combine)
+            resume_after_hash = None
+            skipping = False
+
+        # `resume_after_hash` is the fixed target we're skipping up through (from the
+        # sidecar); `last_processed_hash` is a running tracker of the latest entry seen,
+        # re-saved at the end. Keeping these as two variables matters: overwriting the
+        # target while still searching for it would make the search unfindable.
+        found_resume_point = not skipping
+        last_processed_hash = None
+        for e in hentries:
+            eh = e.get("entry_hash")
+            if skipping:
+                if eh == resume_after_hash:
+                    skipping = False
+                    found_resume_point = True
+                last_processed_hash = eh
+                continue
+            if e.get("type") == "belief_update":
+                checks = e.get(TRIGGER_CHECKS_FIELD)
+                if checks:
+                    if not isinstance(checks, dict):
+                        raise EvalueLedgerError(
+                            f"{hid}: {TRIGGER_CHECKS_FIELD!r} must be a dict of "
+                            f"{{trigger_id: bool}}, got {type(checks).__name__}"
+                        )
+                    for tid, fired in sorted(checks.items()):
+                        if registered_trigger_ids and tid not in registered_trigger_ids:
+                            raise EvalueLedgerError(
+                                f"{hid}: {TRIGGER_CHECKS_FIELD!r} references unregistered "
+                                f"trigger id {tid!r} (registered: {sorted(registered_trigger_ids)})"
+                            )
+                        test.observe(tid, bool(fired))
+            last_processed_hash = eh
+
+        if not found_resume_point:
+            raise EvalueLedgerError(
+                f"{hid}: state sidecar's last_entry_hash was not found in the ledger -- "
+                f"the ledger was rewritten/truncated since the last `evalue` run; refusing "
+                f"to silently skip or double-count observations (delete the sidecar to "
+                f"restart this hypothesis from scratch if that's intended)"
+            )
+
+        hyps_state[hid] = {"test_state": test.to_state(), "last_entry_hash": last_processed_hash}
+        e_value = test.e_value()
+        rows.append(
+            EvalueReportRow(
+                id=hid,
+                status="ok",
+                p0=test.p0,
+                p1=test.p1,
+                combine=test.combine,
+                n_triggers=len(test.trigger_ids()),
+                n_observations=test.total_observations(),
+                e_value=e_value,
+                threshold=1.0 / alpha,
+                decision=test.decision(alpha),
+                ledger_outcome=ledger_outcome,
+            )
+        )
+
+    if persist:
+        save_evalue_state(sp, state)
+    return rows, state

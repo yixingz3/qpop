@@ -9,6 +9,7 @@
   forward-qpop verify-anchor <ledger.jsonl> [--manifest <path>]
   forward-qpop anchor external <ledger.jsonl> [--method ots] [--manifest <path>] [--sidecar <path>]
   forward-qpop verify-external <ledger.jsonl> [--sidecar <path>]
+  forward-qpop evalue   <ledger.jsonl> [--alpha 0.05] [--state <path>] [--json] [--out <path>] [--no-persist]
 
 `anchor external ...` is sugar for `anchor ... --external ...`: `main()` rewrites a leading
 ["anchor", "external", ...] argv into ["anchor", "...", "--external", "ots", ...] before
@@ -22,12 +23,18 @@ timestamp (a public commit, or OpenTimestamps); `verify-anchor` detects drift si
 service (OpenTimestamps by default) and records the outcome in a `<ledger>.external-anchor.json`
 sidecar; `verify-external` checks that sidecar's digest against the current ledger head. A
 network failure exits non-zero with a clear message -- it never silently claims anchored.
+`evalue` replays each hypothesis's `trigger_checks` (belief_update entries) through its
+pre-registered `SequentialTriggerTest` (the `"evalue"` admission config) and reports the
+merged e-value, the `1/alpha` threshold, and the decision; state resumes across runs from a
+`<ledger>.evalue-state.json` sidecar (never mutates the ledger) -- see
+`research/docs/EVALUE_METHODS.md` for the wiring.
 """
 from __future__ import annotations
 
 import argparse
 import json
 import sys
+from pathlib import Path
 from typing import List, Optional, Sequence
 
 from .anchor import (
@@ -40,6 +47,7 @@ from .anchor import (
     verify_external_anchor,
     write_manifest,
 )
+from .evalue import FALSIFIED, EvalueLedgerError, EvalueReportRow, run_ledger_evalue
 from .ledger import Ledger, TERMINAL_STATUSES, verify_file
 
 
@@ -128,6 +136,17 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     )
     pve.add_argument("path")
     pve.add_argument("--sidecar", default=None, help="External-anchor sidecar path (default: <ledger>.external-anchor.json).")
+
+    pev = sub.add_parser(
+        "evalue",
+        help="Run the anytime-valid sequential trigger test over a ledger's registered hypotheses.",
+    )
+    pev.add_argument("path")
+    pev.add_argument("--alpha", type=float, default=0.05, help="Type-I error bound; falsified iff e-value >= 1/alpha (default: 0.05).")
+    pev.add_argument("--state", default=None, help="State sidecar path (default: <ledger>.evalue-state.json).")
+    pev.add_argument("--json", dest="as_json", action="store_true", help="Print the report as JSON instead of a table.")
+    pev.add_argument("--out", default=None, help="Also write the JSON report to this path.")
+    pev.add_argument("--no-persist", dest="no_persist", action="store_true", help="Compute the report without writing/updating the state sidecar (dry run).")
 
     args = p.parse_args(argv)
 
@@ -225,7 +244,38 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         print("external anchor OK" if res.ok else "EXTERNAL ANCHOR MISMATCH")
         return 0 if res.ok else 1
 
+    if args.cmd == "evalue":
+        try:
+            rows, _state = run_ledger_evalue(
+                args.path, alpha=args.alpha, state_path=args.state, persist=not args.no_persist,
+            )
+        except (EvalueLedgerError, ValueError) as exc:
+            print(f"evalue FAILED: {exc}")
+            return 1
+        report = [r.to_dict() for r in rows]
+        if args.out:
+            outp = Path(args.out)
+            outp.parent.mkdir(parents=True, exist_ok=True)
+            outp.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+        if args.as_json:
+            print(json.dumps(report, indent=2, sort_keys=True))
+        else:
+            _print_evalue_report(rows, args.alpha)
+        return 0  # a "falsified" decision is a valid outcome, not a command failure
+
     return 2  # unreachable: subparser is required
+
+
+def _print_evalue_report(rows: List[EvalueReportRow], alpha: float) -> None:
+    print(f"e-value sequential trigger test -- alpha={alpha}, threshold(1/alpha)={1.0 / alpha:.4f}")
+    print(f"{'ID':20} {'STATUS':10} {'E-VALUE':>12} {'DECISION':10} {'LEDGER-OUTCOME':15}")
+    for r in rows:
+        outcome = r.ledger_outcome or "open"
+        if r.status != "ok":
+            print(f"{r.id:20} {r.status:10} {'--':>12} {'--':10} {outcome:15}")
+            continue
+        falsified_flag = " *" if r.decision == FALSIFIED else ""
+        print(f"{r.id:20} {r.status:10} {r.e_value:12.4f} {r.decision:10} {outcome:15}{falsified_flag}")
 
 
 if __name__ == "__main__":
