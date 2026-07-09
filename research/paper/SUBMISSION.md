@@ -13,6 +13,24 @@ Capital-Markets Testbed* — Yixing Zheng (NYU Stern). Source: [`paper.tex`](pap
 | Version | Date | What |
 |---|---|---|
 | v0.1 | 2026-06-29 | SSRN submission draft (built 2026-06-29; `paper.log`: 28 pages) |
+| v2 (draft) | 2026-07-09 | v2 revision drafted on branch `paper-v2` (executes the 2026-07-08 round-3 review §5 edit map). **Headline reversal:** H5 raw auditor precision is now **0.775 (31/40), Wilson [0.625, 0.877]** on a documented, seeded `n=40` sample — the pre-committed **≥0.80 raw gate is NOT met** (adjudicated precision 1.00, 9/9 flags upheld); reported as a result, per the paper's own no-stories discipline. Also folded in: both remaining ablation arms (debate-only ~37% / no-forward-lock ~41%; replicate agreement 89% / 82%; monotone ladder 100→74→66→~41→~37→0%), config-only uranium portability (H3 clause (c) → demonstrated), the e-value module (now ledger-integrated — frozen per-admission commitment + `forward-qpop evalue` CLI, 18 module + 17 integration tests) and the external OpenTimestamps anchor (opt-in / manual by design), neither used in the pilot, a refreshed ledger-derived funnel aggregate (9 rounds / 318 cards / 110 gate-pass / 0 admits, window 2026-06-08→2026-07-06), and a softened release-boundary table (gate + scoring engine is private). Not yet built as a public version — pending operator review. |
+
+## v2 release plan (2026-07-09)
+
+Sequencing decided for the `paper-v2` draft, after operator review:
+
+- **SSRN UPDATE first.** v1 is still a `PRELIMINARY_UPLOAD` — SSRN has not yet processed or posted it
+  (no Abstract ID assigned), so the v2 replacement will become the *first public version*. Update the
+  SSRN submission with the v2 `paper.tex` as soon as the operator signs off; there is no live public v1
+  to supersede, only a preliminary upload to replace. The H5 headline reversal is the integrity clock —
+  ship the SSRN revision rather than sit on a known gate-failure until the December H4 window.
+- **arXiv on endorsement.** Upload the v2 `.tex` + `references.bib` (via `arxiv/`, line-1 comment
+  scrubbed) the moment the operator obtains one cs.AI endorsement. Endorser prep is done
+  ([`../docs/ARXIV_ENDORSER_PREP.md`](../docs/ARXIV_ENDORSER_PREP.md) — verified shortlist + outreach
+  template); the endorsement request itself is the only remaining external blocker, and the v2 draft is
+  the artifact the request can point at.
+- **December (v2.1 / SSRN rev 2)** then carries only the H4 forward read-out + the forward-scoring
+  registry first cohort (+ the human-audit lane if that packet is filled by then).
 
 ## Planned v2 (target ~2026-12)
 
