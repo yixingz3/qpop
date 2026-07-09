@@ -6,7 +6,7 @@ Capital-Markets Testbed* — Yixing Zheng (NYU Stern). Source: [`paper.tex`](pap
 | Venue | Status | Date | Notes |
 |---|---|---|---|
 | SSRN | **Submitted** | 2026-06-29 | Pre-submission verification 2026-06-28 (all funnel numbers ledger-reconciled). eJournals: CSRN (AI Alert, Computing Methodology Alert), FEN (Asset Pricing & Valuation, Market Efficiency), ERN (Econometrics: Computational Techniques). JEL: C45, C12, C53, C81, C88, G11, G17. Abstract ID / URL: *pending — fill in when SSRN posts.* |
-| arXiv | Planned | — | cs.AI primary, q-fin.CP cross-list. Blocked on endorsement. Pre-upload: copy the source (do not edit the SSRN-submitted tex in place), scrub the line-1 `% … SSRN submission draft` comment, upload `.tex` + `references.bib` (figures are inline TikZ — no ancillary files). |
+| arXiv | Ready — needs endorser | — | cs.AI primary, q-fin.CP cross-list. **Source copy prepared (WI-21):** [`arxiv/paper.tex`](arxiv/paper.tex) + `references.bib` (+ `paper.bbl` fallback), line-1 `% … SSRN submission draft` comment scrubbed on the copy only (original tex untouched; diff = 1 line), builds clean (pdflatex+bibtex+pdflatex×2 → 28 pp, 0 undefined citations). Upload `.tex` + `references.bib` (figures are inline TikZ — no ancillary files). **Endorser prep (WI-20c):** [`../docs/ARXIV_ENDORSER_PREP.md`](../docs/ARXIV_ENDORSER_PREP.md) — verified cs.AI endorser shortlist + outreach template. Remaining blocker: operator obtains one manual (Path-2) endorsement, then upload. |
 
 ## Version log
 
