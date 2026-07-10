@@ -1,0 +1,89 @@
+{
+  "domain": "ai_supply_chain",
+  "batch_id": "ai-supply-chain-38card-ablation-pilot",
+  "batch_size": 38,
+  "provenance": "recorded_real_funnel_pilot_batch",
+  "source_docs": [
+    "examples/ai_supply_chain/README.md",
+    "src/prompts.md",
+    "research/docs/RESULTS_V2_WORKING.md"
+  ],
+  "reference_arm": "full_pipeline",
+  "arms": [
+    {
+      "arm": "ungated_screener",
+      "label": "Ungated LLM screener (no discipline)",
+      "admitted": 38,
+      "total": 38,
+      "replicates": 1,
+      "ablates": null
+    },
+    {
+      "arm": "no_bear_case_first",
+      "label": "- bear-case-first",
+      "admitted": 28,
+      "total": 38,
+      "replicates": 1,
+      "ablates": "bear_case_before_recommendation"
+    },
+    {
+      "arm": "no_overlap_penalty",
+      "label": "- overlap penalty",
+      "admitted": 25,
+      "total": 38,
+      "replicates": 1,
+      "ablates": "overlap_penalty"
+    },
+    {
+      "arm": "no_forward_lock",
+      "label": "No Forward-QPOP lock (pending arm c)",
+      "admitted_replicates": [14, 17],
+      "total": 38,
+      "replicates": 2,
+      "agreement": 0.82,
+      "ablates": "forward_lock"
+    },
+    {
+      "arm": "debate_only",
+      "label": "Debate-only, bull/bear judge, no forward lock (pending arm b)",
+      "admitted_replicates": [15, 13],
+      "total": 38,
+      "replicates": 2,
+      "agreement": 0.89,
+      "ablates": "bear_case_before_recommendation+forward_lock"
+    },
+    {
+      "arm": "full_pipeline",
+      "label": "Full pipeline (gate + seen-set + triage + bear-case-first + overlap + forward lock)",
+      "admitted": 0,
+      "total": 38,
+      "replicates": 1,
+      "ablates": null,
+      "is_reference": true
+    }
+  ],
+  "rejection_precision": {
+    "raw": {
+      "n": 40,
+      "justified": 31,
+      "point_estimate": 0.775,
+      "wilson_ci_95": [0.625, 0.877],
+      "sampling": "seeded, round-stratified, documented, content-hash-verifiable manifest over the 48 non-admitted candidates of the batch-era rounds (H5 discipline: no undocumented membership)"
+    },
+    "adjudicated": {
+      "n": 9,
+      "upheld": 9,
+      "point_estimate": 1.0,
+      "note": "every raw-audit FALSE_REJECTION flag escalated to a capital-at-risk re-judge with the full record; all 9 upheld. Secondary resolution figure -- never the headline (H5 discipline)."
+    },
+    "pilot_undocumented_n14": {
+      "n": 14,
+      "justified": 13,
+      "point_estimate": 0.93,
+      "wilson_ci_95": [0.69, 0.99],
+      "adjudicated": {"n": 1, "upheld": 1, "point_estimate": 1.0},
+      "note": "Superseded by the documented n=40 draw: membership was never enumerated or seeded. Kept for historical comparison only -- never reported as primary. This is the exact H5 lesson the design doc bakes into the benchmark protocol."
+    }
+  },
+  "notes": "Arm decisions/prompts: arms a-c (ungated_screener, no_bear_case_first, no_overlap_penalty) are recovered originals from the pilot run journals (src/prompts.md Sec 8a-8c); no_forward_lock and debate_only are freshly-run pending arms under the identical preserved 38-card batch and protocol (RESULTS_V2_WORKING.md). No per-card admit/reject membership is public -- only the aggregate counts, rates, and the H5 audit precision are released."
+}

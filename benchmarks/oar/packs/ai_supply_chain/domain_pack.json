@@ -1,0 +1,23 @@
+{
+  "name": "ai_supply_chain",
+  "domain_label": "AI accelerator supply chain",
+  "thesis_frame": "Chase the physical, hard-to-bypass chokepoints in the AI-accelerator supply chain; size by confidence; exit when the constraint eases.",
+  "substrate": "physical",
+  "finance_domain": true,
+  "ground_truth_provenance": "adjudicated",
+  "example_sets": {
+    "gaps_examples": ["memory / interposer capacity gaps", "power-delivery bottlenecks", "back-end test capacity"],
+    "social_sources": ["semiconductor-industry commentary (tertiary / idea-seed only)"],
+    "literature_examples": ["chokepoint / bottleneck-graph literature cited in research/docs/LITERATURE.md"],
+    "critical_input_examples": ["HBM", "advanced packaging (CoWoS/SoIC)", "leading-edge foundry", "EDA / litho / WFE"]
+  },
+  "node_list_ref": "examples/ai_supply_chain/README.md#the-chokepoints-illustrative",
+  "aggregate_results_ref": "aggregate_results.json",
+  "source_docs": [
+    "examples/ai_supply_chain/README.md",
+    "src/prompts.md",
+    "research/docs/RESULTS_V2_WORKING.md",
+    "research/docs/RESULTS_INITIAL.md"
+  ],
+  "privacy_note": "Aggregate-only. This pack ships the schema plus arm-level RESULTS as fixtures (admission counts, rates, and the recorded rejection-quality-audit precision) -- no per-card content, symbols, or held-book data. Per the release boundary (design doc Sec 6 / DISCLAIMER.md / ETHICS.md), the live engine, live positions, and broker/paid data stay private."
+}

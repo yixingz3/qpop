@@ -1,0 +1,30 @@
+{
+  "domain": "uranium_fuel_cycle",
+  "run_id": "uranium-config-swap-2026-07-07",
+  "provenance": "recorded_single_funnel_run",
+  "source_docs": ["research/docs/RESULTS_V2_WORKING.md"],
+  "funnel": {
+    "sourced": 20,
+    "lenses": 5,
+    "unique_symbols": 10,
+    "gate_pass": 8,
+    "gate_fail": 2,
+    "gate_fail_reasons": ["foreign_otc_sub_liquidity", "min_price"],
+    "triage_pursue": 4,
+    "triage_drop": 3,
+    "triage_drop_reasons": ["commodity_priced", "pre_revenue", "pre_revenue"],
+    "bear_case_admit_flags": 1,
+    "bear_case_watchlist": 2,
+    "bear_case_reject": 1,
+    "adjudicated_admitted": 1,
+    "adjudicated_upheld": true,
+    "adjudicated_sizing": "probationary_half_size",
+    "exit_triggers_count": 5
+  },
+  "admission_rate": {
+    "of_sourced": 0.05,
+    "of_unique_symbols": 0.1,
+    "of_gate_pass": 0.125
+  },
+  "notes": "Single full-funnel run, not an ablation batch -- no arms[] here. Demonstrates the meta.domain config-only swap (H3 clause c): one new configuration file, zero prompt-construction code changes (verified: added-files-only; no generated prompt contains a first-domain string). Not part of the discipline-curve reference (the AI-supply-chain 38-card batch is)."
+}

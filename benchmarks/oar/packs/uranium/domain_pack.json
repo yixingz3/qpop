@@ -1,0 +1,20 @@
+{
+  "name": "uranium_fuel_cycle",
+  "domain_label": "Uranium fuel cycle",
+  "thesis_frame": "Chase the physical, hard-to-bypass chokepoints in the uranium / nuclear fuel cycle; size by confidence; exit when the constraint eases.",
+  "substrate": "physical",
+  "finance_domain": true,
+  "ground_truth_provenance": "recorded",
+  "example_sets": {
+    "gaps_examples": [],
+    "social_sources": [],
+    "literature_examples": [],
+    "critical_input_examples": ["conversion capacity", "enrichment capacity", "fuel fabrication"]
+  },
+  "node_list_ref": "examples/template_domain/bottleneck_map.template.yml",
+  "aggregate_results_ref": "aggregate_results.json",
+  "source_docs": [
+    "research/docs/RESULTS_V2_WORKING.md"
+  ],
+  "privacy_note": "Aggregate-only. This pack demonstrates the meta.domain config-only swap (design doc's H3 clause (c) portability proof) -- funnel-stage counts only, no per-card content, and no filled-in bottleneck_map.yml (the live map is private; only the public template ships). No ablation arms were run for this domain in v0; it is not part of the discipline-curve reference (AI supply chain only)."
+}

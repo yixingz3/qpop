@@ -44,4 +44,5 @@ packages = ["src/forward_qpop"]
 include = ["src/forward_qpop", "README.md", "LICENSE"]
 
 [tool.pytest.ini_options]
-pythonpath = ["src"]
+# "." is the repo root -- needed so `import benchmarks.oar...` resolves (tests/test_oar_*.py).
+pythonpath = ["src", "."]

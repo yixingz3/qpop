@@ -1,0 +1,94 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/yixingz3/qpop/benchmarks/oar/schemas/aggregate_results.schema.json",
+  "title": "OAR benchmark recorded aggregate results",
+  "description": "Aggregate-level (never per-card) recorded results for one v0 domain pack: either an ablation-arms batch (AI supply chain -- design doc Sec 5's discipline curve) or a single funnel-stage run (uranium -- design doc Sec 4's H3 clause (c) portability demo). No per-card content: v0 ships the schema + arm/funnel RESULTS as fixtures only, per the design doc's v0 scope note.",
+  "type": "object",
+  "required": ["domain"],
+  "oneOf": [
+    {"required": ["arms", "reference_arm"]},
+    {"required": ["funnel"]}
+  ],
+  "additionalProperties": true,
+  "properties": {
+    "domain": {"type": "string", "minLength": 1},
+    "batch_id": {"type": "string"},
+    "run_id": {"type": "string"},
+    "batch_size": {"type": "integer", "minimum": 0},
+    "provenance": {"type": "string"},
+    "source_docs": {"type": "array", "items": {"type": "string"}},
+    "reference_arm": {
+      "type": "string",
+      "description": "Name of the arm (must appear in arms[]) that is the disciplined reference OAR is measured against."
+    },
+    "arms": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/arm_result"}
+    },
+    "rejection_precision": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "raw": {"$ref": "#/$defs/precision_estimate"},
+        "adjudicated": {"$ref": "#/$defs/precision_estimate"},
+        "pilot_undocumented_n14": {"type": "object"}
+      }
+    },
+    "funnel": {
+      "type": "object",
+      "description": "Stage counts for a single (non-ablated) funnel run -- sourced/gate/triage/bear-case/adjudicated counts. Shape mirrors schemas/run_manifest.schema.json's 'funnel' block."
+    },
+    "admission_rate": {
+      "type": "object",
+      "description": "Admission rate(s) computed off the funnel counts (e.g. of_sourced, of_unique_symbols, of_gate_pass)."
+    },
+    "notes": {"type": "string"}
+  },
+  "$defs": {
+    "arm_result": {
+      "type": "object",
+      "required": ["arm", "label", "total"],
+      "oneOf": [
+        {"required": ["admitted"]},
+        {"required": ["admitted_replicates"]}
+      ],
+      "additionalProperties": true,
+      "properties": {
+        "arm": {"type": "string", "minLength": 1, "description": "Machine name of the arm, e.g. 'full_pipeline'."},
+        "label": {"type": "string", "minLength": 1, "description": "Human label, e.g. the ablation removed."},
+        "total": {"type": "integer", "minimum": 1, "description": "Candidate-set size this arm was scored on (the fixed admission budget / same-set requirement -- design doc Sec 5)."},
+        "admitted": {"type": "integer", "minimum": 0, "description": "Admit count for a single-replicate arm."},
+        "admitted_replicates": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"type": "integer", "minimum": 0},
+          "description": "Per-replicate admit counts for a multi-replicate arm."
+        },
+        "replicates": {"type": "integer", "minimum": 1},
+        "agreement": {"type": "number", "minimum": 0, "maximum": 1, "description": "Per-card replicate agreement, when replicates > 1."},
+        "ablates": {"type": ["string", "null"], "description": "Which single discipline this arm removes; null for the ungated screener and the full pipeline."},
+        "is_reference": {"type": "boolean"}
+      }
+    },
+    "precision_estimate": {
+      "type": "object",
+      "required": ["n", "point_estimate"],
+      "additionalProperties": true,
+      "properties": {
+        "n": {"type": "integer", "minimum": 0},
+        "justified": {"type": "integer", "minimum": 0},
+        "upheld": {"type": "integer", "minimum": 0},
+        "point_estimate": {"type": "number", "minimum": 0, "maximum": 1},
+        "wilson_ci_95": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": {"type": "number", "minimum": 0, "maximum": 1}
+        },
+        "sampling": {"type": "string"},
+        "note": {"type": "string"}
+      }
+    }
+  }
+}

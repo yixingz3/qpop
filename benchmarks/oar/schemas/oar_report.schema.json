@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/yixingz3/qpop/benchmarks/oar/schemas/oar_report.schema.json",
+  "title": "OAR benchmark harness report",
+  "description": "The scoring harness's output for one domain pack: OAR at a fixed admission budget (design doc Sec 5), rejection precision (raw + adjudicated), admission rate per arm, and the discipline curve -- computed purely from a pack's recorded aggregate_results.json. No network, no LLM calls.",
+  "type": "object",
+  "required": ["domain", "aggregate_only"],
+  "additionalProperties": false,
+  "properties": {
+    "domain": {"type": "string", "minLength": 1},
+    "provenance": {"type": ["string", "null"]},
+    "aggregate_only": {
+      "const": true,
+      "description": "v0 always reports on recorded aggregates, never per-card content."
+    },
+    "discipline_curve": {
+      "type": "array",
+      "description": "The canonical least-to-most-disciplined arm ordering (design doc Sec 5): ungated -> -bear-case-first -> -overlap -> no-forward-lock -> debate-only -> full pipeline.",
+      "items": {
+        "type": "object",
+        "required": ["arm", "label", "admission_rate", "oar"],
+        "additionalProperties": false,
+        "properties": {
+          "arm": {"type": "string"},
+          "label": {"type": "string"},
+          "admission_rate": {"type": "number", "minimum": 0, "maximum": 1},
+          "oar": {"type": ["number", "null"], "minimum": 0, "maximum": 1}
+        }
+      }
+    },
+    "admission_rate_per_arm": {
+      "type": "object",
+      "additionalProperties": {"type": "number", "minimum": 0, "maximum": 1}
+    },
+    "rejection_precision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["raw_point", "raw_n", "raw_justified"],
+      "properties": {
+        "raw_point": {"type": "number", "minimum": 0, "maximum": 1},
+        "raw_n": {"type": "integer", "minimum": 0},
+        "raw_justified": {"type": "integer", "minimum": 0},
+        "raw_ci": {"type": ["array", "null"]},
+        "adjudicated_point": {"type": ["number", "null"]},
+        "adjudicated_n": {"type": ["integer", "null"]},
+        "adjudicated_upheld": {"type": ["integer", "null"]}
+      }
+    },
+    "funnel": {"type": "object"},
+    "admission_rate": {"type": "object"}
+  }
+}
