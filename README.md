@@ -37,10 +37,13 @@ It wraps your agent's research in a discipline and makes every decision auditabl
 - **Validates forward**, not by a leaky backtest.
 
 > **Pilot evidence** (the methods paper, [`research/paper/`](research/paper)): removing any single
-> discipline pushed an LLM screener's admission rate from **0% to 66–100%**; a held-out **LLM-auditor**
-> judged **93%** of the rejections justified (n=14; an LLM-on-LLM diagnostic, not a human audit);
-> "no action" is the modal outcome. *These are pilot metrics — they validate process discipline, not
-> investment performance.*
+> discipline pushed an LLM screener's admission rate from **0% to 66–100%**; on a documented, seeded
+> sample of **n=40** rejections a held-out bull-only **LLM auditor** agreed with **31/40 (0.775)** of
+> the engine's rejections — **missing the pre-committed ≥0.80 gate**, a failure reported as a result
+> (a full-record LLM adjudicator overrode all nine disagreements; model disagreement under asymmetric
+> information, not a human audit or ground truth — rejection quality is unresolved pending a human
+> lane); "no action" is the modal outcome. *These are pilot metrics — they validate process
+> discipline, not investment performance.*
 
 ## Install (Claude Code)
 

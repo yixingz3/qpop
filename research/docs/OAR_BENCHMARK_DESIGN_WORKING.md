@@ -101,12 +101,17 @@ disciplined process reject this?* Three provenances, in decreasing leakage-safet
   for real names.
 
 **The H5 lesson, baked into the protocol as a hard requirement.** The paper's own audit expansion is
-the cautionary tale: the pilot n=14 raw precision (0.93) did *not* survive a documented n=40 draw
-(raw 0.775, Wilson [0.625, 0.877]), while the adjudicated layer strengthened (9/9 upheld) at 9× the
-volume. The benchmark therefore mandates: (i) **documented, seeded, content-hash-verifiable sampling**
+the cautionary tale: the pilot n=14 agreement headline (0.93) did *not* survive a documented n=40 draw
+(bull-only auditor agreement 0.775, naive Wilson [0.625, 0.877]); the full-record adjudicator
+overriding all nine flags (9/9) is an *escalation diagnostic under asymmetric information, not
+ground truth* (terminology revised 2026-07-23 per the v2 review — see
+`../paper/arxiv/revise_log.md`). The benchmark therefore mandates: (i) **documented, seeded,
+content-hash-verifiable sampling**
 (no undocumented membership); (ii) **pre-committed gates** locked before the set is scored; and
-(iii) **both raw and adjudicated precision reported** — never collapse to the flattering
-post-adjudication number. A submission that reports only an "effective" precision fails validation.
+(iii) **both the raw auditor-agreement rate and the post-escalation resolution reported, clearly
+labeled as disagreement metrics** — never collapse to the flattering
+post-adjudication number, and never present same-system adjudication as ground truth. A submission
+that reports only an "effective" precision fails validation.
 
 ## 3. Anti-leakage / anti-gaming design (the hard problem — stated honestly)
 
@@ -224,11 +229,13 @@ admission budget prevents gaming by trivially admitting nothing.
 - **Forward-contract falsification rate.** For admitted cards, how often the pre-committed exit
   triggers fire against settled data — the forward-only leg (§3a).
 
-**Reporting.** Per-domain *and* pooled, with the **monotone ablation ordering as the reference
-"discipline curve."** The paper's own curve, with the two v2 arms inserted, is
-`100% → 74% → 66% → ~41% → ~37% → 0%` (ungated → −bear-case-first → −overlap → no-forward-lock →
-debate-only → full pipeline). A submission's arms should reproduce that *monotone* ordering; the shape
-of the curve is the qualitative reliability signature, the endpoint gap is the quantitative OAR.
+**Reporting.** Per-domain *and* pooled, with the **observed discipline-contrast ordering as a
+descriptive reference "discipline curve"** (sorted post hoc; the arms are non-nested interventions,
+so the curve is not a dose-response and carries no causal claim — wording revised 2026-07-23 per the
+v2 review). The paper's own observed ordering, with the two v2 arms inserted, is
+`100% → 74% → 66% → ~41% → ~37% → 0%` (ungated → −bear-case-first → −overlap → no-contract/lock →
+debate-only → full pipeline). A submission reports its own arms' ordering for comparison; the
+endpoint gap is the quantitative (reference-relative) OAR.
 
 **What the harness reuses vs what is new.**
 - *Reuses (already in the released `forward_qpop` package):* the hash-chained **ledger**

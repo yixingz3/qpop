@@ -40,25 +40,37 @@ The pilot's 14-sample membership was never enumerated and its sampling method wa
 the expansion therefore **supersedes** it with a fully documented draw: population = all 48
 non-admitted candidates of the batch-era rounds (mechanical bull-only extraction, bear-case
 exclusion enforced by test), sample n=40, fixed seed, round-stratified, content-hash-verifiable
-manifest. Protocol: five held-out bull-only auditor instances (8 records each), every
+manifest. Protocol: five fresh runs of a held-out bull-only auditor (8 records each; fresh contexts
+within one model family, not statistically independent instances), every
 FALSE_REJECTION flag escalated to an expensive-model capital-at-risk adjudication with the full
 record (no-web retrospective — a dated deviation from the pilot's contemporaneous adjudication, to
 avoid look-ahead).
 
+*(Terminology revised 2026-07-23 per the v2 review — reported as model disagreement under
+asymmetric information, not ground truth; "raw precision"/"adjudicated precision" renamed.)*
+
 | Metric | Pilot (n=14, undocumented) | Expanded (n=40, seeded) |
 |---|---|---|
-| Raw auditor precision (primary) | 0.93, Wilson [0.69, 0.99] | **0.775 (31/40), Wilson [0.625, 0.877]** |
-| Auditor flags | 1 | 9 |
-| Adjudicated precision (secondary) | 1.00 (1/1 upheld) | **1.00 (9/9 upheld)** |
+| Bull-only auditor agreement (primary) | 0.929 (13/14); interval non-inferential (sample undocumented) | **0.775 (31/40), naive Wilson [0.625, 0.877]** |
+| Bull-only flag / disagreement rate | 7.1% (1/14) | **22.5% (9/40)** |
+| Full-record LLM uphold among flagged (secondary) | 1/1 | **9/9** |
 
-**The honest v2 statement:** the raw-primary metric fails the pre-committed H5 gate (≥0.80 raw,
-≤10% flag rate) on the documented sample — the pilot's 0.93 was the optimistic read of a small
-sample (the expanded point estimate lies inside the pilot's own CI, so nothing is contradicted, but
-the n=14 headline does not survive n=40). The escalation architecture, by contrast, is strengthened
-at 9× the volume: every flag dissolved against a load-bearing fact from the full record that the
-bull-only auditor could not see. Flags split evenly across the funnel's cheap-drop and full-eval
+**The honest v2 statement:** BOTH pre-committed H5 clauses fail on the documented sample (≥0.80
+agreement: 0.775; ≤10% flag rate: 22.5% — on a single binary-labeled sample the clauses are
+redundant, flag rate = 1 − agreement, effectively binding at 0.90). The pilot's 0.93 was the
+optimistic read of a small
+sample (the expanded point estimate lies inside the pilot's own interval, so nothing is
+contradicted, but the n=14 headline did not survive a 2.86× larger documented sample; the flag
+count rose 9×, from one to nine). The full-record adjudicator overriding all nine bull-only flags is
+an escalation diagnostic, not independent validation: auditor and adjudicator are related models
+judging under deliberately asymmetric information, so a full-record model overriding bull-only
+flags is expected and does not establish the rejections were correct. Flags split evenly across the
+funnel's cheap-drop and full-eval
 stages (5/4 against a 20/20 sample), so the disagreement rate is not a sample-composition artifact.
-A human-auditor lane (same 40 records, bull-only packet) is prepared and pending.
+Rejection quality remains **unresolved** pending the human lane — redesigned per review: two human
+reviewers, neutral dated full-record packet, blind to LLM labels and pipeline decisions, source
+verification allowed, third-reviewer tie rule, inter-rater agreement reported (supersedes the
+earlier bull-only packet).
 
 ## Portability H3 clause (c) — config-only domain swap DEMONSTRATED (2026-07-07)
 

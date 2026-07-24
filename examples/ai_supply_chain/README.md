@@ -82,10 +82,14 @@ The same **38-candidate batch**, run through baselines that each remove one disc
 | **Ungated LLM screener** (no discipline) | **38 / 38** | **100%** |
 
 An ungated LLM admits *literally everything*; removing any single discipline raises admission far
-past a "beyond noise" threshold; the full stack drives 100% → 0%. Paired with the rejection-quality
-audit (an independent reviewer judged the rejections **0.93 justified**, rising to **1.00** after a
-capital-at-risk adjudication overturned the one flagged false-rejection), this is the evidence that
-the restraint is *discipline*, not blanket conservatism. Full write-up: `../../research/docs/RESULTS_INITIAL.md`.
+past a "beyond noise" threshold; the full stack sits at 0%. Paired with the rejection-quality
+audit (on the documented, seeded n=40 sample a held-out bull-only LLM auditor agreed with **31/40
+(0.775)** of the rejections — *missing* the pre-committed ≥0.80 gate, a failure reported as a
+result; a full-record adjudicator overrode all nine disagreements, which is model disagreement
+under asymmetric information, not ground truth), this is evidence that the restraint comes from
+*specific, removable disciplines*, not blanket conservatism — whether the rejections are justified
+awaits the human audit lane. Current numbers: `../../research/docs/RESULTS_V2_WORKING.md`
+(the earlier `RESULTS_INITIAL.md` pilot record is superseded).
 
 ## Reproducing the method (not the positions)
 

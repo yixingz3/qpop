@@ -1,5 +1,11 @@
 # Initial Results (discipline metrics)
 
+> **SUPERSEDED (2026-07):** this is the dated *initial pilot* record, kept for provenance. Its
+> headline audit number (0.93, n=14, undocumented sampling) did **not** survive the documented,
+> seeded n=40 expansion (bull-only auditor agreement 0.775; both pre-committed H5 gate clauses
+> fail) — see [`RESULTS_V2_WORKING.md`](RESULTS_V2_WORKING.md) for the current numbers and the
+> revised (model-disagreement) terminology. Do not cite this file's numbers as current.
+
 > **Pilot metrics — not a performance claim, and not confirmatory.** This validates *process
 > discipline*, not investment profitability (which awaits H4). The numbers below are pilot / initial
 > discipline metrics that *motivate* the registered evaluation, not confirm it. Forward returns are

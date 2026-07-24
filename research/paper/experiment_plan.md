@@ -120,3 +120,30 @@ additive amendment.
 Small sample / wide intervals early; LLM nondeterminism across model versions; survivorship in
 which domains get built; the admission-rate metric is *necessary but not sufficient* for alpha. The
 paper reports these rather than hiding them.
+
+## Dated amendments (additive; the original rules above are preserved as registered)
+
+- **2026-07-07 — H2 arms added retrospectively.** The debate-only and
+  no-falsifiable-contract/forward-lock arms were run on the preserved 38-card batch after v1
+  submission (two fresh runs each; two runs of one model are not independent replicates). These are
+  exploratory system contrasts, not matched one-factor ablations; per-arm rejection precision (the
+  registered second half of H2) was not measured, so H2 is inconclusive / not tested as registered
+  on the pilot data.
+- **2026-07-23 — H2 zero-denominator convention.** With a zero full-pipeline admission rate the
+  "≥25% relative" limb of H2's threshold is undefined; only the absolute "≥5 pp" limb applies.
+- **2026-07-23 — H5 clause redundancy recorded.** When both H5 clauses are computed on the same
+  binary-labeled audit sample, false-rejection rate = 1 − precision, so the two clauses are
+  mathematically redundant and the ≤10% clause effectively binds at precision ≥0.90. Both clauses
+  failed on the documented n=40 sample (agreement 0.775; flag rate 22.5%). The prospective H5
+  window will use a single explicit criterion committed in a dated amendment before its data
+  accrue, and its audit metric is renamed to what it measures: bull-only auditor agreement (model
+  disagreement under asymmetric information), with ground-truth rejection quality reserved for the
+  human lane (two reviewers, neutral full-record packet, blind to LLM labels, tie rule,
+  inter-rater agreement).
+- **2026-07-23 — H3 rate criterion replacement (future windows).** "Within 2× the first domain's
+  rate" is degenerate against a zero first-domain rate (admits only exactly zero). For prospective
+  windows it is replaced by an absolute non-inferiority criterion: the second domain's
+  evaluated-finalist admission rate must not exceed the first domain's by more than 10 percentage
+  points. H3's registered conjunction — one second domain satisfying (a)+(b)+(c) jointly — is
+  unchanged, and on the pilot data H3 is not supported as registered (clauses read on different
+  domains).

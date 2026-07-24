@@ -35,3 +35,18 @@ keywords:
 license: MIT
 version: 0.1.2
 date-released: "2026-06-28"
+preferred-citation:
+  type: article
+  title: "Forward-Registered, Auditable LLM-Assisted Research: A Reliability Methodology, with a Capital-Markets Testbed"
+  authors:
+    - family-names: Zheng
+      given-names: Yixing
+      orcid: "https://orcid.org/0009-0000-0563-2398"
+  year: 2026
+  journal: "SSRN preprint"
+  notes: >-
+    Public SSRN preprint (v1 posted 2026-07; v2 revision in preparation). SSRN
+    abstract URL to be added when recorded; paper source and version log:
+    https://github.com/yixingz3/qpop/tree/main/research/paper. The `version`
+    field above is the software package version, which is versioned separately
+    from the paper.
