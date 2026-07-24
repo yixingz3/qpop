@@ -91,10 +91,10 @@ insert one, delete one, or reorder them, and `verify` fails (and exits non-zero 
 | Area | Status |
 |---|---|
 | Claude Code plugin discipline (`auditable-research` + `/qpop:*`) | **Working — v0.1** |
-| Hash-chained Python ledger (`forward_qpop`) + CLI | **Working** (49/50 tests, 1 network test skipped by default) |
-| Anytime-valid sequential trigger test (`evalue`) — Type-I control over many triggers | **Working** (18/18 tests) — e-value / Ville, [methods note](research/docs/EVALUE_METHODS.md) |
+| Hash-chained Python ledger (`forward_qpop`) + CLI | **Working** (66/67 tests, 1 network test skipped by default) |
+| Anytime-valid sequential trigger test (`evalue`) — Type-I control over many triggers, wired to the ledger (`forward-qpop evalue`) | **Working** (18 e-process + 17 ledger-integration tests) — e-value / Ville, [methods note](research/docs/EVALUE_METHODS.md) |
 | Local anchor manifest (`anchor` / `verify-anchor`) | **Working** — manifest + drift-detection + git / local OpenTimestamps stamp |
-| External timestamp anchor (`anchor external` / `verify-external`) | **Working** — submits to OpenTimestamps, sidecar receipt + drift-detection ([details](#external-anchor-what-it-proves-and-what-it-doesnt)) |
+| External timestamp anchor (`anchor external` / `verify-external`) | **Working — manual/opt-in by design** (WI-30, 2026-07-09; not an auto-hook on ledger writes) — submits to OpenTimestamps, sidecar receipt + drift-detection ([details](#external-anchor-what-it-proves-and-what-it-doesnt)) |
 | JSON Schemas for cards / entries / runs | **Included** ([`schemas/`](schemas)) |
 | Synthetic fixtures + worked examples | **Included** ([`examples/`](examples)) |
 | Methods paper — theory + pilot evidence | **Included** ([PDF](research/paper/paper.pdf)) |
@@ -123,6 +123,15 @@ The "before the outcome" guarantee needs an **external anchor** — and `qpop` s
 `forward-qpop anchor <ledger>` writes a local manifest committing to the ledger head, and
 `verify-anchor` detects any drift since. Bind it to time by committing the manifest to a public repo
 (the commit date *is* the anchor) or by submitting it to a public, append-only timestamp service.
+
+**Anchoring is manual/opt-in by design, not an auto-hook (decided 2026-07-09, WI-30).**
+Nothing calls `anchor` / `anchor external` automatically from `register`/`update`/`close` —
+calendar-server reachability is outside this repo's control, and a failed auto-anchor must
+never block a ledger append (the hash chain is the load-bearing, always-offline guarantee;
+external anchoring is a strictly weaker, best-effort addition on top of it). **Recommended
+cadence:** anchor at hypothesis **registration**, at **close**, and before **publishing any
+results that cite the ledger**. See the [module docstring](src/forward_qpop/anchor.py) for
+the full rationale.
 
 ### External anchor: what it proves, and what it doesn't
 

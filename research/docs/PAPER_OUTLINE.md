@@ -1,5 +1,14 @@
 # Paper Outline
 
+> **Historical working outline (WI-20d, marked 2026-07-09).** This document is the early
+> planning outline used before drafting began. The paper grew from the ~6-8 page methods
+> draft sketched below to a 28-page submission; section numbers, scope, and even some
+> section names below no longer match the shipped paper. It is kept for **provenance**
+> (how the paper's scope evolved), not as a current reference. For the actual paper, see
+> [`research/paper/paper.tex`](../paper/paper.tex) (built PDF: `research/paper/paper.pdf`);
+> for submission status and the v2 edit log, see
+> [`research/paper/SUBMISSION.md`](../paper/SUBMISSION.md).
+
 **Working title:** *Forward-Registered, Auditable LLM-Assisted Research: A Reliability Methodology,
 with a Capital-Markets Testbed*
 

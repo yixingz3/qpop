@@ -49,6 +49,40 @@ weaker immediacy is an acceptable, honestly-disclosed cost.
 ``external_anchor`` never silently claims success: a network failure raises
 :class:`ExternalAnchorError` and no sidecar is written (or, if partially written, its
 ``status`` is never ``submitted``/``confirmed``).
+
+## Manual/opt-in by design (WI-30, decided 2026-07-09)
+
+External anchoring stays a **separate, manually-invoked CLI step** -- there is no
+auto-hook that fires ``anchor`` / ``anchor external`` from inside ``Ledger.register`` /
+``update`` / ``close``, and none is planned. Two reasons, both structural rather than a
+missing feature:
+
+* **Calendar-server reachability is outside this repo's control.** OpenTimestamps'
+  public calendar servers can be slow, unreachable, or rate-limiting at any given
+  moment (see the ``workflow_dispatch``-gated live CI job, which is excluded from
+  required push/PR triggers for exactly this reason). A ledger append is a local,
+  offline operation; making it depend on a third-party network call would trade a
+  reliable primitive for a flaky one.
+* **A failed auto-anchor must never block a ledger append.** The append-only chain
+  (tamper-evidence) is the load-bearing guarantee and must always succeed offline;
+  external anchoring (proof of *time*) is a strictly weaker, best-effort addition on
+  top of it (see the README's "what the chain proves" table). Coupling them would let
+  a network hiccup silently degrade the discipline the whole ledger exists to enforce.
+
+**Recommended operating cadence** (manual, by the operator or an out-of-band cron/CI
+step -- not by this library): run ``anchor`` + ``anchor external`` (a) at hypothesis
+**registration** and (b) at **close**, and (c) before **publishing any results that cite
+the ledger** (e.g. a paper draft or SSRN/arXiv submission). Each of those is a natural,
+infrequent checkpoint where a manual step costs nothing and a transient network failure
+just means "run it again," rather than a hot path where degraded availability would be
+felt on every write.
+
+**What this buys you, and what it doesn't:** the hash chain alone proves
+*tamper-evidence* -- that no past entry was edited, inserted, deleted, or reordered --
+at every ``verify()`` call, with zero network dependency. It does **not** prove
+*wall-clock time* (that an entry existed before its outcome was known) on its own; only
+an anchored entry (local manifest + git push, or ``anchor external``) carries that
+additional guarantee, and only as of whenever the operator last ran the anchor step.
 """
 from __future__ import annotations
 

@@ -70,11 +70,22 @@ forward-qpop verify-anchor ledger.jsonl   # detect any drift since anchoring
 # external anchor -- a publicly-dated, append-only submission (WI-19)
 forward-qpop anchor external ledger.jsonl --method ots   # submit the head digest to OpenTimestamps
 forward-qpop verify-external ledger.jsonl                # detect drift since the external submission
+
+# anytime-valid sequential trigger test over the ledger (WI-29)
+forward-qpop evalue ledger.jsonl --alpha 0.05            # table report; resumes via a state sidecar
+forward-qpop evalue ledger.jsonl --json --out report.json  # JSON report, also written to a file
 ```
 
 `anchor external` requires the `anchor` extra (`pip install forward-qpop[anchor]`) and network
 access; a missing `ots` binary or a network failure exits non-zero with a clear message and never
 writes a sidecar that falsely claims success.
+
+`evalue` reads a hypothesis's pre-registered `p0`/`p1`/`combine` from its admission entry's
+`"evalue"` field and its per-step trigger observations from belief_update entries' `"trigger_checks"`
+field (both additive, non-breaking conventions — see
+[`research/docs/EVALUE_METHODS.md`](../../research/docs/EVALUE_METHODS.md)); state resumes across
+runs via a `<ledger>.evalue-state.json` sidecar and never mutates the ledger. Hypotheses with no
+`"evalue"` config are reported `no_config`, not fabricated.
 
 ## Why forward, and why a chain
 
