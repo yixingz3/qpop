@@ -12,9 +12,11 @@ needs `pdflatex` + `bibtex`. Total time is under a minute, excluding the paper b
 make test            # or: python -m pytest -q
 ```
 
-Expected: **`31 passed, 1 skipped`** — 9 ledger + 7 local-anchor + 11 external-anchor (WI-19;
+Expected: **`66 passed, 1 skipped`** — 9 ledger + 7 local-anchor + 11 external-anchor (WI-19;
 1 skipped by default — a true-network OpenTimestamps round-trip, opt in with
-`QPOP_TEST_LIVE_OTS=1`) + 5 schema tests, covering field-tamper, insert, delete, reorder,
+`QPOP_TEST_LIVE_OTS=1`) + 5 schema tests + 18 e-value module tests (incl. a Monte-Carlo Type-I
+check under optional stopping) + 17 e-value ledger-integration tests (frozen commitments,
+trigger checks, sidecar state — WI-29), covering field-tamper, insert, delete, reorder,
 terminal re-registration, tertiary-only blocking, local- and external-anchor drift-detection,
 and schema/fixture validation (with `format: date` enforced).
 
@@ -77,7 +79,7 @@ Expected: **`ALL SAMPLES VALID`** — every row in `data/synthetic/` validates a
 make paper           # -> research/paper/paper.pdf
 ```
 
-Expected: a clean 25-page PDF, no undefined references.
+Expected: a clean 28-page PDF (the submitted v1 build), no undefined references.
 
 ---
 
