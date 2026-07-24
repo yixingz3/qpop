@@ -1,13 +1,23 @@
-"""Tests for forward_qpop.evalue — the anytime-valid sequential trigger test.
+"""Tests for forward_qpop.evalue — the e-value sequential trigger test (the mathematical rule).
 
 Runs under pytest, or standalone (``python tests/test_evalue.py``) with no third-party
 dependencies — set ``PYTHONPATH=src`` if the package is not installed.
 
+Scope note: these simulations validate the RULE under a fixed reporting pattern in which
+every registered trigger reports at every step — the pattern under which the rule's
+anytime-valid Type-I property applies. They do NOT cover the two acknowledged
+implementation defects (first-report-only e-process creation, which changes mixture
+membership/weights; ``bool()`` trigger coercion) — the module is experimental and does
+not yet deliver the guarantee in general (see the module warning and
+``research/docs/EVALUE_METHODS.md``); regression tests for the defects land with the
+code fixes.
+
 The properties under test:
 
-* **Type-I control (the headline)** — under the null (fire prob = p0), across many
+* **Type-I control of the rule (under the simulated all-triggers-report pattern)** —
+  under the null (fire prob = p0), across many
   simulated monitoring paths *with optional stopping*, the empirical rate of a false
-  ``"falsified"`` call is <= alpha. This is the Ville-inequality guarantee.
+  ``"falsified"`` call is <= alpha. This is the Ville-inequality guarantee of the rule.
 * **Power sanity** — under a true alternative (fire prob well above p0) the test does
   eventually falsify.
 * **Supermartingale spot-check** — the mean e-value under the null at a fixed horizon
@@ -102,7 +112,8 @@ def test_unknown_trigger_ids_tracked_independently():
 
 
 # --------------------------------------------------------------------------- #
-# (a) Type-I control by simulation — the load-bearing test
+# (a) Type-I control of the RULE by simulation (all registered triggers report each
+#     step — the pattern the rule's guarantee covers; defect paths are not simulated)
 # --------------------------------------------------------------------------- #
 def _run_null_path(rng, p0, p1, alpha, n_triggers, horizon, combine):
     """Monitor n_triggers under the null (fire prob = p0) for up to `horizon` steps,

@@ -89,5 +89,7 @@ paper's empirical evidence runs — the 38-card candidate batches, per-arm decis
 manifest/labels, discovery-funnel ledger, the H3 config-only engine run, and the production
 gate/scoring/domain-templating engine that produced them are all private. What this directory
 verifies is the released *mechanics* (ledger, hashes, anchors, schemas, e-value module, paper
-build); the empirical results are auditable as literal prompts + sanitized aggregates only.
+build); for the empirical results, the released prompts and sanitized aggregates let you inspect
+the protocol and recompute the reported aggregate arithmetic — not audit or rescore individual
+decisions.
 See the paper's *Reproducibility and Release* table.

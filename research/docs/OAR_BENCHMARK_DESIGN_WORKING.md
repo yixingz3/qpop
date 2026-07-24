@@ -246,8 +246,9 @@ endpoint gap is the quantitative (reference-relative) OAR.
 
 **What the harness reuses vs what is new.**
 - *Reuses (already in the released `forward_qpop` package):* the hash-chained **ledger**
-  (`ledger.py`) for forward-locked admission contracts; the **e-value** anytime-valid trigger test
-  (`evalue.py`) for the falsification leg; the **anchor** (`anchor.py`, OpenTimestamps) to prove sets
+  (`ledger.py`) for forward-locked admission contracts; the **e-value** sequential trigger test
+  (`evalue.py` — experimental; does not yet deliver its anytime-valid guarantee, see
+  `EVALUE_METHODS.md`) for the falsification leg; the **anchor** (`anchor.py`, OpenTimestamps) to prove sets
   and decisions predate outcomes; the **JSON Schemas** for cards/entries; the **prompt templates**
   (`src/prompts.md`, incl. the five §8 ablation arms) as the reference discipline arms; the
   deterministic gate reference (`src/gate_reference.md`).

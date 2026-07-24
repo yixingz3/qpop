@@ -112,7 +112,8 @@ def test_dry_run_does_not_persist_state():
 
 
 # --------------------------------------------------------------------------- #
-# Resumed run: state round-trip, anytime-valid across invocations
+# Resumed run: state round-trip, exactly-once folding across invocations
+# (state-resumption mechanics only; no statistical guarantee is asserted here)
 # --------------------------------------------------------------------------- #
 def test_resumed_run_with_no_new_observations_is_idempotent():
     p = _tmp()

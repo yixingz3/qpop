@@ -3,8 +3,9 @@
 These are the load-bearing prompts of the funnel, sanitized to the generic framework (no live
 positions, no broker calls, no paid-data text). The experiment plan commits to publishing the prompts
 by reference; this is that reference. The exact production strings are versioned in the private
-implementation and pinned by commit hash per run (see `../research/docs/RESULTS_INITIAL.md` → implementation
-details). `{...}` are fill-ins.
+implementation and pinned by commit hash per run (see the paper's Implementation Details /
+experiment plan; the earlier `RESULTS_INITIAL.md` pointer is superseded). `{...}` are fill-ins.
+Exception: the §8 ablation-arm prompts below are the recovered originals, released verbatim.
 
 ## 0. Research contract (prepended to every LLM stage)
 

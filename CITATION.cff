@@ -12,11 +12,13 @@ abstract: >-
   Methods for making AI- and LLM-assisted research reliable and auditable. The
   framework wraps open-ended agentic discovery in deterministic,
   specification-published gates and a forward pre-registration ("forward-QPOP")
-  protocol, so that each accept/reject decision is auditable against the released
-  prompts and gate specification rather than a black-box narrative, and is evaluated
-  forward rather than by a leakage-prone backtest. The released package covers the
-  ledger/anchor/e-value mechanics and templates; the production funnel engine and the
-  paper's empirical runs are private. It is
+  protocol, so that a run's accept/reject decisions are traceable to prompts,
+  deterministic gates, and hash-chained ledger entries rather than a black-box
+  narrative, and are evaluated forward rather than by a leakage-prone backtest.
+  Adopters can fully audit their own retained runs; the authors' production engine
+  and per-card empirical runs are private (protocol, sanitized reference prompts,
+  and aggregate results are published). The released package covers the
+  ledger/anchor/e-value mechanics and templates. It is
   validated on high-stakes capital-markets and economic forecasting as an adversarial
   testbed, and is domain-agnostic by construction. Components include a portable
   bottleneck graph, a decomposed confidence model, a budget-aware cheap-source /

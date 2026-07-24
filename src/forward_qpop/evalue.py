@@ -102,7 +102,9 @@ onto a real :class:`forward_qpop.ledger.Ledger` without any schema-breaking chan
   the ``1/alpha`` threshold, and the decision. State (the e-process, not the ledger) is
   persisted in a JSON **sidecar** file next to the ledger (``<ledger>.evalue-state.json``
   by default) so repeated invocations resume rather than silently re-deriving --
-  anytime-valid across runs, never mutating a ledger row.
+  state resumption that folds each observation in exactly once, never mutating a ledger
+  row (this proves resumption mechanics only; per the module warning, the statistical
+  guarantee itself is not yet delivered).
 * Hypotheses with no ``"evalue"`` config are reported as ``no_config`` (skipped, not
   fabricated) -- see :data:`EVALUE_CONFIG_FIELD`.
 

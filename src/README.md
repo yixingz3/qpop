@@ -10,11 +10,14 @@ implement against these contracts. **Now open-sourced:** the QPOP pre-registrati
 generalized out of the private deployment, now with an external timestamp
 [`anchor`](forward_qpop/anchor.py) (`anchor` / `verify-anchor`).
 The **stage prompts** (the disciplines themselves) are committed
-in [`prompts.md`](prompts.md), and the **deterministic gate** is specified with reference pseudocode
+in [`prompts.md`](prompts.md) as sanitized reference templates (the H2 ablation-arm prompts in its
+§8 are the recovered originals, verbatim), and the **deterministic gate** is specified with
+reference pseudocode
 in [`gate_reference.md`](gate_reference.md) — so the method is **fully specified** from this repo
-alone: a reader can implement their own funnel from the prompts and the gate spec, and audit ours
-against them. (The production engine that runs our funnel — and the empirical results it produced —
-is private and not re-runnable from this repo.)
+alone: a reader can implement their own funnel from the prompts and the gate spec, and audit our
+*published protocol and aggregate results* against them. (The production engine that runs our
+funnel — and the per-card empirical records it produced —
+is private; individual decisions are not auditable or re-runnable from this repo.)
 Machine-readable contracts for candidate cards, ledger entries, and run manifests are published as
 JSON Schema in [`../schemas`](../schemas).
 

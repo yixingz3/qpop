@@ -157,7 +157,8 @@ debate-only, no-\textsc{QPOP}-lock, no-overlap-penalty---in which every weakened
 configuration admits far more than the full pipeline (a configuration-level observation; no single
 component's causal contribution is identified).
 This is a \emph{methods and systems} paper: the contribution is a workflow whose released
-scaffold --- the ledger, hash chain, anchor, e-value module, literal prompts, schemas, and domain
+scaffold --- the ledger, hash chain, anchor, e-value module, reference prompt templates (sanitized;
+the H2 arm prompts released verbatim), schemas, and domain
 template --- any practitioner can adopt, audit, and extend. Supplying a new
 \texttt{bottleneck\_map.yml} reuses the public discipline, ledger, and template for one's
 \emph{own} funnel, implemented from the released prompts and reference gate specification; it does
@@ -1013,7 +1014,8 @@ Edit only by appending dated amendments.
     It is wired into the ledger: an admission entry \emph{can} carry a frozen \texttt{evalue}
     commitment (\texttt{p0}/\texttt{p1}/combine, hashed with the entry), belief-update entries may
     carry \texttt{trigger\_checks} observations, and \texttt{forward-qpop evalue <ledger.jsonl>} runs
-    the sequential test with anytime-valid state persisted in a sidecar (never mutating the ledger).
+    the sequential test with its state persisted in a sidecar (exactly-once resumption; never
+    mutating the ledger).
     The reporting-time significance level $\alpha$ is a CLI argument, \emph{not} part of the hashed
     commitment; any operational decision threshold must be committed in a separately dated policy.
     It was \emph{not} used in the pilot outcome decisions --- the pilot predates it --- and as of this
@@ -1667,8 +1669,10 @@ explicitly is not. The repository is
 \url{https://github.com/yixingz3/qpop}; its \texttt{repro/} directory verifies the released
 \emph{mechanics}
 with one command each (tests, ledger verification, tamper demo, timestamp anchor, schema validation,
-and the paper build). The empirical results in this paper are auditable as sanitized aggregates and
-released prompts, \emph{not} independently reproducible from the public repository: the per-card
+and the paper build). The empirical results in this paper are \emph{documented} as released prompts
+and sanitized aggregates: a reader can inspect the disclosed protocol and recompute the reported
+aggregate arithmetic, but cannot audit or rescore individual empirical decisions and cannot
+independently reproduce the results --- the per-card
 records, arm decisions, audit manifest and labels, funnel ledger, and the private engine that
 produced them are not public.
 
@@ -1681,7 +1685,7 @@ produced them are not public.
 \midrule
 Code (package)        & Yes                  & ledger, hash chain, OpenTimestamps anchor, e-value module (experimental), CLI, schema validation \\
 Gate + scoring engine & No                   & deterministic gate, confidence scoring, domain templating (runs the live funnel) \\
-Prompts         & Yes                        & source / triage / evaluate / adjudicate / audit (literal, verbatim) \\
+Prompts         & Yes                        & sanitized reference templates for source / triage / evaluate / adjudicate / audit; the H2 ablation-arm prompts are released verbatim (recovered originals) \\
 Candidate cards & Synthetic sample only      & schema-conformant sample cards; the empirical 38-card batch and per-card arm outputs are private \\
 Ledger          & Synthetic                  & QPOP schema and sample hashes \\
 Live positions  & No                         & not released \\
