@@ -9,11 +9,14 @@ authors:
     orcid: "https://orcid.org/0009-0000-0563-2398"
 repository-code: "https://github.com/yixingz3/qpop"
 abstract: >-
-  Methods for making AI- and LLM-assisted research reliable, auditable, and
-  reproducible. The framework wraps open-ended agentic discovery in deterministic,
-  independently-auditable gates and a forward pre-registration ("forward-QPOP")
-  protocol, so that each accept/reject decision is verifiable rather than a black-box
-  narrative and is evaluated forward rather than by a leakage-prone backtest. It is
+  Methods for making AI- and LLM-assisted research reliable and auditable. The
+  framework wraps open-ended agentic discovery in deterministic,
+  specification-published gates and a forward pre-registration ("forward-QPOP")
+  protocol, so that each accept/reject decision is auditable against the released
+  prompts and gate specification rather than a black-box narrative, and is evaluated
+  forward rather than by a leakage-prone backtest. The released package covers the
+  ledger/anchor/e-value mechanics and templates; the production funnel engine and the
+  paper's empirical runs are private. It is
   validated on high-stakes capital-markets and economic forecasting as an adversarial
   testbed, and is domain-agnostic by construction. Components include a portable
   bottleneck graph, a decomposed confidence model, a budget-aware cheap-source /

@@ -32,7 +32,8 @@ contribution — so language, citations, figures, reproducibility, and ethics al
   chartjunk. Label axes with units. Do not truncate axes to exaggerate.
 - Planned figures: (1) the source→gate→evaluate funnel; (2) the candidate state machine; (3) the
   admission-rate / no-action distribution; (4) source-tier and overlap-penalty distributions;
-  (5) the ablation (admission rate rises as each discipline is removed). Keep figure source in the repo.
+  (5) the system contrasts (admission rate across weakened discipline configurations — descriptive,
+  not a causal per-discipline curve). Keep figure source in the repo.
 
 ## Structure & reproducibility
 

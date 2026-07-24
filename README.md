@@ -176,7 +176,7 @@ explicitly opt in (`QPOP_TEST_LIVE_OTS=1`) — see [`repro/`](repro) and
 ## Learn more
 
 - **The method** — the 7-step admission ladder (falsifiable claim → deterministic gates → bear-case-first → source tiers → forward pre-registration → forward-not-backtest → on-balance). Auto-applied by the [`auditable-research`](skills/auditable-research/SKILL.md) skill.
-- **Reproduce every claim** — [`repro/`](repro): tests, tamper demo, schema validation, the anchor round-trip, and the paper build — each with expected output.
+- **Verify the released mechanics** — [`repro/`](repro): tests, tamper demo, schema validation, the anchor round-trip, and the paper build — each with expected output. (The paper's empirical results are auditable as released prompts + sanitized aggregates, not re-runnable from this repo — see the paper's *Reproducibility and Release* section.)
 - **Data contracts** — [`schemas/`](schemas): JSON Schema for candidate cards, ledger entries, evidence, exit triggers, and run manifests.
 - **Python library** — `pip install forward-qpop` (or run [`scripts/qpop.py`](scripts/qpop.py) from a clone): the dependency-free ledger + anchor. API in [the package README](src/forward_qpop/README.md).
 - **The paper** — [PDF](research/paper/paper.pdf) / [source](research): theory, pilot evidence, and the **over-admission-rate (OAR)** benchmark. If you build on it, please cite [`CITATION.cff`](CITATION.cff).

@@ -1,8 +1,10 @@
 # template_domain — start a new bottleneck domain here
 
-Copy this directory to `examples/<your_domain>/` and fill in the two configs. The *engine* does not
+Copy this directory to `examples/<your_domain>/` and fill in the two configs. The *method* does not
 change — only the domain map and the benchmark. That is the flywheel: a new domain is a config, not
-a codebase.
+a codebase. (Boundary note: this template + the released prompts and reference gate spec fully
+specify the method for *your* implementation; the production engine that runs our funnel is
+private, so there is no public command that executes the funnel for you.)
 
 ```
 examples/<your_domain>/
@@ -24,7 +26,10 @@ examples/<your_domain>/
 4. **List candidate tickers** per node with `exposure_purity` + role. US-tradeable (or your venue)
    only; foreign-only listings are context, not candidates.
 5. **Set the benchmark** in `benchmark_config.yml` (the theme benchmark you measure alpha against).
-6. **Run the funnel** (source → gate → evaluate), **pre-register** admissions in the QPOP ledger,
+6. **Run your funnel** (source → gate → evaluate — implemented from
+   [`src/prompts.md`](../../src/prompts.md) + [`src/gate_reference.md`](../../src/gate_reference.md),
+   or driven manually with the plugin skills), **pre-register** admissions in the QPOP ledger
+   (`forward-qpop register` — this part is a released public command),
    and **forward-validate**.
 
 ## Domains this schema fits

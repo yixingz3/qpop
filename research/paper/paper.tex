@@ -157,10 +157,12 @@ debate-only, no-\textsc{QPOP}-lock, no-overlap-penalty---in which every weakened
 configuration admits far more than the full pipeline (a configuration-level observation; no single
 component's causal contribution is identified).
 This is a \emph{methods and systems} paper: the contribution is a workflow whose released
-scaffold --- the ledger, hash chain, anchor, e-value module, prompts, schemas, and domain template
---- any practitioner can replicate, audit, and extend by supplying
-a different \texttt{bottleneck\_map.yml}; the production gate/scoring/domain-templating engine
-that runs the live funnel is private (\S\,Reproducibility).
+scaffold --- the ledger, hash chain, anchor, e-value module, literal prompts, schemas, and domain
+template --- any practitioner can adopt, audit, and extend. Supplying a new
+\texttt{bottleneck\_map.yml} reuses the public discipline, ledger, and template for one's
+\emph{own} funnel, implemented from the released prompts and reference gate specification; it does
+not run or reproduce \emph{our} production funnel, whose gate/scoring/domain-templating engine
+is private (\S\,Reproducibility).
 
 \section{Related Work}
 
@@ -419,7 +421,7 @@ exit / update trigger & price or lead-time signal & metric threshold \\
 The primary reliability failure of an ungated LLM workflow is \textbf{over-admission}: admitting
 plausible but weak candidates that a disciplined process would reject. We therefore measure not
 only \emph{how few} candidates a pipeline admits, but whether its rejections are \emph{defensible}
-and whether removing individual disciplines \emph{increases} admission. Three metrics make this
+and whether admission \emph{rises} under weakened discipline configurations. Three metrics make this
 precise.
 
 \begin{definition}[Admission rate]
@@ -434,9 +436,11 @@ $\text{justified}/\text{audited}$. This guards against arbitrary conservatism.
 \end{definition}
 
 \begin{definition}[Over-admission rate (OAR)]
-For a candidate set, the share that an ablated or ungated process \emph{admits} but the full
-discipline \emph{rejects}. OAR isolates the admissions attributable to removing a discipline, and is
-the portable reliability target this framework minimizes.
+For a fixed candidate set, the share that an ablated or ungated process \emph{admits} but the full
+discipline \emph{rejects} --- a reference-relative admission-disagreement quantity (formalized,
+with its mirror direction, as rOAR/rOMR in \S\,Results). It is the portable reliability target this
+framework minimizes; attributing it to any \emph{single} removed discipline requires matched,
+nested arms, which the pilot does not have.
 \end{definition}
 
 A reliable workflow drives OAR down \emph{while} keeping rejection precision high --- defensible
@@ -1650,9 +1654,10 @@ commitment yet); and an external \textbf{OpenTimestamps} anchor (opt-in / manual
 
 To make ``open release'' concrete, Table~\ref{tab:release} states exactly what is
 and is not published. The boundary is firm: the ledger, hash chain, timestamp anchor,
-e-value module, schemas, prompts, and synthetic / sanitized fixtures are released so
-the ledger mechanics are reproducible and the H2 contrast protocol (prompts, sanitized cards,
-decisions) is auditable; the \emph{live scoring
+e-value module, schemas, prompts, and synthetic fixtures are released so
+the ledger mechanics are reproducible and the H2 contrast protocol is auditable at the
+prompt-and-aggregate level (the literal arm prompts plus the reported aggregate counts --- the
+empirical cards and per-card decisions are private, per Table~\ref{tab:release}); the \emph{live scoring
 engine} (the deterministic gate, confidence scoring, and domain-templating code that
 runs the funnel --- including the config-only domain swap of \S\,Portability~(c)) stays
 in the private research book, so that demonstration is reported rather than
@@ -1674,7 +1679,7 @@ produced them are not public.
 \toprule
 \textbf{Artifact} & \textbf{Released?} & \textbf{Contains} \\
 \midrule
-Code (package)        & Yes                  & ledger, hash chain, OpenTimestamps anchor, e-value module, CLI, schema validation, example-domain runner \\
+Code (package)        & Yes                  & ledger, hash chain, OpenTimestamps anchor, e-value module (experimental), CLI, schema validation \\
 Gate + scoring engine & No                   & deterministic gate, confidence scoring, domain templating (runs the live funnel) \\
 Prompts         & Yes                        & source / triage / evaluate / adjudicate / audit (literal, verbatim) \\
 Candidate cards & Synthetic sample only      & schema-conformant sample cards; the empirical 38-card batch and per-card arm outputs are private \\
@@ -1786,8 +1791,10 @@ full-record adjudicator overrode all nine
 disagreements ($9/9$); we report the miss as the honest pilot reading and the override pattern as
 model disagreement under asymmetric information (an LLM-on-LLM diagnostic, not a human audit ---
 rejection quality remains unresolved pending the pre-specified human lane), and exploratory
-contrasts show large admission-rate increases whenever a discipline is removed.
-The framework, a worked example, and a domain template are released for others to fork and extend.
+system contrasts show large admission-rate increases in every weakened-discipline configuration
+--- with no single component's causal contribution identified.
+The framework scaffold, a worked example, and a domain template are released for others to fork
+and extend.
 
 \appendix
 \section{Cross-Substrate Portability Probe: Proprietary-Data Monopolies}

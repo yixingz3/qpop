@@ -9,7 +9,7 @@
 > pilot is built. Aggregates cited here are the sanitized, already-published numbers from
 > `RESULTS_V2_WORKING.md` and the paper — no live positions, weights, returns, or per-card content.
 
-Last updated: 2026-07-09.
+Last updated: 2026-07-24 (terminology aligned with the v2 review rounds).
 
 ---
 
@@ -35,10 +35,14 @@ task-completion benchmark can score, because completion frameworks have no notio
 (sequential/e-value control of false discovery over agent-proposed hypotheses) is the closest
 neighbor: both treat an LLM as a *proposer* whose outputs must clear a falsification-style gate
 before they count. OAR is complementary and one level up — it is not a single-hypothesis validity
-test but a **workflow-reliability metric**: given the same candidate set, it scores how much a
-pipeline's admissions are inflated by *removing* individual disciplines. The two compose cleanly: the
-paper already wires an anytime-valid e-process (`forward-qpop evalue`) as the per-hypothesis Type-I
-control, and OAR sits above it as the aggregate over-admission measure across a whole batch.
+test but a **workflow-reliability metric**: given the same candidate set, it scores how much more a
+pipeline admits under *weakened discipline configurations*, relative to a reference discipline
+(reference-relative — attributing the difference to any single removed component requires matched,
+nested arms). The two compose cleanly: the
+paper wires an e-process (`forward-qpop evalue`) as the intended per-hypothesis Type-I
+control (an experimental implementation — it does not yet deliver the guarantee; see
+`EVALUE_METHODS.md`), and OAR sits above it as the aggregate over-admission measure across a whole
+batch.
 
 **Why finance was a good first testbed, and why the metric is domain-general.** Markets are a
 *deliberately adversarial* substrate: they punish wishful thinking, settled outcomes are unambiguous,
@@ -168,7 +172,7 @@ imperfect de-identification — a strong model may re-identify from residual str
 - **Fallback / gold-standard anchor: (a) forward-only cohorts.** Reserved for the legs that genuinely
   need settled reality — rejection precision against *eventual* outcomes and the forward-contract
   falsification rate. Slow but clean; runs on the multi-year cadence of the paper's forward-scoring
-  registry and validates that constructed/adjudicated OAR tracks settled OAR.
+  registry and validates that constructed/independently-adjudicated OAR (blinded panels, never same-system LLM escalation) tracks settled OAR.
 - **Explicitly rejected as primary: (b).** It re-imports the retrodiction invalidity the paper spends
   a full subsection dismantling.
 
@@ -287,7 +291,7 @@ answers.
   dual disagreement-metric report (bull-only agreement + post-escalation resolution).
 - **v1 — public benchmark.** 4–5 domains; public dataset + leaderboard; community pack-contribution
   protocol live; forward-cohort anchor seeded (settles at the v2 horizon). Live engine stays private.
-- **v2 — settled-outcome validation.** Forward-cohort read-out validates that constructed/adjudicated
+- **v2 — settled-outcome validation.** Forward-cohort read-out validates that constructed/independently-adjudicated
   OAR tracks settled OAR; depends on the paper's H4 December read-out + forward-scoring-registry first
   cohort.
 
@@ -306,9 +310,12 @@ must be run over the shared packs; and (iv) the H5 discipline throughout (docume
 gates locked before scoring, both disagreement metrics reported).
 
 **Dependency on the v2 / H4 December read-out.** The benchmark can *launch* on constructed +
-adjudicated ground truth without waiting — that is the whole point of the (c)-primary recommendation.
-But its strongest claim — *constructed/adjudicated OAR tracks settled forward OAR* — is gated on the
+independently/blindly adjudicated ground truth (constructed label keys and blinded human panels —
+never same-system LLM escalation) without waiting — that is the whole point of the (c)-primary
+recommendation.
+But its strongest claim — *constructed/independently-adjudicated OAR tracks settled forward OAR* —
+is gated on the
 paper v2 H4 forward read-out and the forward-scoring-registry first cohort (roughly two quarters out
 from the paper's declared timeline, ~2026-12). Until that read-out, the benchmark paper reports OAR
-against constructed and adjudicated ground truth and declares the settled-outcome validation as
+against constructed and independently/blindly adjudicated ground truth and declares the settled-outcome validation as
 pending — the same forward-first honesty the methods paper models.

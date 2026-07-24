@@ -1,11 +1,24 @@
-"""Anytime-valid sequential trigger test — the paper's §7 Decision Rules, implemented.
+"""Sequential trigger test (e-value rule) — EXPERIMENTAL implementation, per-hypothesis scope.
 
 A Forward-QPOP position is judged against *several* pre-registered exit triggers, and
 each trigger is re-checked at every monitoring step (daily, per rebalance, ...). Naively
 calling a thesis "Falsified" the first time any check fires would inflate the false-
 "Falsified" rate exactly like the factor-zoo multiple-comparisons problem — here in its
-*prospective, repeatedly-monitored* form. This module supplies the fix the paper commits
-to: an **e-value (safe / anytime-valid) sequential test** with explicit Type-I control.
+*prospective, repeatedly-monitored* form. This module implements the rule the paper's
+§7 Decision Rules specifies for that problem: an **e-value (safe / anytime-valid)
+sequential test**.
+
+.. warning:: **Experimental — the current implementation does NOT yet deliver the
+   anytime-valid Type-I guarantee.** Two known defects are tracked (see the v2 review
+   round and ``research/docs/EVALUE_METHODS.md``): (1) a trigger's e-process is created
+   only when that trigger first reports, so the average's mixture membership/weights
+   change after observations — the rule requires every registered trigger initialized
+   at 1 with fixed weights; (2) trigger values are coerced with ``bool()`` rather than
+   strictly type-checked, so e.g. the string ``"false"`` counts as fired. Until both
+   are fixed with regression tests, treat every decision as advisory output of an
+   experimental tool, not a controlled test. Scope is **per-hypothesis only**: nothing
+   here controls multiplicity across hypotheses/positions (book-wide control is future
+   work).
 
 The model (per trigger)
 -----------------------
@@ -28,23 +41,25 @@ martingale with ``E[e_n] = 1``; for any ``P(fire) < p0`` it is a supermartingale
 
     P_{H0}( sup_n e_n >= 1/alpha ) <= alpha .
 
-So the rule "call *Falsified* only when ``e >= 1/alpha``" controls the Type-I error at
-alpha **at any stopping time** — continuous monitoring and optional stopping included.
-That is the whole point: you may peek after every trigger check and still keep the
-false-"Falsified" rate at alpha.
+So the mathematical rule "call *Falsified* only when ``e >= 1/alpha``" controls the Type-I
+error at alpha **at any stopping time** — continuous monitoring and optional stopping
+included — *under its assumptions and with fixed mixture weights over all registered
+triggers*. The current implementation deviates from that requirement (see the warning
+above), so the delivered code does not yet inherit this property.
 
-Combining triggers / positions
-------------------------------
+Combining triggers (within ONE hypothesis)
+------------------------------------------
 E-values combine cleanly:
 
 * **product** — valid when the component e-processes are *independent*; the merged
   process is again an e-process (``E[prod] <= 1`` under the joint null).
 * **average** (the **default**) — the *arithmetic mean* of e-values is a valid e-value
   under **arbitrary dependence** between triggers (Vovk & Wang 2021). Exit triggers on
-  one position (or across positions in one theme) are typically correlated, so averaging
+  one position are typically correlated, so averaging
   is the honest, dependence-safe merge; product would double-count shared evidence and
   break Type-I control. We therefore default to averaging and offer product only for the
-  genuinely-independent case, documented at the call site.
+  genuinely-independent case, documented at the call site. Averaging within one
+  hypothesis provides NO multiplicity control across hypotheses/positions.
 
 Scope / limits (v1)
 -------------------
@@ -212,7 +227,12 @@ def average_evalues(evalues: Iterable[float]) -> float:
 
 @dataclass
 class SequentialTriggerTest:
-    """Anytime-valid sequential test over many binary exit triggers for one hypothesis.
+    """Sequential test over many binary exit triggers for one hypothesis (EXPERIMENTAL).
+
+    Implements the e-value rule described in the module docstring; see the module-level
+    warning — the current implementation does not yet deliver the anytime-valid
+    guarantee (first-report-only e-process creation changes mixture weights; trigger
+    values are ``bool()``-coerced).
 
     Consumes a stream of ``(trigger_id, fired)`` observations, maintaining one
     :class:`EProcess` per trigger id, and exposes:
@@ -261,8 +281,10 @@ class SequentialTriggerTest:
     def decision(self, alpha: float) -> str:
         """``"falsified"`` iff the merged e-value >= 1/alpha (Ville), else ``"continue"``.
 
-        Calling this after every observation is safe: the guarantee is anytime-valid, so
-        optional stopping does not inflate the false-"Falsified" rate beyond ``alpha``.
+        Under the mathematical rule, calling this after every observation would be safe
+        (anytime-valid; optional stopping does not inflate the false-"Falsified" rate
+        beyond ``alpha``) — but see the module-level warning: the current implementation
+        does not yet deliver that guarantee, so treat the decision as advisory.
         """
         if not (0.0 < alpha < 1.0):
             raise ValueError(f"alpha must be in (0, 1), got {alpha!r}")
@@ -378,9 +400,12 @@ def run_ledger_evalue(
 ) -> Tuple[List[EvalueReportRow], dict]:
     """Fold newly-recorded trigger checks into each hypothesis's e-process and report.
 
-    Anytime-valid across repeated invocations: the merged e-value only ever grows by
-    folding in observations once each (tracked via ``last_entry_hash`` in the sidecar),
+    State-resuming across repeated invocations: observations are folded in once each
+    (tracked via ``last_entry_hash`` in the sidecar),
     so re-running after new belief_update entries land resumes rather than re-derives.
+    Resumption preserves whatever statistical properties the underlying test has — see
+    the module-level warning: the current implementation is experimental and does not
+    yet deliver the anytime-valid guarantee.
     The ledger file itself is read-only here -- state lives entirely in the sidecar.
 
     Returns ``(rows, state)``; ``state`` is the (possibly updated) sidecar dict, already

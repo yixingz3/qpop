@@ -94,8 +94,12 @@ under asymmetric information, not ground truth), this shows the restraint is
 awaits the human audit lane. Current numbers: `../../research/docs/RESULTS_V2_WORKING.md`
 (the earlier `RESULTS_INITIAL.md` pilot record is superseded).
 
-## Reproducing the method (not the positions)
+## Reusing the method (not the positions)
 
-Use `../template_domain/` to build your own map and run the funnel. The *engine and disciplines* are
-the reusable artifact here; the live AI book's specific holdings and trades are intentionally not
+Use `../template_domain/` to build your own map and run your *own* funnel — implemented from the
+released stage prompts ([`../../src/prompts.md`](../../src/prompts.md)) and the reference gate
+specification ([`../../src/gate_reference.md`](../../src/gate_reference.md)), or driven manually
+with the plugin skills. The *disciplines and templates* are
+the reusable artifact here; our production engine is private, and the live AI book's specific
+holdings and trades are intentionally not
 published (it would read as "copy these trades," which this project explicitly is not).

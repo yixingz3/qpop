@@ -84,5 +84,10 @@ Expected: a clean 33-page PDF (the v2 revision), no undefined references.
 ---
 
 **What is *not* reproducible here, by design:** forward performance (the evaluation window is
-open; no return is claimed) and the live book (positions and paid feeds are never released).
+open; no return is claimed); the live book (positions and paid feeds are never released); and the
+paper's empirical evidence runs — the 38-card candidate batches, per-arm decisions, H5 audit
+manifest/labels, discovery-funnel ledger, the H3 config-only engine run, and the production
+gate/scoring/domain-templating engine that produced them are all private. What this directory
+verifies is the released *mechanics* (ledger, hashes, anchors, schemas, e-value module, paper
+build); the empirical results are auditable as literal prompts + sanitized aggregates only.
 See the paper's *Reproducibility and Release* table.

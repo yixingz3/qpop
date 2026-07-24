@@ -71,7 +71,9 @@ forward-qpop verify-anchor ledger.jsonl   # detect any drift since anchoring
 forward-qpop anchor external ledger.jsonl --method ots   # submit the head digest to OpenTimestamps
 forward-qpop verify-external ledger.jsonl                # detect drift since the external submission
 
-# anytime-valid sequential trigger test over the ledger (WI-29)
+# sequential trigger test (e-value rule) over the ledger — EXPERIMENTAL (WI-29):
+# advisory output; does not yet deliver the anytime-valid Type-I guarantee
+# (two tracked defects; see research/docs/EVALUE_METHODS.md); per-hypothesis scope only
 forward-qpop evalue ledger.jsonl --alpha 0.05            # table report; resumes via a state sidecar
 forward-qpop evalue ledger.jsonl --json --out report.json  # JSON report, also written to a file
 ```
