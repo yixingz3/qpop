@@ -70,7 +70,8 @@ a disciplined, forward-registered agent \textbf{rejects most of the candidates i
 \emph{for defensible reasons}. We report \emph{pilot} discipline metrics from early candidate batches
 --- a low admission rate and a \textbf{held-out LLM-auditor rejection-quality check}. On a documented,
 seeded sample of $n{=}40$ rejections the held-out bull-only auditor \textbf{agreed with 31/40 (0.775)}
-of the engine's rejections, which \textbf{does not meet the pre-committed $\geq 0.80$ gate}; we report
+of the engine's rejections, which \textbf{does not meet the $\geq 0.80$ criterion later registered
+for the prospective H5 window}; we report
 that gate failure as a result. The earlier pilot's $0.93$ (an undocumented $n{=}14$) was a small-sample
 optimistic read: the documented estimate lies inside the pilot's own interval, so nothing is
 contradicted, but the pilot headline did not survive a $2.86\times$ larger, documented sample (the
@@ -146,16 +147,20 @@ In our initial pilot batch, fewer than 10\% of \emph{evaluated finalists} (and a
 LLM-surfaced candidates) were admitted to the
 forward ledger; the remainder were rejected via deterministic gates or bear-case evaluation.
 On a later documented, seeded sample of 40 rejections the held-out bull-only \emph{LLM auditor}
-agreed with 31/40 (0.775) of the engine's rejections, which does \emph{not} clear the pre-committed
-$\geq 0.80$ gate --- a result we report rather than bury; a full-record LLM adjudicator overrode every
+agreed with 31/40 (0.775) of the engine's rejections, which does \emph{not} clear the
+$\geq 0.80$ criterion later registered for the prospective H5 window --- a result we report rather
+than bury; a full-record LLM adjudicator overrode every
 one of the nine auditor flags (model disagreement under asymmetric information --- an LLM-on-LLM
 diagnostic, not a human audit or ground truth).
-We report this restraint figure alongside exploratory ablation contrasts---ungated screener,
-debate-only, no-\textsc{QPOP}-lock, no-overlap-penalty---where removing each mechanism
-raises the admission rate.
-This is a \emph{methods and systems} paper: the contribution is a workflow that any
-practitioner or researcher can replicate, audit, and extend to a new domain by supplying
-a different \texttt{bottleneck\_map.yml}.
+We report this restraint figure alongside exploratory system contrasts---ungated screener,
+debate-only, no-\textsc{QPOP}-lock, no-overlap-penalty---in which every weakened-discipline
+configuration admits far more than the full pipeline (a configuration-level observation; no single
+component's causal contribution is identified).
+This is a \emph{methods and systems} paper: the contribution is a workflow whose released
+scaffold --- the ledger, hash chain, anchor, e-value module, prompts, schemas, and domain template
+--- any practitioner can replicate, audit, and extend by supplying
+a different \texttt{bottleneck\_map.yml}; the production gate/scoring/domain-templating engine
+that runs the live funnel is private (\S\,Reproducibility).
 
 \section{Related Work}
 
@@ -856,18 +861,23 @@ But a low admission rate is \textbf{not, by itself, evidence of quality} --- a s
 95\% of ideas by being arbitrarily conservative. So restraint is reported with two companions:
 
 \begin{itemize}
-  \item \textbf{Rejection quality (rejection precision).} A held-out auditor (an independent LLM
+  \item \textbf{Rejection quality.} A held-out auditor (an LLM
     and/or a human), shown only the \emph{bull} case and the decision --- \textbf{not} the engine's
     bear case --- labels each sampled rejection \textsc{justified} or a \textsc{false rejection},
     with a category (low-purity / duplicate-overlap / valuation-or-crowding / commodity-cycle /
     pre-revenue-or-hype / unverifiable-or-untradeable). The headline pairs \emph{admission rate}
-    (how much is rejected) with \emph{rejection precision} (whether it should have been). High
-    restraint + low rejection precision would be a failure, not a success.
+    (how much is rejected) with the auditor's \emph{agreement rate} (whether it should have been) ---
+    noting that an LLM audit measures model disagreement under asymmetric information, and ground
+    truth is reserved for the blinded human lane (\S\,Results). High
+    restraint + low audit agreement would be a warning, not a success.
 
-  \item \textbf{Ablation against baselines.} The same candidate stream is run through an ungated
-    screener, debate-only, no-Forward-QPOP-lock, and no-overlap-penalty variants; the claim is that
-    the full pipeline admits \emph{fewer} ideas \textbf{and} that its rejections are better
-    justified --- not merely that gates reduce the count.
+  \item \textbf{System contrasts against baselines.} The same candidate stream is run through an
+    ungated
+    screener, debate-only, no-falsifiable-contract/lock, and no-overlap-penalty variants --- the
+    design goal being to show the full pipeline admits \emph{fewer} ideas \textbf{and} (once
+    arm-specific audits exist) that its rejections are better
+    justified --- not merely that gates reduce the count. The pilot ran the admission-rate half
+    only (\S\,Results).
 \end{itemize}
 
 \section{Experiment Plan (Pre-Registered)}
@@ -971,24 +981,31 @@ Edit only by appending dated amendments.
     will use a single explicit criterion committed in a dated amendment before its data accrue.}
   \item A position's outcome is recorded \textbf{Supported / Weakened / Falsified} strictly by
     its pre-registered exit triggers --- never by an after-the-fact narrative. Because a thesis is
-    judged against \emph{several} triggers over time, outcome decisions use a \textbf{sequential
-    test with explicit Type-I error control} (an anytime-valid / e-value formulation from the
+    judged against \emph{several} triggers over time, outcome decisions are \textbf{designed to use
+    a sequential test with explicit Type-I error control} (an anytime-valid / e-value formulation
+    from the
     safe-testing literature \citep{ramdas2023gametheoretic,shafer2021testing,vovk2021evalues};
-    specified in the pre-registered plan and since implemented and
-    ledger-integrated in the released package, though not used in the pilot decisions\footnote{The
-    e-value / anytime-valid module in the released package (\texttt{forward\_qpop.evalue}) is
-    \emph{experimental future-window machinery under stated assumptions}, not pilot evidence: a
+    specified in the pre-registered plan; an \emph{experimental} implementation is
+    ledger-integrated in the released package, not used in the pilot decisions and not yet
+    delivering the guarantee\footnote{The
+    e-value / anytime-valid module in the released package (\texttt{forward\_qpop.evalue}) is an
+    \emph{experimental implementation of a theoretically anytime-valid per-hypothesis rule} ---
+    it does \emph{not yet deliver} that guarantee, and it is not pilot evidence. The rule: a
     betting-martingale e-process per registered trigger, an arithmetic-average combiner by default
     (dependence-safe per \citet{vovk2021evalues}; the product combiner is valid only under a genuine
     independence assumption) and Ville-threshold decisions, covered by 18 module tests (including a
-    Monte-Carlo Type-I check under optional stopping) plus 17 ledger-integration tests. The
-    targeted guarantee is \textbf{per-hypothesis}: anytime-valid control for that hypothesis's
+    Monte-Carlo Type-I check under optional stopping) plus 17 ledger-integration tests. The rule's
+    guarantee, once the implementation matches it, is \textbf{per-hypothesis}: anytime-valid control
+    for that hypothesis's
     registered triggers under a stated conditional null ($\Pr(\text{fire}_t = 1 \mid \text{past})
     \leq p_0$), assuming non-overlapping observation periods --- a persistent fired state must not be
-    re-counted as fresh evidence; no across-hypothesis (book-wide) multiplicity control is provided,
-    and remaining implementation caveats (e-process initialization / mixture-weight handling when
-    triggers first report, strict trigger-value typing) are tracked in the repository and must be
-    closed before the module drives a live outcome decision.
+    re-counted as fresh evidence; no across-hypothesis (book-wide) multiplicity control is provided
+    under any configuration. Two known implementation defects currently break the stated rule ---
+    the mixture initializes each trigger's e-process only when that trigger first reports (changing
+    mixture membership/weights after observations, where the rule requires all registered triggers
+    initialized at 1 with fixed weights) and trigger values are coerced with \texttt{bool()} rather
+    than strictly type-checked --- and must be
+    closed, with regression tests, before the module drives a live outcome decision.
     It is wired into the ledger: an admission entry \emph{can} carry a frozen \texttt{evalue}
     commitment (\texttt{p0}/\texttt{p1}/combine, hashed with the entry), belief-update entries may
     carry \texttt{trigger\_checks} observations, and \texttt{forward-qpop evalue <ledger.jsonl>} runs
@@ -999,10 +1016,11 @@ Edit only by appending dated amendments.
     revision no ledger admission carries a live \texttt{evalue} commitment (a direct consequence of
     the zero-admit streak since the integration landed); the first future admission can freeze its
     commitment at registration.}),
-    so that repeated looks at \emph{one} hypothesis's registered triggers do not
+    the design intent being that repeated looks at \emph{one} hypothesis's registered triggers not
     inflate false ``Falsified'' calls for that hypothesis --- per-hypothesis anytime-valid control,
-    applied \emph{prospectively}. Book-wide (across-hypothesis) multiplicity control --- the
-    factor-zoo analogue --- is \emph{not} yet provided and is declared future work.
+    applied \emph{prospectively} once the implementation matches the rule. Book-wide
+    (across-hypothesis) multiplicity control --- the
+    factor-zoo analogue --- is \emph{not} provided and is declared future work.
 \end{itemize}
 
 \subsection*{Implementation Details (Fixed in Advance, for Reproducibility)}
@@ -1014,7 +1032,12 @@ additive amendment.
   \item \textbf{Model versions \& prompts:} the exact model identifier (and version/date) for
     each tier (\textsc{source} / first-pass \textsc{evaluate} / adjudication) is logged per run;
     prompt templates are committed in the repo and referenced by commit hash. A model-version
-    change is an amendment, not a silent swap.
+    change is an amendment, not a silent swap. \emph{Disclosure (v2):} that per-run log is
+    private; the public paper names only the cost tiers (cheap / mid / expensive). A sanitized
+    exact-version run table (identifiers, dates, invocation counts, token/cost totals, with
+    missing fields exposed as missing) is not yet released, so the cost-aware-cascade contribution
+    should be read as \emph{architectural} (the tier allocation and its asymmetry) rather than a
+    publicly reconstructible per-run cost accounting.
   \item \textbf{Source timestamps:} every evidence item carries the publication date of the
     source and the retrieval date; an admission may rely only on evidence dated \textbf{on or
     before} the admission date.
@@ -1278,7 +1301,8 @@ adjudicator (a related model) sees the full record, so overturned flags do not e
 engine's rejections were correct. Denominators: agreement and flag rates are over all audited
 rejections ($n$); the uphold rate is over flagged cases only. The documented $n{=}40$ seeded sample
 is primary; the pilot $n{=}14$ (membership and sampling method never recorded) is retained only as a
-clearly-labeled pilot reading, its interval suppressed as non-inferential. The pre-committed H5 gate
+clearly-labeled pilot reading, its interval suppressed as non-inferential. The H5 gate (registered
+2026-06-29, after most of the audited rejections existed --- see Table~\ref{tab:evidence-status})
 required agreement (registered as ``raw precision'') $\geq 0.80$ \emph{and} a flag rate $\leq 10\%$
 --- \textbf{both clauses fail} on the documented sample ($0.775$; $22.5\%$); on a single
 binary-labeled sample the two clauses are redundant (flag rate $= 1 -$ agreement), effectively
@@ -1296,7 +1320,7 @@ to an expensive-model, capital-at-risk adjudication on the full record (a no-web
 dated deviation from the pilot's contemporaneous adjudication, to avoid look-ahead).
 
 \textbf{On the documented sample the bull-only auditor agreed with $31/40$ ($0.775$) of the engine's
-rejections and flagged $9/40$ ($22.5\%$), so \emph{both} pre-committed H5 clauses fail ($\geq 0.80$
+rejections and flagged $9/40$ ($22.5\%$), so \emph{both} H5 gate clauses fail ($\geq 0.80$
 agreement; $\leq 10\%$ flag rate) --- we record the gate failure as a result, not a footnote.}
 Because the gate was registered in v1 (2026-06-29) while the audited rejections largely predate it
 and the pilot predates it entirely, this batch is a pilot reading against the criterion, not a
@@ -1330,7 +1354,7 @@ exactly that --- the same cheap-screen $\to$ expensive-adjudicate asymmetry that
 --- not a claim that the overrides are ground truth. \textbf{Rejection quality therefore remains
 unresolved} pending the human lane, whose protocol is pre-specified in \S\,``What Is Still Pending.''
 
-\subsection{Ablation: Each Discipline Contributes to Restraint (H2)}
+\subsection{Exploratory System Contrasts (H2): Admission Under Weakened Discipline Configurations}
 
 A separate \textbf{38-candidate batch} (distinct from the funnel batch in
 Figure~\ref{fig:cascade}) was run through baseline arms that each \emph{weaken or
@@ -1382,16 +1406,20 @@ after v1 (debate-only, no-contract/lock) report two fresh runs each with per-car
 agreement; the pilot arms are single-run. The arms are not matched one-factor ablations (see text).}
 \end{table}
 
-\noindent\emph{Reproducibility of the baselines.} The ungated baseline was \textbf{allowed to
-reject} --- it is not a strawman forced to admit. The full baseline prompt, the model version, the
-temperature, and the candidate cards are released (\texttt{src/prompts.md}; cards sanitized) so a
-reader can judge for themselves whether the ungated arm was unfairly admission-biased rather than
-taking our word that the $100\%$ is a fair comparison.
+\noindent\emph{Audit boundary of the baselines.} The ungated baseline was \textbf{allowed to
+reject} --- it is not a strawman forced to admit. What a reader can inspect from the public
+release: the \emph{literal arm prompts} (\texttt{src/prompts.md}, released verbatim, including the
+ungated arm's instruction set) and the aggregate per-arm decision counts reported here --- enough
+to judge whether the ungated arm's \emph{instructions} were admission-biased. What a reader cannot
+do: re-run or re-score the arms, because the empirical 38-card set, the per-card arm outputs, and
+the run manifest remain in the private research repository (only a schema-conformant synthetic
+card sample is public). The fairness of the $100\%$ is therefore \emph{inspectable at the prompt
+level, not independently reproducible}.
 
 In this batch and prompt setting the contrasts are large: the
 \textbf{ungated screener admitted every candidate} (the ``over-admits by construction'' failure made
 concrete);
-every arm that removes a discipline admits far more than the full pipeline (each difference exceeds
+every weakened-configuration arm admits far more than the full pipeline (each difference exceeds
 the absolute limb of H2's
 threshold, $\geq 5$ pp; with a zero full-pipeline rate the $\geq 25\%$-relative limb is undefined, a
 zero-denominator convention we record here as a dated amendment); and the full stack sits at 0\%.
@@ -1405,7 +1433,7 @@ disciplines; they do not identify any single component's causal contribution.
 We read the 100\% honestly: an ungated screener that is free to reject but admits
 everything is exhibiting exactly the structural bias-to-admit the framework
 exists to counter --- the informative quantity is the \emph{change} in behavior
-when a discipline is removed, not that any single arm always admits.
+across configurations, not that any single arm always admits.
 
 \textbf{With the two new arms the observed rates, sorted after the fact, span $100\% \to 74\% \to
 66\% \to {\sim}41\% \to {\sim}37\% \to 0\%$} (ungated, $-$bear-case, $-$overlap, no-contract/lock,
@@ -1415,10 +1443,11 @@ from it. The new arms land \emph{between} the full pipeline and the
 single-discipline ablations: the most disciplined single-pass prompt --- bull/bear
 reasoning and purity intact, without the falsifiable-contract requirement --- still admits
 \textbf{roughly
-four in ten}. We \emph{attribute} the residual gap to $0\%$ to
-the funnel's \emph{structure} --- the deterministic gate, the cheap-triage escalation
-asymmetry, the capital-at-risk adjudication, and the lockable-contract bar as practiced --- a reading
-consistent with, though not isolated by, these arms.
+four in ten}. The residual gap to $0\%$ coincides with the components the single-pass arms lack ---
+the deterministic gate, the cheap-triage escalation
+asymmetry, the capital-at-risk adjudication, and the lockable-contract bar as practiced --- but
+these contrasts cannot identify which of those components, if any, is causal; that attribution
+awaits a matched, nested ablation (future work).
 Consistently, the new arms' \emph{consensus-admit core} (the names both
 runs admit) closely tracks the production funnel's \textsc{watchlist} tier --- one
 such consensus name later earned a pre-registered flip contract --- so prompt-level
@@ -1430,8 +1459,10 @@ limb, with high per-card agreement between the two runs (89\%, 82\%).
 \begin{quote}
 A reviewer's exact objection --- ``a system can reject 95\% of ideas by being
 arbitrarily conservative'' --- is \emph{partially} answered: the
-contrasts show the rejections come from \emph{specific, removable disciplines}
-(not blanket conservatism). Whether they are \emph{justified} is not yet established --- the
+contrasts show the restraint is \emph{configuration-dependent} --- admission jumps when the
+discipline configuration is weakened --- rather than blanket conservatism baked into the
+underlying model, though which specific component drives it is not identified. Whether the
+rejections are \emph{justified} is not yet established --- the
 bull-only audit agreed with $31/40$ and the full-record adjudicator overrode all nine disagreements,
 an intra-model-family diagnostic under asymmetric information, not ground truth; the human lane is
 the outstanding test.
@@ -1453,7 +1484,7 @@ disagreement with the reference discipline, and ``true'' over-admission is reser
 sets with independent labels or settled forward outcomes. In this pilot the reference admitted zero
 of the 38-card batch, so $\mathrm{rOMR} = 0$ \emph{by construction} --- an artifact of the zero-admit
 reference, not evidence the reference is infallible. Operationally: the ungated screener's rOAR
-against the full discipline is $100\%$ on this batch, and removing any single discipline moved rOAR
+against the full discipline is $100\%$ on this batch, and every weakened-configuration arm moved rOAR
 by more than H2's absolute $\geq 5$\,pp limb. A meaningful benchmark pairs rOAR with a
 \emph{rejection-quality} audit of the reference itself (here: bull-only agreement $31/40$, unresolved
 pending the human lane): driving rOAR down matters only if the reference's rejections are defensible
@@ -1584,11 +1615,13 @@ not test --- a substrate-specific hypothesis about the \emph{entry} rule.
 remaining ablation arms (debate-only, no-contract/lock --- \S\,H2 above); config-only domain
 portability (the uranium funnel --- \S\,H3, clause (c)); the expanded rejection-quality audit
 ($n{=}40$, on which
-\emph{both} pre-committed gate clauses failed, reported as such --- \S\,H5); the
+\emph{both} gate clauses failed (a criterion registered 2026-06-29, after most of the audited
+rejections existed), reported as such --- \S\,H5); the
 \textbf{e-value / anytime-valid} module, now \emph{ledger-integrated} (a frozen per-admission
 \texttt{evalue} commitment hashed with the entry, plus a \texttt{forward-qpop evalue} CLI that runs the
-sequential test over the ledger; 18 module + 17 integration tests --- experimental future-window
-machinery with per-hypothesis control only, not used in the pilot, and no live admission carries a
+sequential test over the ledger; 18 module + 17 integration tests --- an experimental implementation
+of a per-hypothesis anytime-valid rule that does \emph{not yet deliver} the guarantee (two known
+defects tracked; \S\,Decision Rules footnote), not used in the pilot, and no live admission carries a
 commitment yet); and an external \textbf{OpenTimestamps} anchor (opt-in / manual by design,
 11 hermetic tests plus a dispatch-gated live CI job). Still pending:
 
@@ -1643,8 +1676,8 @@ produced them are not public.
 \midrule
 Code (package)        & Yes                  & ledger, hash chain, OpenTimestamps anchor, e-value module, CLI, schema validation, example-domain runner \\
 Gate + scoring engine & No                   & deterministic gate, confidence scoring, domain templating (runs the live funnel) \\
-Prompts         & Yes                        & source / triage / evaluate / adjudicate / audit \\
-Candidate cards & Sanitized                  & redacted evidence summaries \\
+Prompts         & Yes                        & source / triage / evaluate / adjudicate / audit (literal, verbatim) \\
+Candidate cards & Synthetic sample only      & schema-conformant sample cards; the empirical 38-card batch and per-card arm outputs are private \\
 Ledger          & Synthetic                  & QPOP schema and sample hashes \\
 Live positions  & No                         & not released \\
 Broker data     & No                         & not released \\
@@ -1748,7 +1781,8 @@ tool: deterministic gates, source-tiered dated evidence, a bear case written bef
 recommendation, a hash-chained pre-registration ledger, and forward (not backtest) validation. The
 headline is restraint --- the agent rejects most of what it surfaces. A held-out bull-only LLM
 auditor agreed with $31/40$ ($0.775$) of a documented, seeded sample of those rejections ---
-\emph{missing} the pre-committed $\geq 0.80$ gate --- and a full-record adjudicator overrode all nine
+\emph{missing} the $\geq 0.80$ criterion later registered for the prospective window --- and a
+full-record adjudicator overrode all nine
 disagreements ($9/9$); we report the miss as the honest pilot reading and the override pattern as
 model disagreement under asymmetric information (an LLM-on-LLM diagnostic, not a human audit ---
 rejection quality remains unresolved pending the pre-specified human lane), and exploratory

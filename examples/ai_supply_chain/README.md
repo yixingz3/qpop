@@ -70,9 +70,10 @@ outcome, and it is the result, not a failure.
   gated on the incumbent firing an exit trigger, not a standalone add. The gate caught the
   duplication before any expensive evaluation.
 
-## Ablation — each discipline contributes to restraint
+## Exploratory system contrasts — admission under weakened discipline configurations
 
-The same **38-candidate batch**, run through baselines that each remove one discipline:
+The same **38-candidate batch**, run through baseline arms with weakened discipline configurations
+(non-nested, multi-component contrasts — not matched one-factor ablations):
 
 | Arm | Admitted | Rate |
 |---|---|---|
@@ -81,13 +82,15 @@ The same **38-candidate batch**, run through baselines that each remove one disc
 | − bear-case-first | 28 / 38 | 74% |
 | **Ungated LLM screener** (no discipline) | **38 / 38** | **100%** |
 
-An ungated LLM admits *literally everything*; removing any single discipline raises admission far
-past a "beyond noise" threshold; the full stack sits at 0%. Paired with the rejection-quality
+An ungated LLM admits *literally everything*; every weakened configuration admits far more than
+the full pipeline, which sits at 0% (a configuration-level observation — these contrasts do not
+identify any single component's causal contribution). Paired with the rejection-quality
 audit (on the documented, seeded n=40 sample a held-out bull-only LLM auditor agreed with **31/40
-(0.775)** of the rejections — *missing* the pre-committed ≥0.80 gate, a failure reported as a
+(0.775)** of the rejections — *missing* the ≥0.80 criterion later registered for the prospective
+H5 window, a failure reported as a
 result; a full-record adjudicator overrode all nine disagreements, which is model disagreement
-under asymmetric information, not ground truth), this is evidence that the restraint comes from
-*specific, removable disciplines*, not blanket conservatism — whether the rejections are justified
+under asymmetric information, not ground truth), this shows the restraint is
+*configuration-dependent*, not blanket conservatism — whether the rejections are justified
 awaits the human audit lane. Current numbers: `../../research/docs/RESULTS_V2_WORKING.md`
 (the earlier `RESULTS_INITIAL.md` pilot record is superseded).
 

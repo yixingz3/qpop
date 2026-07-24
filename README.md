@@ -36,10 +36,13 @@ It wraps your agent's research in a discipline and makes every decision auditabl
   evidence, and measurable exit triggers, committed *before* the outcome is known.
 - **Validates forward**, not by a leaky backtest.
 
-> **Pilot evidence** (the methods paper, [`research/paper/`](research/paper)): removing any single
-> discipline pushed an LLM screener's admission rate from **0% to 66–100%**; on a documented, seeded
+> **Pilot evidence** (the methods paper, [`research/paper/`](research/paper)): in exploratory
+> system contrasts on one 38-card batch, every weakened-discipline configuration admitted far more
+> than the full pipeline (**37–100% vs 0%**; a configuration-level observation — no single
+> component's causal contribution is identified); on a documented, seeded
 > sample of **n=40** rejections a held-out bull-only **LLM auditor** agreed with **31/40 (0.775)** of
-> the engine's rejections — **missing the pre-committed ≥0.80 gate**, a failure reported as a result
+> the engine's rejections — **missing the ≥0.80 criterion later registered for the prospective H5
+> window**, a failure reported as a result
 > (a full-record LLM adjudicator overrode all nine disagreements; model disagreement under asymmetric
 > information, not a human audit or ground truth — rejection quality is unresolved pending a human
 > lane); "no action" is the modal outcome. *These are pilot metrics — they validate process
@@ -95,7 +98,7 @@ insert one, delete one, or reorder them, and `verify` fails (and exits non-zero 
 |---|---|
 | Claude Code plugin discipline (`auditable-research` + `/qpop:*`) | **Working — v0.1** |
 | Hash-chained Python ledger (`forward_qpop`) + CLI | **Working** (66/67 tests, 1 network test skipped by default) |
-| Anytime-valid sequential trigger test (`evalue`) — Type-I control over many triggers, wired to the ledger (`forward-qpop evalue`) | **Working** (18 e-process + 17 ledger-integration tests) — e-value / Ville, [methods note](research/docs/EVALUE_METHODS.md) |
+| Anytime-valid sequential trigger test (`evalue`) — experimental implementation of a per-hypothesis anytime-valid rule, wired to the ledger (`forward-qpop evalue`); does not yet deliver the guarantee (two known defects tracked: e-process initialization/mixture weights, strict trigger typing); no book-wide multiplicity control | **Experimental** (18 e-process + 17 ledger-integration tests) — e-value / Ville, [methods note](research/docs/EVALUE_METHODS.md) |
 | Local anchor manifest (`anchor` / `verify-anchor`) | **Working** — manifest + drift-detection + git / local OpenTimestamps stamp |
 | External timestamp anchor (`anchor external` / `verify-external`) | **Working — manual/opt-in by design** (WI-30, 2026-07-09; not an auto-hook on ledger writes) — submits to OpenTimestamps, sidecar receipt + drift-detection ([details](#external-anchor-what-it-proves-and-what-it-doesnt)) |
 | JSON Schemas for cards / entries / runs | **Included** ([`schemas/`](schemas)) |

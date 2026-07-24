@@ -104,8 +104,8 @@ disciplined process reject this?* Three provenances, in decreasing leakage-safet
 the cautionary tale: the pilot n=14 agreement headline (0.93) did *not* survive a documented n=40 draw
 (bull-only auditor agreement 0.775, naive Wilson [0.625, 0.877]); the full-record adjudicator
 overriding all nine flags (9/9) is an *escalation diagnostic under asymmetric information, not
-ground truth* (terminology revised 2026-07-23 per the v2 review — see
-`../paper/arxiv/revise_log.md`). The benchmark therefore mandates: (i) **documented, seeded,
+ground truth* (terminology revised 2026-07-23/24 per the v2 review round). The benchmark
+therefore mandates: (i) **documented, seeded,
 content-hash-verifiable sampling**
 (no undocumented membership); (ii) **pre-committed gates** locked before the set is scored; and
 (iii) **both the raw auditor-agreement rate and the post-escalation resolution reported, clearly
@@ -221,9 +221,12 @@ admits that a disciplined reference would reject, read straight from the ablatio
 admission budget prevents gaming by trivially admitting nothing.
 
 **Secondary metrics.**
-- **Rejection precision (raw + adjudicated, both reported).** Guards against the "reject everything"
-  degenerate — a low OAR is only meaningful if the rejections are *justified*. Raw is primary;
-  adjudicated is a secondary resolution figure, never the headline (the H5 discipline).
+- **Rejection-quality audit (bull-only agreement rate + post-escalation resolution, both reported
+  as disagreement metrics — same-system escalation is never ground truth).** Guards against the "reject everything"
+  degenerate — a low OAR is only meaningful if the rejections are *justified*. The bull-only
+  agreement rate is primary; the post-escalation resolution is a secondary figure, never the
+  headline (the H5 discipline). Justification itself requires independent labels (constructed keys
+  or blinded human panels), not same-system escalation.
 - **Watchlist calibration.** How well the middle tier separates "watch with a dated trigger" from
   "commit" — measured against the constructed labels and, where available, forward triggers.
 - **Forward-contract falsification rate.** For admitted cards, how often the pre-committed exit
@@ -259,7 +262,8 @@ same firm boundary the paper's reproducibility table draws.
 
 **Dataset / leaderboard shape.** A versioned dataset of domain packs + candidate sets (with label
 manifests for constructed cards, held-out for forward-cohort cards), and a leaderboard reporting
-per-domain and pooled OAR + raw/adjudicated rejection precision + watchlist calibration, with
+per-domain and pooled rOAR + the rejection-quality audit (bull-only agreement + post-escalation
+resolution, as disagreement metrics) + watchlist calibration, with
 confidence intervals and the discipline-curve plot per submission.
 
 **Versioning.** Semantic pack versions; candidate-set membership content-hash-pinned and anchored so
@@ -275,11 +279,12 @@ answers.
 **Staged roadmap.**
 - **v0 — 2-domain pilot, from existing material.** AI supply chain + uranium (both already run through
   the real funnel; sanitized aggregates exist). Ships the shared task-format spec, the domain-pack
-  pattern, the ablation harness reading OAR straight from the released package, and the monotone
-  discipline curve as the reference. No new forward data required — reuses preserved batches.
+  pattern, the contrast harness reading rOAR straight from the released package, and the observed
+  discipline-contrast curve as a descriptive reference. No new forward data required — reuses
+  preserved batches.
 - **v0.5 — leakage-clean expansion.** Add constructed planted-bait sets + blinded perturbation; add
   the ML-eval control domain (clean, fast ground truth); wire the blinded multi-auditor lane and the
-  raw+adjudicated dual report.
+  dual disagreement-metric report (bull-only agreement + post-escalation resolution).
 - **v1 — public benchmark.** 4–5 domains; public dataset + leaderboard; community pack-contribution
   protocol live; forward-cohort anchor seeded (settles at the v2 horizon). Live engine stays private.
 - **v2 — settled-outcome validation.** Forward-cohort read-out validates that constructed/adjudicated
@@ -288,16 +293,17 @@ answers.
 
 ## 7. Relationship to paper v2 and the follow-up paper
 
-**One-paragraph outline of the benchmark paper.** *Claim:* OAR paired with rejection precision is a
+**One-paragraph outline of the benchmark paper.** *Claim:* rOAR paired with a rejection-quality
+audit is a
 **portable, adversarial reliability benchmark for agentic research** — it measures epistemic restraint
 under plausibility pressure, a failure mode orthogonal to the capability/task-completion axis existing
 agent benchmarks score. *Evidence it needs:* (i) ≥4 domains spanning physical/non-physical and
-finance/non-finance, each reproducing the monotone discipline curve; (ii) a leakage-clean
+finance/non-finance, each reporting its discipline-contrast curve; (ii) a leakage-clean
 ground-truth protocol (primary: constructed + perturbed; anchored by forward cohorts) that survives
 the features-are-the-fingerprint objection; (iii) **multi-agent** runs — the benchmark's point is that
 it scores *any* agent's over-admission, not just this engine, so at least a handful of external agents
 must be run over the shared packs; and (iv) the H5 discipline throughout (documented seeded samples,
-pre-committed gates, raw+adjudicated both reported).
+gates locked before scoring, both disagreement metrics reported).
 
 **Dependency on the v2 / H4 December read-out.** The benchmark can *launch* on constructed +
 adjudicated ground truth without waiting — that is the whole point of the (c)-primary recommendation.

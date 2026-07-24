@@ -1,9 +1,16 @@
 # Anytime-valid sequential trigger test (paper §7 Decision Rules)
 
-*Implements the decision rule the paper commits to: outcome decisions over many exit
-triggers and positions use a sequential test with explicit Type-I error control (an
-anytime-valid / e-value formulation from the safe-testing literature), so that monitoring
-many triggers across many positions does not inflate false "Falsified" calls.* Module:
+*An **experimental implementation** of the decision rule the paper's plan specifies: outcome
+decisions over one hypothesis's registered exit triggers use a sequential test designed for
+anytime-valid Type-I error control (an e-value formulation from the safe-testing literature). The
+guarantee is **per-hypothesis only** — nothing here controls multiplicity across positions/
+hypotheses (book-wide control is future work) — and the current code does **not yet deliver** even
+the per-hypothesis guarantee: two known defects are tracked (the mixture initializes a trigger's
+e-process only when that trigger first reports, changing mixture membership/weights after
+observations, where the rule requires all registered triggers initialized at 1 with fixed weights;
+and trigger values are coerced with `bool()` rather than strictly type-checked, so `"false"` counts
+as fired). Both must be fixed, with regression tests, before the module drives a live outcome
+decision (per the v2 review, 2026-07-24).* Module:
 [`src/forward_qpop/evalue.py`](../../src/forward_qpop/evalue.py); tests:
 [`tests/test_evalue.py`](../../tests/test_evalue.py) (the standalone e-process, 18 tests)
 and [`tests/test_evalue_ledger.py`](../../tests/test_evalue_ledger.py) (the ledger wiring,
@@ -62,7 +69,12 @@ So the decision rule
 controls the Type-I (false-"Falsified") error at `α` **at any stopping time** — continuous
 monitoring and optional stopping included. You may re-evaluate `decision(α)` after every
 trigger check and still keep the false-"Falsified" rate at `α`. This is exactly the
-guarantee a fixed-sample test lacks.
+guarantee a fixed-sample test lacks. *(That is the property of the mathematical rule under its
+assumptions — the stated conditional null `P(fire_t = 1 | past) <= p0`, non-overlapping
+observation periods, no re-counting of a persistent fired state, and fixed mixture weights over
+all registered triggers. The current implementation deviates from the fixed-weights requirement
+and from strict trigger typing — see the header note — so the delivered code is experimental, not
+a completed guarantee.)*
 
 **Simulation check (in the test suite).** Under the null (`p0 = 0.15`, `p1 = 0.6`,
 4 triggers, horizon 60, `α = 0.10`), across 400 optional-stopping paths that stop the
@@ -70,7 +82,7 @@ instant the rule would fire, the empirical false-"Falsified" rate is **0.050**
 (averaging) / **0.0375** (product) — both `<= α`. Under a true alternative
 (`P(fire) = p1`) the test falsifies on **100/100** paths (power sanity).
 
-## Combining triggers and positions
+## Combining triggers (within one hypothesis)
 
 E-values merge cleanly, and the merge choice is a dependence assumption:
 
@@ -80,11 +92,15 @@ E-values merge cleanly, and the merge choice is a dependence assumption:
   dependence** between the component e-values (Vovk & Wang: the arithmetic average is the
   admissible symmetric merge of arbitrarily-dependent e-values).
 
-Exit triggers on one position — and across positions in one theme — are typically
+Exit triggers on one position are typically
 **correlated** (a supply shock trips several at once). Product would double-count that
 shared evidence and break Type-I control; averaging stays valid regardless of the
 dependence structure. We therefore **default to averaging** and expose product only for
-the genuinely-independent case, to be chosen explicitly at the call site.
+the genuinely-independent case, to be chosen explicitly at the call site. **Averaging within one
+hypothesis does not address multiplicity across hypotheses/positions:** testing many positions
+each at `α` still inflates the book-wide false-"Falsified" rate; a global e-process, alpha
+allocation, or an e-value multiple-testing procedure would be needed for across-position control,
+and none is provided here.
 
 ## How the ledger integrates it (WI-29, wired 2026-07-09)
 

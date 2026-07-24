@@ -147,17 +147,28 @@ pre-committed gates rather than after-the-fact judgment, is one measurable contr
 But a low admission rate is **not, by itself, evidence of quality** — a system can reject 95% of
 ideas by being arbitrarily conservative. So restraint is reported with two companions:
 
-- **Rejection quality (rejection precision).** A held-out auditor (an independent LLM and/or a human),
-  shown only the *bull* case and the decision — **not** the engine's bear case — labels each sampled
+- **Rejection quality.** A held-out auditor (an LLM and/or a human), shown only the *bull* case and
+  the decision — **not** the engine's bear case — labels each sampled
   rejection JUSTIFIED or a FALSE REJECTION, with a category (low-purity / duplicate-overlap /
   valuation-or-crowding / commodity-cycle / pre-revenue-or-hype / unverifiable-or-untradeable). The
-  headline pairs *admission rate* (how much is rejected) with *rejection precision* (whether it
-  should have been). High restraint + low rejection precision would be a failure, not a success.
-- **Ablation against baselines.** The same candidate stream is run through an ungated screener,
-  debate-only, no-Forward-QPOP-lock, and no-overlap-penalty variants; the claim is that the full
-  pipeline admits *fewer* ideas **and** that its rejections are better justified — not merely that
-  gates reduce the count.
+  headline pairs *admission rate* (how much is rejected) with the auditor's *agreement rate*
+  (whether it should have been). An LLM audit measures **model disagreement under asymmetric
+  information**, not ground truth — a same-family full-record adjudicator overriding bull-only
+  flags does not establish the rejections were correct; ground truth is reserved for a blinded,
+  full-record human lane. High restraint + low audit agreement would be a warning, not a success.
+  *(Terminology revised 2026-07-24 per the v2 review; the paper's v2 uses "bull-only auditor
+  agreement," not "rejection precision," for what is measured.)*
+- **System contrasts against baselines.** The same candidate stream is run through an ungated
+  screener, debate-only, no-falsifiable-contract/lock, and no-overlap-penalty variants. These are
+  exploratory system contrasts (non-nested, multi-component arms), not matched one-factor
+  ablations: they show whether admission jumps when the discipline configuration is weakened; they
+  do not identify a single component's causal contribution, and rejection-quality per arm is a
+  separate, unmeasured question.
 
-Outcome decisions over many triggers and positions use a **sequential test with explicit Type-I
-control** (an anytime-valid / e-value formulation), so monitoring many exit triggers does not inflate
-false "Falsified" calls — the prospective analogue of the factor-zoo multiple-comparisons problem.
+Outcome decisions are *designed* to use a **per-hypothesis anytime-valid sequential test** (an
+e-value formulation) so that repeated looks at one hypothesis's registered triggers do not inflate
+false "Falsified" calls. The released module is an experimental implementation of that rule and
+does not yet deliver the guarantee (known defects: e-process initialization/mixture weights when
+triggers first report; non-strict trigger typing); it provides **no across-hypothesis (book-wide)
+multiplicity control** — the factor-zoo analogue remains future work. See
+[EVALUE_METHODS.md](EVALUE_METHODS.md).

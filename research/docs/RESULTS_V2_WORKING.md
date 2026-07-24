@@ -9,10 +9,16 @@ release boundary (paper §Reproducibility). All runs 2026-07-07 unless noted.
 The pilot's 38-card batch, per-arm decisions, and literal arm prompts were recovered in full from
 the run journals and are now preserved as named artifacts (prompts released in `src/prompts.md` §8).
 The two §9.5-pending arms were then run on the identical batch under the pilot protocol (batched
-mid-tier model call; admit boolean + one-line each), with two independent replicates per arm and an
+mid-tier model call; admit boolean + one-line each), with two fresh runs per arm (two runs of one
+model are not independent replicates) and an
 explicit as-of framing (dated amendment: retrospective run).
 
-| Arm | Admission rate | Replicates | Per-card replicate agreement |
+*(Terminology revised 2026-07-24 per the v2 review: these are exploratory system contrasts, not
+matched one-factor ablations; the arms are non-nested and the full-pipeline comparator is a
+multi-component staged cascade, so no single component's causal contribution is identified and H2
+is inconclusive / not tested as registered — per-arm rejection quality was never measured.)*
+
+| Arm | Admission rate | Fresh runs | Per-card run agreement |
 |---|---|---|---|
 | Full pipeline (pilot, real funnel) | 0/38 (0%) | 1 | — |
 | − overlap penalty (pilot) | 25/38 (66%) | 1 | — |
@@ -21,14 +27,18 @@ explicit as-of framing (dated amendment: retrospective run).
 | **Debate-only (new, arm b)** | **15/38, 13/38 (~37%)** | 2 | 89% |
 | **No forward lock (new, arm c)** | **14/38, 17/38 (~41%)** | 2 | 82% |
 
-Both new arms clear H2's pre-committed support threshold (≥25% relative or ≥5pp above the full
-pipeline) by +37/+41pp. Two observations for v2:
+Both new arms' admission rates exceed the full pipeline's by more than the absolute ≥5pp limb of
+H2's threshold (+37/+41pp; with a zero full-pipeline rate the ≥25%-relative limb is undefined —
+dated zero-denominator convention). This does NOT make H2 supported: the registered design also
+requires per-arm rejection precision, which was never measured. Two observations for v2:
 
-1. **Monotone discipline ordering, with the new arms in between:** 100% → 74% → 66% → ~41% → ~37% →
-   0%. The most disciplined single-pass prompt (bear-case-first + purity + overlap intact, only the
-   forward lock removed) still admits ~4-in-10 — the residual gap to 0% belongs to the funnel's
-   *structure* (deterministic gate, cheap-triage escalation asymmetry, capital-at-risk adjudication,
-   and the falsifiable-contract requirement as practiced), not to prompt wording.
+1. **Observed rate ordering (descriptive, sorted post hoc), with the new arms in between:** 100% →
+   74% → 66% → ~41% → ~37% → 0%. The arms are non-nested interventions, so this is not a
+   dose-response curve. The most disciplined single-pass prompt (bear-case-first + purity + overlap
+   intact, without the falsifiable-contract requirement) still admits ~4-in-10 — the residual gap
+   to 0% coincides with the components the single-pass arms lack (deterministic gate, cheap-triage
+   escalation asymmetry, capital-at-risk adjudication, the falsifiable-contract bar), but these
+   contrasts cannot identify which of those components, if any, is causal.
 2. **The arms' consensus-admit core closely tracks the production funnel's WATCHLIST tier** (one
    consensus name later earned a pre-registered flip contract). Prompt-level discipline finds the
    same candidates; the staged funnel converts "interesting" into "watch with a dated trigger"
@@ -55,7 +65,8 @@ asymmetric information, not ground truth; "raw precision"/"adjudicated precision
 | Bull-only flag / disagreement rate | 7.1% (1/14) | **22.5% (9/40)** |
 | Full-record LLM uphold among flagged (secondary) | 1/1 | **9/9** |
 
-**The honest v2 statement:** BOTH pre-committed H5 clauses fail on the documented sample (≥0.80
+**The honest v2 statement:** BOTH H5 gate clauses (a criterion registered 2026-06-29, after most
+of the audited rejections existed — not a pre-committed test of this batch) fail on the documented sample (≥0.80
 agreement: 0.775; ≤10% flag rate: 22.5% — on a single binary-labeled sample the clauses are
 redundant, flag rate = 1 − agreement, effectively binding at 0.90). The pilot's 0.93 was the
 optimistic read of a small

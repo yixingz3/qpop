@@ -2,9 +2,13 @@
 
 > **SUPERSEDED (2026-07):** this is the dated *initial pilot* record, kept for provenance. Its
 > headline audit number (0.93, n=14, undocumented sampling) did **not** survive the documented,
-> seeded n=40 expansion (bull-only auditor agreement 0.775; both pre-committed H5 gate clauses
-> fail) — see [`RESULTS_V2_WORKING.md`](RESULTS_V2_WORKING.md) for the current numbers and the
-> revised (model-disagreement) terminology. Do not cite this file's numbers as current.
+> seeded n=40 expansion (bull-only auditor agreement 0.775; both H5 gate clauses fail — a
+> criterion registered 2026-06-29, after most audited rejections existed) — see
+> [`RESULTS_V2_WORKING.md`](RESULTS_V2_WORKING.md) for the current numbers and the
+> revised (model-disagreement) terminology. The H2 section below likewise predates the v2
+> terminology: its "each discipline contributes" / "monotone and decisive" framing is superseded —
+> the arms are exploratory system contrasts and H2 is inconclusive / not tested as registered.
+> Do not cite this file's numbers or framings as current.
 
 > **Pilot metrics — not a performance claim, and not confirmatory.** This validates *process
 > discipline*, not investment profitability (which awaits H4). The numbers below are pilot / initial

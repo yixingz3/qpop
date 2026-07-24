@@ -140,6 +140,15 @@ paper reports these rather than hiding them.
   disagreement under asymmetric information), with ground-truth rejection quality reserved for the
   human lane (two reviewers, neutral full-record packet, blind to LLM labels, tie rule,
   inter-rater agreement).
+- **2026-07-24 — e-value scope correction.** The registered decision-rule sentence saying the
+  sequential test keeps "monitoring many triggers across many positions" from inflating false
+  "Falsified" calls overstated the scope in two ways, recorded here rather than rewritten: (1) the
+  rule is **per-hypothesis** — averaging a hypothesis's registered trigger e-processes provides no
+  across-position/book-wide multiplicity control, which remains future work; (2) the released
+  implementation is **experimental and does not yet deliver** even the per-hypothesis guarantee
+  (two tracked defects: e-process initialization/mixture weights when triggers first report;
+  non-strict trigger typing) — see `research/docs/EVALUE_METHODS.md`. No pilot decision used it,
+  and no live admission carries an e-value commitment yet.
 - **2026-07-23 — H3 rate criterion replacement (future windows).** "Within 2× the first domain's
   rate" is degenerate against a zero first-domain rate (admits only exactly zero). For prospective
   windows it is replaced by an absolute non-inferiority criterion: the second domain's
