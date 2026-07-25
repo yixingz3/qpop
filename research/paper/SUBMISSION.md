@@ -6,7 +6,7 @@ Capital-Markets Testbed* — Yixing Zheng (NYU Stern). Source: [`paper.tex`](pap
 
 | Venue | Status | Date | Notes |
 |---|---|---|---|
-| SSRN | **Posted (public preprint)** | accepted 2026-07-22 (submitted 2026-06-29) | v1 is now publicly posted and receiving views/downloads (27 views / 15 downloads day one). It is a preprint, not a peer-reviewed publication. **Abstract ID 7017500 — <https://ssrn.com/abstract=7017500>** (operator-supplied 2026-07-23). Pre-submission verification 2026-06-28 (all funnel numbers ledger-reconciled). eJournals: CSRN (AI Alert, Computing Methodology Alert), FEN (Asset Pricing & Valuation, Market Efficiency), ERN (Econometrics: Computational Techniques). JEL: C45, C12, C53, C81, C88, G11, G17. |
+| SSRN | **v2 REVISION LIVE (public preprint)** | v2 posted 2026-07-25 (v1 accepted 2026-07-22; submitted 2026-06-29) | v1 is now publicly posted and receiving views/downloads (27 views / 15 downloads day one). It is a preprint, not a peer-reviewed publication. **Abstract ID 7017500 — <https://ssrn.com/abstract=7017500>** (operator-supplied 2026-07-23). Pre-submission verification 2026-06-28 (all funnel numbers ledger-reconciled). eJournals: CSRN (AI Alert, Computing Methodology Alert), FEN (Asset Pricing & Valuation, Market Efficiency), ERN (Econometrics: Computational Techniques). JEL: C45, C12, C53, C81, C88, G11, G17. |
 | arXiv | Manuscript revision + endorsement pending | — | cs.AI primary, q-fin.CP cross-list. **The `arxiv/` bundle is still the v1 source — do NOT upload it; it must be re-synced from the canonical v2 after the SSRN revision lands (arXiv deferred by operator decision, 2026-07-24).** **Source copy prepared (WI-21):** [`arxiv/paper.tex`](arxiv/paper.tex) + `references.bib` (+ `paper.bbl` fallback), line-1 `% … SSRN submission draft` comment scrubbed on the copy only (original tex untouched; diff = 1 line), builds clean (pdflatex+bibtex+pdflatex×2 → 28 pp, 0 undefined citations). Upload `.tex` + `references.bib` (figures are inline TikZ — no ancillary files). **Endorser prep (WI-20c):** [`../docs/ARXIV_ENDORSER_PREP.md`](../docs/ARXIV_ENDORSER_PREP.md) — verified cs.AI endorser shortlist + outreach template. Remaining blocker: operator obtains one manual (Path-2) endorsement, then upload. |
 
 ## Version log
@@ -51,9 +51,9 @@ Sequencing decided for the `paper-v2` draft, after operator review:
 semantic acceptance searches). Merged to `main` the same day. **Post-acceptance amendment (rev. 8):
 one operator-requested abstract-emphasis sentence (38/38 vs 0/38 contrast, already-verified
 numbers, non-causal framing); 34 pp; pending the reviewer's delta pass, then re-merge to `main`
-before upload.** **Remaining manual step (operator):
+before upload.** **DONE 2026-07-25: operator uploaded the rev.8 v2; SSRN abstract page updated immediately (PDF swap to be spot-checked once processing settles).** ~~Remaining manual step (operator):
 upload the PDF as a revision to SSRN abstract 7017500, and update SSRN's abstract-text and
-AI-disclosure form fields to match the v2 abstract** (those fields live outside the PDF).
+AI-disclosure form fields to match the v2 abstract** (those fields live outside the PDF).~~
 **arXiv remains deferred by
 operator decision (2026-07-24)** and is not part of this release step; the `arxiv/` bundle stays
 untouched (and must not be uploaded) until separately requested. December (v2.1) scope: H4 forward
