@@ -139,13 +139,13 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
 
     pev = sub.add_parser(
         "evalue",
-        help="Run the EXPERIMENTAL sequential trigger test (e-value rule) over a ledger's "
-             "registered hypotheses. Advisory output: the current implementation does not yet "
-             "deliver the anytime-valid Type-I guarantee (see EVALUE_METHODS.md); "
-             "per-hypothesis scope only.",
+        help="Run the sequential trigger test (e-value rule) over a ledger's registered "
+             "hypotheses. Per-hypothesis anytime-valid under stated assumptions (fixed "
+             "registered-trigger membership, strict boolean checks — see "
+             "EVALUE_METHODS.md); no book-wide multiplicity control.",
     )
     pev.add_argument("path")
-    pev.add_argument("--alpha", type=float, default=0.05, help="Reporting threshold; 'falsified' iff e-value >= 1/alpha (default: 0.05). Not a delivered Type-I bound while the implementation is experimental.")
+    pev.add_argument("--alpha", type=float, default=0.05, help="Per-hypothesis Type-I level; 'falsified' iff e-value >= 1/alpha (default: 0.05). Reporting-time argument, not part of the hashed commitment — freeze any operational threshold in a dated policy.")
     pev.add_argument("--state", default=None, help="State sidecar path (default: <ledger>.evalue-state.json).")
     pev.add_argument("--json", dest="as_json", action="store_true", help="Print the report as JSON instead of a table.")
     pev.add_argument("--out", default=None, help="Also write the JSON report to this path.")

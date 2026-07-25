@@ -8,17 +8,21 @@ calling a thesis "Falsified" the first time any check fires would inflate the fa
 §7 Decision Rules specifies for that problem: an **e-value (safe / anytime-valid)
 sequential test**.
 
-.. warning:: **Experimental — the current implementation does NOT yet deliver the
-   anytime-valid Type-I guarantee.** Two known defects are tracked (see the v2 review
-   round and ``research/docs/EVALUE_METHODS.md``): (1) a trigger's e-process is created
-   only when that trigger first reports, so the average's mixture membership/weights
-   change after observations — the rule requires every registered trigger initialized
-   at 1 with fixed weights; (2) trigger values are coerced with ``bool()`` rather than
-   strictly type-checked, so e.g. the string ``"false"`` counts as fired. Until both
-   are fixed with regression tests, treat every decision as advisory output of an
-   experimental tool, not a controlled test. Scope is **per-hypothesis only**: nothing
-   here controls multiplicity across hypotheses/positions (book-wide control is future
-   work).
+.. note:: **Guarantee status (WI-40, closed 2026-07-25).** The two defects named by the
+   v2 review round are fixed with regression tests: (1) in registered (fixed-membership)
+   mode every registered trigger's e-process is initialized at 1 with fixed mixture
+   weights from step 0 — late- or never-reporting registered triggers stay in the
+   average at e=1; (2) trigger values are strictly type-checked (``bool`` only — no
+   ``bool()`` coercion, so ``"false"`` is rejected, not counted as fired). In registered
+   mode the implementation now matches the rule, so the per-hypothesis anytime-valid
+   Type-I property holds **under the stated assumptions** (conditional null
+   ``P(fire_t=1 | past) <= p0``, non-overlapping observation periods — a persistent
+   fired state must not be re-counted; product combiner only under genuine
+   independence). Legacy lazy mode (``registered=None``) remains exploratory-only: it
+   changes mixture membership mid-stream and carries no guarantee. Scope is
+   **per-hypothesis only**: nothing here controls multiplicity across
+   hypotheses/positions (book-wide control is future work), and the reporting-time
+   ``alpha`` is not part of the hashed commitment.
 
 The model (per trigger)
 -----------------------
@@ -44,8 +48,8 @@ martingale with ``E[e_n] = 1``; for any ``P(fire) < p0`` it is a supermartingale
 So the mathematical rule "call *Falsified* only when ``e >= 1/alpha``" controls the Type-I
 error at alpha **at any stopping time** — continuous monitoring and optional stopping
 included — *under its assumptions and with fixed mixture weights over all registered
-triggers*. The current implementation deviates from that requirement (see the warning
-above), so the delivered code does not yet inherit this property.
+triggers*. Registered mode implements exactly that requirement (see the note above);
+legacy lazy mode does not and is exploratory-only.
 
 Combining triggers (within ONE hypothesis)
 ------------------------------------------
@@ -103,8 +107,8 @@ onto a real :class:`forward_qpop.ledger.Ledger` without any schema-breaking chan
   persisted in a JSON **sidecar** file next to the ledger (``<ledger>.evalue-state.json``
   by default) so repeated invocations resume rather than silently re-deriving --
   state resumption that folds each observation in exactly once, never mutating a ledger
-  row (this proves resumption mechanics only; per the module warning, the statistical
-  guarantee itself is not yet delivered).
+  row (resumption preserves the registered fixed membership, so in registered mode the
+  per-hypothesis guarantee carries across invocations — see the module note).
 * Hypotheses with no ``"evalue"`` config are reported as ``no_config`` (skipped, not
   fabricated) -- see :data:`EVALUE_CONFIG_FIELD`.
 
@@ -187,7 +191,16 @@ class EProcess:
         return (1.0 - self.p1) / (1.0 - self.p0)
 
     def observe(self, fired: bool) -> float:
-        """Fold in one binary trigger check; return the updated e-value."""
+        """Fold in one binary trigger check; return the updated e-value.
+
+        ``fired`` must be a real boolean (WI-40): truthy stand-ins like ``"false"``
+        or ``1`` are rejected rather than coerced, because ``bool("false")`` is
+        ``True`` and a silent coercion would count a non-firing as evidence.
+        """
+        if not isinstance(fired, bool):
+            raise TypeError(
+                f"fired must be a bool, got {type(fired).__name__}: {fired!r}"
+            )
         self.e *= self._lr_fired if fired else self._lr_not_fired
         self.n += 1
         return self.e
@@ -229,12 +242,12 @@ def average_evalues(evalues: Iterable[float]) -> float:
 
 @dataclass
 class SequentialTriggerTest:
-    """Sequential test over many binary exit triggers for one hypothesis (EXPERIMENTAL).
+    """Sequential test over many binary exit triggers for one hypothesis.
 
-    Implements the e-value rule described in the module docstring; see the module-level
-    warning — the current implementation does not yet deliver the anytime-valid
-    guarantee (first-report-only e-process creation changes mixture weights; trigger
-    values are ``bool()``-coerced).
+    Implements the e-value rule described in the module docstring. Pass ``registered``
+    (the admission's exit-trigger ids) for fixed-membership mode — the mode with the
+    per-hypothesis anytime-valid property under the stated assumptions (WI-40); leave
+    it ``None`` only for exploratory use.
 
     Consumes a stream of ``(trigger_id, fired)`` observations, maintaining one
     :class:`EProcess` per trigger id, and exposes:
@@ -250,6 +263,7 @@ class SequentialTriggerTest:
     p0: float
     p1: float
     combine: str = "average"
+    registered: Optional[Tuple[str, ...]] = None
     _procs: Dict[str, EProcess] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
@@ -258,11 +272,36 @@ class SequentialTriggerTest:
             raise ValueError(
                 f"combine must be one of {_COMBINERS}, got {self.combine!r}"
             )
+        if self.registered is not None:
+            ids = tuple(sorted(dict.fromkeys(self.registered)))
+            if not ids:
+                raise ValueError("registered must be non-empty when provided")
+            self.registered = ids
+            # WI-40: every registered trigger's e-process exists from step 0 at
+            # e=1 with fixed mixture membership/weights — the rule's requirement.
+            for tid in ids:
+                if tid not in self._procs:
+                    self._procs[tid] = EProcess(p0=self.p0, p1=self.p1)
 
     def observe(self, trigger_id: str, fired: bool) -> float:
-        """Record one trigger check; return the merged e-value across all triggers."""
+        """Record one trigger check; return the merged e-value across all triggers.
+
+        In registered (fixed-membership) mode, an id outside the registered set is
+        an error; in legacy lazy mode (``registered=None``, exploratory use only)
+        an unseen id creates a new e-process, which changes mixture weights
+        mid-stream and forfeits the anytime-valid property.
+        """
+        if not isinstance(fired, bool):
+            raise TypeError(
+                f"fired must be a bool, got {type(fired).__name__}: {fired!r}"
+            )
         proc = self._procs.get(trigger_id)
         if proc is None:
+            if self.registered is not None:
+                raise ValueError(
+                    f"trigger id {trigger_id!r} is not in the registered set "
+                    f"{list(self.registered)}"
+                )
             proc = EProcess(p0=self.p0, p1=self.p1)
             self._procs[trigger_id] = proc
         proc.observe(fired)
@@ -283,10 +322,10 @@ class SequentialTriggerTest:
     def decision(self, alpha: float) -> str:
         """``"falsified"`` iff the merged e-value >= 1/alpha (Ville), else ``"continue"``.
 
-        Under the mathematical rule, calling this after every observation would be safe
-        (anytime-valid; optional stopping does not inflate the false-"Falsified" rate
-        beyond ``alpha``) — but see the module-level warning: the current implementation
-        does not yet deliver that guarantee, so treat the decision as advisory.
+        In registered mode, calling this after every observation is safe (anytime-valid;
+        optional stopping does not inflate the false-"Falsified" rate beyond ``alpha``)
+        under the module-note assumptions. In legacy lazy mode the decision is
+        exploratory/advisory only.
         """
         if not (0.0 < alpha < 1.0):
             raise ValueError(f"alpha must be in (0, 1), got {alpha!r}")
@@ -295,19 +334,34 @@ class SequentialTriggerTest:
     # ---------- serialization ----------
     def to_state(self) -> dict:
         """A plain JSON-serializable snapshot for per-entry ledger persistence."""
-        return {
+        state = {
             "p0": self.p0,
             "p1": self.p1,
             "combine": self.combine,
             "procs": {tid: p.to_state() for tid, p in self._procs.items()},
         }
+        if self.registered is not None:
+            state["registered"] = list(self.registered)
+        return state
 
     @classmethod
     def from_state(cls, state: dict) -> "SequentialTriggerTest":
-        st = cls(p0=state["p0"], p1=state["p1"], combine=state.get("combine", "average"))
+        registered = state.get("registered")
+        st = cls(
+            p0=state["p0"],
+            p1=state["p1"],
+            combine=state.get("combine", "average"),
+            registered=tuple(registered) if registered else None,
+        )
         st._procs = {
             tid: EProcess.from_state(ps) for tid, ps in state.get("procs", {}).items()
         }
+        if st.registered is not None:
+            # Defensive: a registered trigger absent from the snapshot re-enters at
+            # e=1 (fixed membership must survive the round-trip).
+            for tid in st.registered:
+                if tid not in st._procs:
+                    st._procs[tid] = EProcess(p0=st.p0, p1=st.p1)
         return st
 
 
@@ -446,7 +500,14 @@ def run_ledger_evalue(
             skipping = resume_after_hash is not None
         else:
             p0, p1, combine = _evalue_config(admission)
-            test = SequentialTriggerTest(p0=p0, p1=p1, combine=combine)
+            test = SequentialTriggerTest(
+                p0=p0,
+                p1=p1,
+                combine=combine,
+                # WI-40: the admission's registered exit-trigger contract fixes the
+                # mixture membership from step 0 (every registered trigger at e=1).
+                registered=tuple(sorted(registered_trigger_ids)) or None,
+            )
             resume_after_hash = None
             skipping = False
 
@@ -478,7 +539,13 @@ def run_ledger_evalue(
                                 f"{hid}: {TRIGGER_CHECKS_FIELD!r} references unregistered "
                                 f"trigger id {tid!r} (registered: {sorted(registered_trigger_ids)})"
                             )
-                        test.observe(tid, bool(fired))
+                        if not isinstance(fired, bool):
+                            raise EvalueLedgerError(
+                                f"{hid}: trigger {tid!r} value must be a JSON boolean, "
+                                f"got {type(fired).__name__}: {fired!r} (WI-40: no "
+                                f"coercion -- bool('false') would count as fired)"
+                            )
+                        test.observe(tid, fired)
             last_processed_hash = eh
 
         if not found_resume_point:

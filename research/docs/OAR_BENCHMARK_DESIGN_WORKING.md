@@ -39,10 +39,10 @@ test but a **workflow-reliability metric**: given the same candidate set, it sco
 pipeline admits under *weakened discipline configurations*, relative to a reference discipline
 (reference-relative — attributing the difference to any single removed component requires matched,
 nested arms). The two compose cleanly: the
-paper wires an e-process (`forward-qpop evalue`) as the intended per-hypothesis Type-I
-control (an experimental implementation — it does not yet deliver the guarantee; see
-`EVALUE_METHODS.md`), and OAR sits above it as the aggregate over-admission measure across a whole
-batch.
+paper wires an e-process (`forward-qpop evalue`) as the per-hypothesis Type-I
+control (guarantee in registered mode under stated assumptions; defects closed WI-40 2026-07-25 —
+see `EVALUE_METHODS.md`), and OAR sits above it as the aggregate over-admission measure across a
+whole batch.
 
 **Why finance was a good first testbed, and why the metric is domain-general.** Markets are a
 *deliberately adversarial* substrate: they punish wishful thinking, settled outcomes are unambiguous,

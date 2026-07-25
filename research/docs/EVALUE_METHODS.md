@@ -1,16 +1,18 @@
 # Anytime-valid sequential trigger test (paper §7 Decision Rules)
 
-*An **experimental implementation** of the decision rule the paper's plan specifies: outcome
-decisions over one hypothesis's registered exit triggers use a sequential test designed for
+*Implements the decision rule the paper's plan specifies: outcome
+decisions over one hypothesis's registered exit triggers use a sequential test with
 anytime-valid Type-I error control (an e-value formulation from the safe-testing literature). The
 guarantee is **per-hypothesis only** — nothing here controls multiplicity across positions/
-hypotheses (book-wide control is future work) — and the current code does **not yet deliver** even
-the per-hypothesis guarantee: two known defects are tracked (the mixture initializes a trigger's
-e-process only when that trigger first reports, changing mixture membership/weights after
-observations, where the rule requires all registered triggers initialized at 1 with fixed weights;
-and trigger values are coerced with `bool()` rather than strictly type-checked, so `"false"` counts
-as fired). Both must be fixed, with regression tests, before the module drives a live outcome
-decision (per the v2 review, 2026-07-24).* Module:
+hypotheses (book-wide control is future work). **Defect-closure note (WI-40, 2026-07-25):** the two
+defects named by the v2 review (2026-07-24) are fixed with regression tests — in registered
+(fixed-membership) mode every registered trigger's e-process initializes at 1 with fixed mixture
+weights from step 0 (late/never-reporting registered triggers stay in the average at e=1), and
+trigger values are strictly type-checked (`bool` only; `"false"` is rejected, never coerced to
+fired). In registered mode — which the ledger runner always uses, deriving membership from the
+admission's exit-trigger contract — the implementation matches the rule, so the per-hypothesis
+anytime-valid property holds under the stated assumptions below; the paper's v2 text still carries
+the pre-fix experimental caveat and updates at v2.1.* Module:
 [`src/forward_qpop/evalue.py`](../../src/forward_qpop/evalue.py); tests:
 [`tests/test_evalue.py`](../../tests/test_evalue.py) (the standalone e-process, 18 tests)
 and [`tests/test_evalue_ledger.py`](../../tests/test_evalue_ledger.py) (the ledger wiring,

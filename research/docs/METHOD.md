@@ -165,10 +165,10 @@ ideas by being arbitrarily conservative. So restraint is reported with two compa
   do not identify a single component's causal contribution, and rejection-quality per arm is a
   separate, unmeasured question.
 
-Outcome decisions are *designed* to use a **per-hypothesis anytime-valid sequential test** (an
+Outcome decisions use a **per-hypothesis anytime-valid sequential test** (an
 e-value formulation) so that repeated looks at one hypothesis's registered triggers do not inflate
-false "Falsified" calls. The released module is an experimental implementation of that rule and
-does not yet deliver the guarantee (known defects: e-process initialization/mixture weights when
-triggers first report; non-strict trigger typing); it provides **no across-hypothesis (book-wide)
+false "Falsified" calls — the guarantee holds in registered (fixed-membership) mode under stated
+assumptions (the v2 review's two implementation defects were closed 2026-07-25, WI-40, with
+regression tests); it provides **no across-hypothesis (book-wide)
 multiplicity control** — the factor-zoo analogue remains future work. See
 [EVALUE_METHODS.md](EVALUE_METHODS.md).

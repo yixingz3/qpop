@@ -77,10 +77,11 @@ def test_fresh_run_computes_merged_evalue_from_trigger_checks():
     assert len(rows) == 1
     row = rows[0]
     assert row.status == "ok"
-    assert row.n_triggers == 1
+    # BOTH registered triggers enter the mixture at fixed weight (WI-40) even
+    # though only trig_a reported: average of {6.0, 1.0} = 3.5.
+    assert row.n_triggers == 2
     assert row.n_observations == 1
-    # average of one e-process: p1/p0 = 6.0
-    assert abs(row.e_value - 6.0) < 1e-9
+    assert abs(row.e_value - 3.5) < 1e-9
     assert row.threshold == 20.0
     assert row.decision == "continue"
 
@@ -137,8 +138,12 @@ def test_resumed_run_folds_in_only_the_new_observations():
     _observe(led, "H-1", {"trig_a": True}, "2026-01-03")
     rows2, _ = run_ledger_evalue(p, alpha=0.05)
     assert rows2[0].n_observations == 2  # not 1, not 3 -- exactly one new fold-in
-    # Folding the same "fired" observation in again multiplies by p1/p0 again.
-    assert abs(rows2[0].e_value - e1 * (0.6 / 0.1)) < 1e-9
+    # Exactly-once folding under fixed two-trigger membership (WI-40): after one
+    # fire e1 = ((p1/p0) + 1)/2 = 3.5; after the second fire on the same trigger
+    # the merged average is ((p1/p0)^2 + 1)/2 -- NOT e1 * (p1/p0), which was the
+    # single-process arithmetic of the pre-fix lazy-membership behavior.
+    assert abs(e1 - ((0.6 / 0.1) + 1.0) / 2.0) < 1e-9
+    assert abs(rows2[0].e_value - ((0.6 / 0.1) ** 2 + 1.0) / 2.0) < 1e-9
 
 
 def test_resumed_run_matches_a_single_from_scratch_run():
@@ -306,3 +311,29 @@ if __name__ == "__main__":
             print("FAIL", fn.__name__, "->", repr(exc))
     print(f"\n{len(fns) - failed - skipped}/{len(fns)} passed ({skipped} skipped, need pytest)")
     sys.exit(1 if failed else 0)
+
+
+# --------------------------------------------------------------------------- #
+# WI-40: ledger runs use fixed registered membership + strict boolean typing
+# --------------------------------------------------------------------------- #
+def test_ledger_run_initializes_all_registered_triggers():
+    p = _tmp()
+    led = _seed_with_config(p)  # registers trig_a AND trig_b
+    _observe(led, "H-1", {"trig_a": True}, "2026-01-02")
+    rows, _ = run_ledger_evalue(p, alpha=0.05)
+    row = rows[0]
+    # Both registered triggers are in the mixture even though only one reported:
+    assert row.n_triggers == 2
+    # average over {p1/p0 = 6.0, silent = 1.0} = 3.5
+    assert abs(row.e_value - 3.5) < 1e-9
+
+
+def test_ledger_rejects_non_boolean_trigger_value():
+    p = _tmp()
+    led = _seed_with_config(p)
+    _observe(led, "H-1", {"trig_a": "false"}, "2026-01-02")
+    try:
+        run_ledger_evalue(p, alpha=0.05)
+        assert False, "expected EvalueLedgerError for a string trigger value"
+    except EvalueLedgerError as e:
+        assert "boolean" in str(e)

@@ -98,7 +98,7 @@ insert one, delete one, or reorder them, and `verify` fails (and exits non-zero 
 |---|---|
 | Claude Code plugin discipline (`auditable-research` + `/qpop:*`) | **Working — v0.1** |
 | Hash-chained Python ledger (`forward_qpop`) + CLI | **Working** (66/67 tests, 1 network test skipped by default) |
-| Anytime-valid sequential trigger test (`evalue`) — experimental implementation of a per-hypothesis anytime-valid rule, wired to the ledger (`forward-qpop evalue`); does not yet deliver the guarantee (two known defects tracked: e-process initialization/mixture weights, strict trigger typing); no book-wide multiplicity control | **Experimental** (18 e-process + 17 ledger-integration tests) — e-value / Ville, [methods note](research/docs/EVALUE_METHODS.md) |
+| Sequential trigger test (`evalue`) — per-hypothesis anytime-valid rule wired to the ledger (`forward-qpop evalue`); guarantee holds in registered (fixed-membership) mode under stated assumptions (defects closed WI-40, 2026-07-25, with regression tests incl. partial-reporting Monte-Carlo); no book-wide multiplicity control | **Working — per-hypothesis scope** (24 e-process + 19 ledger-integration tests) — e-value / Ville, [methods note](research/docs/EVALUE_METHODS.md) |
 | Local anchor manifest (`anchor` / `verify-anchor`) | **Working** — manifest + drift-detection + git / local OpenTimestamps stamp |
 | External timestamp anchor (`anchor external` / `verify-external`) | **Working — manual/opt-in by design** (WI-30, 2026-07-09; not an auto-hook on ledger writes) — submits to OpenTimestamps, sidecar receipt + drift-detection ([details](#external-anchor-what-it-proves-and-what-it-doesnt)) |
 | JSON Schemas for cards / entries / runs | **Included** ([`schemas/`](schemas)) |

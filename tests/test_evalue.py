@@ -3,14 +3,12 @@
 Runs under pytest, or standalone (``python tests/test_evalue.py``) with no third-party
 dependencies — set ``PYTHONPATH=src`` if the package is not installed.
 
-Scope note: these simulations validate the RULE under a fixed reporting pattern in which
-every registered trigger reports at every step — the pattern under which the rule's
-anytime-valid Type-I property applies. They do NOT cover the two acknowledged
-implementation defects (first-report-only e-process creation, which changes mixture
-membership/weights; ``bool()`` trigger coercion) — the module is experimental and does
-not yet deliver the guarantee in general (see the module warning and
-``research/docs/EVALUE_METHODS.md``); regression tests for the defects land with the
-code fixes.
+Scope note: the original simulations validate the RULE under an all-triggers-report
+pattern; the WI-40 section (2026-07-25) adds the regressions for the two defects the v2
+review named — fixed registered-trigger membership (late/never-reporting registered
+triggers stay in the mixture at e=1) and strict boolean typing — plus a Type-I
+Monte-Carlo under PARTIAL reporting. In registered mode the implementation now matches
+the rule (see the module note and ``research/docs/EVALUE_METHODS.md``).
 
 The properties under test:
 
@@ -300,3 +298,91 @@ if __name__ == "__main__":
             print("FAIL", fn.__name__, "->", repr(exc))
     print(f"\n{len(fns) - failed}/{len(fns)} passed")
     sys.exit(1 if failed else 0)
+
+
+# --------------------------------------------------------------------------- #
+# WI-40: fixed registered-trigger membership + strict boolean typing
+# (regressions for the two defects named in the v2 review round)
+# --------------------------------------------------------------------------- #
+def test_registered_triggers_initialize_at_one_with_fixed_weights():
+    st = SequentialTriggerTest(p0=0.15, p1=0.6, registered=("a", "b", "c"))
+    # All three e-processes exist from step 0, before any observation.
+    assert sorted(st.trigger_ids()) == ["a", "b", "c"]
+    assert st.e_value() == 1.0
+    # Only "a" ever reports: the average must keep the two silent registered
+    # triggers in the mixture at e=1 with fixed weight 1/3.
+    ref = EProcess(p0=0.15, p1=0.6)
+    for _ in range(5):
+        st.observe("a", False)
+        ref.observe(False)
+    expected = (ref.e_value() + 1.0 + 1.0) / 3.0
+    assert abs(st.e_value() - expected) < 1e-12
+    # Under the OLD (buggy) first-report-only behavior the merged value would
+    # have been ref.e_value() alone — assert we are NOT doing that.
+    assert abs(st.e_value() - ref.e_value()) > 1e-9
+
+
+def test_late_arriving_registered_trigger_does_not_change_membership():
+    st = SequentialTriggerTest(p0=0.15, p1=0.6, registered=("a", "b"))
+    st.observe("a", False)
+    n_before = len(st.trigger_ids())
+    st.observe("b", False)  # b reports late — membership must not change
+    assert len(st.trigger_ids()) == n_before == 2
+
+
+def test_unregistered_trigger_rejected_in_registered_mode():
+    st = SequentialTriggerTest(p0=0.15, p1=0.6, registered=("a",))
+    try:
+        st.observe("z", True)
+        assert False, "expected ValueError for unregistered trigger id"
+    except ValueError:
+        pass
+
+
+def test_non_boolean_trigger_values_rejected():
+    st = SequentialTriggerTest(p0=0.15, p1=0.6, registered=("a",))
+    for bad in ("false", "true", 1, 0, None, [True]):
+        try:
+            st.observe("a", bad)
+            assert False, f"expected TypeError for fired={bad!r}"
+        except TypeError:
+            pass
+    ep = EProcess(p0=0.15, p1=0.6)
+    try:
+        ep.observe("false")
+        assert False, "expected TypeError from EProcess for a string"
+    except TypeError:
+        pass
+
+
+def test_state_roundtrip_preserves_registered_membership():
+    st = SequentialTriggerTest(p0=0.15, p1=0.6, registered=("a", "b", "c"))
+    st.observe("a", True)
+    st2 = SequentialTriggerTest.from_state(st.to_state())
+    assert sorted(st2.trigger_ids()) == ["a", "b", "c"]
+    assert abs(st2.e_value() - st.e_value()) < 1e-12
+    # The silent registered triggers survived the round-trip at e=1.
+    st2.observe("b", False)  # must not raise, and must not add membership
+    assert len(st2.trigger_ids()) == 3
+
+
+def test_type_i_control_under_partial_reporting():
+    # The defect scenario: registered triggers that do NOT all report every
+    # step. With fixed membership/weights the average is still an e-process,
+    # so optional stopping keeps the false-"falsified" rate <= alpha.
+    p0, p1, alpha, horizon, paths = 0.15, 0.6, 0.10, 60, 300
+    rng = random.Random(20260725)
+    false_calls = 0
+    for _ in range(paths):
+        st = SequentialTriggerTest(p0=p0, p1=p1, registered=("t0", "t1", "t2", "t3"))
+        for _step in range(horizon):
+            for tid in ("t0", "t1", "t2", "t3"):
+                if rng.random() < 0.5:  # each trigger reports only half the time
+                    st.observe(tid, rng.random() < p0)  # fires at the NULL rate
+            if st.decision(alpha) == "falsified":
+                false_calls += 1
+                break
+    assert false_calls / paths <= alpha, (
+        f"false-falsified rate {false_calls / paths:.3f} > alpha={alpha} "
+        f"under partial reporting"
+    )
