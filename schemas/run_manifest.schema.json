@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/yixingz3/qpop/schemas/run_manifest.schema.json",
   "title": "Run manifest",
-  "description": "Provenance and funnel counts for a single SOURCE -> GATE -> EVALUATE run: identifiers, model/prompt references, and per-stage counts, recorded so the run's aggregate accounting is checkable and its provenance pinned. It does not contain candidate inputs, per-card decisions, or the engine — reproducing or auditing individual decisions requires those artifacts. Pairs with the ledger, which holds the admitted hypotheses.",
+  "description": "Public adopter/synthetic-fixture contract: provenance and funnel counts for a single SOURCE -> GATE -> EVALUATE run: identifiers, model/prompt references, and per-stage counts, recorded so the run's aggregate accounting is checkable and its provenance pinned. Scope: prompt_commit is required here so ADOPTERS pin their own prompt source; the paper's private production provenance record is a separate format that pins rendered prompt artifacts by SHA-256 hashes. This manifest does not contain candidate inputs, per-card decisions, or the engine — reproducing or auditing individual decisions requires those artifacts. Pairs with the ledger, which holds the admitted hypotheses.",
   "type": "object",
   "required": ["run_id", "domain", "model", "prompt_commit", "funnel"],
   "additionalProperties": false,

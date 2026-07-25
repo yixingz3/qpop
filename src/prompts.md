@@ -3,7 +3,8 @@
 These are the load-bearing prompts of the funnel, sanitized to the generic framework (no live
 positions, no broker calls, no paid-data text). The experiment plan commits to publishing the prompts
 by reference; this is that reference. The exact production strings are versioned in the private
-implementation and pinned by commit hash per run (see the paper's Implementation Details /
+implementation and pinned per run by SHA-256 hashes of the rendered prompt artifacts in its
+provenance record (see the paper's Implementation Details /
 experiment plan; the earlier `RESULTS_INITIAL.md` pointer is superseded). `{...}` are fill-ins.
 Exception: the §8 ablation-arm prompts below are released verbatim for their recorded runs —
 8a–8c are the recovered pilot originals; 8d–8e are the later pre-registered v2-extension arms

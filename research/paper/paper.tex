@@ -1039,8 +1039,11 @@ additive amendment.
     each tier (\textsc{source} / first-pass \textsc{evaluate} / adjudication) is logged per run;
     prompt templates are committed in the repo and referenced by commit hash. A model-version
     change is an amendment, not a silent swap. \emph{Disclosure (v2):} that per-run log is
-    private, and the commit-hash prompt reference pins the \emph{exact production strings} in the
-    private implementation --- the public \texttt{src/prompts.md} releases sanitized reference
+    private, and the \emph{executed} pinning mechanism is per-run \textbf{SHA-256 hashes of the
+    rendered prompt artifacts} in the private provenance record (the registered
+    ``referenced by commit hash'' phrasing above describes the private implementation's
+    versioning, corrected here as a dated amendment) --- the public \texttt{src/prompts.md}
+    releases sanitized reference
     templates (the H2 arm prompts verbatim), not the production bundle; the public paper names
     only the cost tiers (cheap / mid / expensive). A sanitized
     exact-version run table (identifiers, dates, invocation counts, token/cost totals, with
@@ -1742,8 +1745,9 @@ investment analysis or advice.
 
 \section{Limitations}
 The forward sample is small and early; intervals are wide and no live-money track record is claimed.
-LLM outputs are nondeterministic across model versions, so we log the exact model identifier and
-prompt commit per run and treat a version change as a dated amendment. Survivorship enters through
+LLM outputs are nondeterministic across model versions, so we log the exact model identifier per
+run, pin the rendered prompt artifacts by SHA-256 hash in the private provenance record, and treat
+a version change as a dated amendment. Survivorship enters through
 which domains get built. Most importantly, the admission rate is \emph{necessary but not sufficient}
 for forward predictive performance: a disciplined rejection process is a precondition for, not a
 guarantee of it, and only the pre-registered forward log can establish that. Finally, a screening engine's
