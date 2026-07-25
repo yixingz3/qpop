@@ -42,10 +42,15 @@ Sequencing decided for the `paper-v2` draft, after operator review:
 - **December (v2.1 / SSRN rev 2)** then carries only the H4 forward read-out + the forward-scoring
   registry first cohort (+ the human-audit lane if that packet is filled by then).
 
-## Current release step (2026-07-24)
+## Current release step (2026-07-24) — v2 ACCEPTED FOR RELEASE
 
-The canonical v2 (branch `paper-v2`) is in the review loop for an **SSRN replacement of the posted
-v1** — reviewer verification of the latest correction block is the gate. **arXiv is deferred by
+**The canonical v2 (33 pp, `research/paper/paper.pdf`) is ACCEPTED to replace SSRN v1** (abstract
+7017500) — reviewer acceptance recorded 2026-07-24 after a 16-block adversarial review round
+(independent verification of tests, isolated builds, all-page pixel/raster comparison, and
+semantic acceptance searches). Merged to `main` the same day. **Remaining manual step (operator):
+upload the PDF as a revision to SSRN abstract 7017500, and update SSRN's abstract-text and
+AI-disclosure form fields to match the v2 abstract** (those fields live outside the PDF).
+**arXiv remains deferred by
 operator decision (2026-07-24)** and is not part of this release step; the `arxiv/` bundle stays
 untouched (and must not be uploaded) until separately requested. December (v2.1) scope: H4 forward
 read-out + forward-scoring-registry first cohort + the human-audit lane.
