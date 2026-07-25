@@ -2,7 +2,7 @@
 
 *Forward-Registered, Auditable LLM-Assisted Research: A Reliability Methodology, with a
 Capital-Markets Testbed* — Yixing Zheng (NYU Stern). Source: [`paper.tex`](paper.tex) (v2 revision,
-33 pp on branch `paper-v2`; the posted SSRN v1 and the `arxiv/` copy are the 28 pp v0.1 build).
+34 pp on branch `paper-v2`; the posted SSRN v1 and the `arxiv/` copy are the 28 pp v0.1 build).
 
 | Venue | Status | Date | Notes |
 |---|---|---|---|
@@ -14,6 +14,7 @@ Capital-Markets Testbed* — Yixing Zheng (NYU Stern). Source: [`paper.tex`](pap
 | Version | Date | What |
 |---|---|---|
 | v0.1 | 2026-06-29 | SSRN submission draft (built 2026-06-29; `paper.log`: 28 pages) |
+| v2 (rev. 8) | 2026-07-24 | Abstract-emphasis amendment (operator-requested, post-acceptance): one sentence added to the abstract surfacing the paper's own already-verified headline contrast — ungated screener 38/38 vs full pipeline 0/38 (exploratory system contrasts, non-causal framing preserved) and 0 admissions / 9 rounds / 110 gate-pass over the frozen window; "no action" is the modal outcome. No other content changed; page count 33 → 34 (current-facing references synced). Pending the reviewer's delta pass before SSRN upload. |
 | v2 (rev. 7) | 2026-07-24 | Block-14 provenance patch (`9eb55e7`): the executed prompt-pin mechanism (per-run SHA-256 hashes of rendered prompt artifacts in the private provenance record) now stated in the paper's Implementation Details and Limitations and in `src/prompts.md`, replacing the residual commit-hash phrasing (registered bullets preserved with dated in-place corrections); `run_manifest` schema scoped explicitly as the public adopter/synthetic-fixture contract, separate from the private production provenance format; rev.6 row now names its commit. |
 | v2 (rev. 6) | 2026-07-24 | Block-12 provenance/wording patch (`154c0af`): H2 arm-prompt provenance corrected everywhere (only 8a–8c are recovered pilot originals; 8d–8e are later pre-registered extension arms, their stale "pending" headings replaced with dated executed labels — the overgeneralized "recovered originals" label was introduced by the rev.5 patch itself); `src/README` exact-prompt/audit-boundary sentences aligned to inspect-protocol/recompute-aggregates; `prompt_commit` schema field documented as the adopter's pin (production runs pin exact prompts via sha256 hashes in the private provenance record — field never used by our runs); repro/README Type-I test-inventory line qualified as a rule-level idealized simulation; RESULTS_V2_WORKING "becomes fully true" reproducibility line corrected; experiment-plan dated prompt-reference amendment added. |
 | v2 (rev. 5) | 2026-07-24 | Block-10 wording patch (`795d97c`): stage prompts described as sanitized reference templates everywhere (only H2 arm prompts verbatim); empirical results "documented" not "auditable" (protocol + aggregate arithmetic inspectable; individual decisions not rescoreable); run-manifest description narrowed; remaining "anytime-valid" labels on the released implementation/state/tests removed or scoped to the mathematical rule. |
@@ -44,10 +45,13 @@ Sequencing decided for the `paper-v2` draft, after operator review:
 
 ## Current release step (2026-07-24) — v2 ACCEPTED FOR RELEASE
 
-**The canonical v2 (33 pp, `research/paper/paper.pdf`) is ACCEPTED to replace SSRN v1** (abstract
+**The canonical v2 (`research/paper/paper.pdf`) is ACCEPTED to replace SSRN v1** (abstract
 7017500) — reviewer acceptance recorded 2026-07-24 after a 16-block adversarial review round
 (independent verification of tests, isolated builds, all-page pixel/raster comparison, and
-semantic acceptance searches). Merged to `main` the same day. **Remaining manual step (operator):
+semantic acceptance searches). Merged to `main` the same day. **Post-acceptance amendment (rev. 8):
+one operator-requested abstract-emphasis sentence (38/38 vs 0/38 contrast, already-verified
+numbers, non-causal framing); 34 pp; pending the reviewer's delta pass, then re-merge to `main`
+before upload.** **Remaining manual step (operator):
 upload the PDF as a revision to SSRN abstract 7017500, and update SSRN's abstract-text and
 AI-disclosure form fields to match the v2 abstract** (those fields live outside the PDF).
 **arXiv remains deferred by

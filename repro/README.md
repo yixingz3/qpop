@@ -81,7 +81,7 @@ Expected: **`ALL SAMPLES VALID`** — every row in `data/synthetic/` validates a
 make paper           # -> research/paper/paper.pdf
 ```
 
-Expected: a clean 33-page PDF (the v2 revision), no undefined references.
+Expected: a clean 34-page PDF (the v2 revision), no undefined references.
 
 ---
 
