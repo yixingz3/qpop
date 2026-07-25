@@ -18,7 +18,7 @@
       "additionalProperties": {"type": "string"}
     },
     "temperature": {"type": "number", "minimum": 0},
-    "prompt_commit": {"type": "string", "description": "Git commit of src/prompts.md used for this run."},
+    "prompt_commit": {"type": "string", "description": "Pin of the prompt bundle used for this run. For adopters: the Git commit of your prompts source (e.g. your prompts.md). For the paper's production runs this field was not used: exact production prompts are pinned by sha256 artifact hashes in the private run record, with the public src/prompts.md as their sanitized reference."},
     "funnel": {
       "type": "object",
       "description": "Counts at each stage of the cheap-source -> deterministic-gate -> expensive-evaluate funnel.",

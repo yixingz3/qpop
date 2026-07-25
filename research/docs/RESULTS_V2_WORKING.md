@@ -4,11 +4,11 @@ Dated evidence gathered after the SSRN submission (2026-06-29), for the v2 revis
 only — per-card records, symbols, and the held book stay in the private research repo per the
 release boundary (paper §Reproducibility). All runs 2026-07-07 unless noted.
 
-## Ablation (H2) — the two pending arms, run on the SAME preserved 38-candidate batch
+## Ablation (H2) — the two formerly-pending §9.5 arms, run 2026-07-07 on the SAME preserved 38-candidate batch
 
 The pilot's 38-card batch, per-arm decisions, and literal arm prompts were recovered in full from
 the run journals and are now preserved as named artifacts (prompts released in `src/prompts.md` §8).
-The two §9.5-pending arms were then run on the identical batch under the pilot protocol (batched
+The two formerly-§9.5-pending arms were then run (2026-07-07) on the identical batch under the pilot protocol (batched
 mid-tier model call; admit boolean + one-line each), with two fresh runs per arm (two runs of one
 model are not independent replicates) and an
 explicit as-of framing (dated amendment: retrospective run).
@@ -115,5 +115,8 @@ admit-class outcome in any second-domain probe (restraint is not blanket conserv
 - §9.2: report the n=40 documented-sample numbers as primary with the pilot alongside; add the
   sampling-method paragraph; state plainly that the raw gate was not met and why the two-layer
   audit is the metric that scales.
-- Reproducibility: the ablation's cards/decisions/prompts are now preserved artifacts — the claim
-  becomes fully true.
+- Reproducibility: the ablation's cards/decisions/prompts are now preserved artifacts —
+  author-side traceability is restored and the arm prompts are released verbatim; the public
+  empirical run remains *not* independently reproducible (per-card records stay private).
+  *(Wording corrected 2026-07-24: an earlier version of this line said the reproducibility claim
+  "becomes fully true," which overstated — preservation is private-side.)*

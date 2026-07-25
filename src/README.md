@@ -10,14 +10,17 @@ implement against these contracts. **Now open-sourced:** the QPOP pre-registrati
 generalized out of the private deployment, now with an external timestamp
 [`anchor`](forward_qpop/anchor.py) (`anchor` / `verify-anchor`).
 The **stage prompts** (the disciplines themselves) are committed
-in [`prompts.md`](prompts.md) as sanitized reference templates (the H2 ablation-arm prompts in its
-§8 are the recovered originals, verbatim), and the **deterministic gate** is specified with
+in [`prompts.md`](prompts.md) as sanitized reference templates (the five H2 ablation-arm prompts in
+its §8 are released verbatim — 8a–8c the recovered pilot originals, 8d–8e the later pre-registered
+extension arms), and the **deterministic gate** is specified with
 reference pseudocode
 in [`gate_reference.md`](gate_reference.md) — so the method is **fully specified** from this repo
-alone: a reader can implement their own funnel from the prompts and the gate spec, and audit our
-*published protocol and aggregate results* against them. (The production engine that runs our
+alone: a reader can implement their own funnel from the prompts and the gate spec, inspect our
+published protocol, and recompute the reported aggregate arithmetic. (The production engine that
+runs our
 funnel — and the per-card empirical records it produced —
-is private; individual decisions are not auditable or re-runnable from this repo.)
+is private; individual decisions cannot be audited or rescored from this repo, and the empirical
+aggregates cannot be validated against their underlying records.)
 Machine-readable contracts for candidate cards, ledger entries, and run manifests are published as
 JSON Schema in [`../schemas`](../schemas).
 
@@ -56,7 +59,9 @@ The funnel's model-backed stages, run as a cost cascade (cheapest models do the 
 model only ever judges admits): **SOURCE** (cheap, wide — one lens per node + gaps/social/policy/
 literature, deduped against a seen-set) → GATE → **TRIAGE** (cheapest — drop obvious low-purity) →
 **EVALUATE** (mid — bear-case-before-recommendation on survivors) → **ADJUDICATE** (expensive — only
-the admit-flags). Each stage's exact prompt is in [`prompts.md`](prompts.md); the model tier is a
+the admit-flags). Each stage's sanitized reference template is in [`prompts.md`](prompts.md)
+(exact production strings are private; the §8 H2 arm prompts are the released-verbatim exception);
+the model tier is a
 **knob** (`../research/docs/TUNING.md`). The asymmetry that makes the cascade safe — a false watchlist only
 delays, a false admit is caught downstream — also governs the audit of rejections.
 

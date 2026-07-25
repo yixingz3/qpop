@@ -1039,7 +1039,10 @@ additive amendment.
     each tier (\textsc{source} / first-pass \textsc{evaluate} / adjudication) is logged per run;
     prompt templates are committed in the repo and referenced by commit hash. A model-version
     change is an amendment, not a silent swap. \emph{Disclosure (v2):} that per-run log is
-    private; the public paper names only the cost tiers (cheap / mid / expensive). A sanitized
+    private, and the commit-hash prompt reference pins the \emph{exact production strings} in the
+    private implementation --- the public \texttt{src/prompts.md} releases sanitized reference
+    templates (the H2 arm prompts verbatim), not the production bundle; the public paper names
+    only the cost tiers (cheap / mid / expensive). A sanitized
     exact-version run table (identifiers, dates, invocation counts, token/cost totals, with
     missing fields exposed as missing) is not yet released, so the cost-aware-cascade contribution
     should be read as \emph{architectural} (the tier allocation and its asymmetry) rather than a
@@ -1685,7 +1688,7 @@ produced them are not public.
 \midrule
 Code (package)        & Yes                  & ledger, hash chain, OpenTimestamps anchor, e-value module (experimental), CLI, schema validation \\
 Gate + scoring engine & No                   & deterministic gate, confidence scoring, domain templating (runs the live funnel) \\
-Prompts         & Yes                        & sanitized reference templates for source / triage / evaluate / adjudicate / audit; the H2 ablation-arm prompts are released verbatim (recovered originals) \\
+Prompts         & Yes                        & sanitized reference templates for source / triage / evaluate / adjudicate / audit; the five H2 arm prompts released verbatim (three recovered pilot originals, two later pre-registered extension arms) \\
 Candidate cards & Synthetic sample only      & schema-conformant sample cards; the empirical 38-card batch and per-card arm outputs are private \\
 Ledger          & Synthetic                  & QPOP schema and sample hashes \\
 Live positions  & No                         & not released \\

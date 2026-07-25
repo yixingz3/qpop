@@ -15,7 +15,9 @@ make test            # or: python -m pytest -q
 Expected: **`66 passed, 1 skipped`** — 9 ledger + 7 local-anchor + 11 external-anchor (WI-19;
 1 skipped by default — a true-network OpenTimestamps round-trip, opt in with
 `QPOP_TEST_LIVE_OTS=1`) + 5 schema tests + 18 e-value module tests (incl. a Monte-Carlo Type-I
-check under optional stopping) + 17 e-value ledger-integration tests (frozen commitments,
+simulation of the *mathematical rule* under an idealized all-triggers-report pattern — not a
+regression proof that the released, still-experimental implementation delivers Type-I control)
++ 17 e-value ledger-integration tests (frozen commitments,
 trigger checks, sidecar state — WI-29), covering field-tamper, insert, delete, reorder,
 terminal re-registration, tertiary-only blocking, local- and external-anchor drift-detection,
 and schema/fixture validation (with `format: date` enforced).

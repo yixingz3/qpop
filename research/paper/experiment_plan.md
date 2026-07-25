@@ -140,6 +140,13 @@ paper reports these rather than hiding them.
   disagreement under asymmetric information), with ground-truth rejection quality reserved for the
   human lane (two reviewers, neutral full-record packet, blind to LLM labels, tie rule,
   inter-rater agreement).
+- **2026-07-24 — prompt-reference clarification.** The registered bullet "prompt templates are
+  committed in the repo and referenced by commit hash" refers to the **private implementation
+  repo**, which pins the exact production strings per run (in practice via sha256 artifact hashes
+  in the private provenance record); the **public** repo releases sanitized reference templates
+  (`src/prompts.md`), whose §8 H2 arm prompts are the released-verbatim exception (8a–8c recovered
+  pilot originals; 8d–8e later pre-registered extension arms). The public `run_manifest` schema's
+  `prompt_commit` field is the *adopter's* pin and was not used by the paper's production runs.
 - **2026-07-24 — e-value scope correction.** The registered decision-rule sentence saying the
   sequential test keeps "monitoring many triggers across many positions" from inflating false
   "Falsified" calls overstated the scope in two ways, recorded here rather than rewritten: (1) the

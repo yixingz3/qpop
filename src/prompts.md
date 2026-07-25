@@ -5,7 +5,9 @@ positions, no broker calls, no paid-data text). The experiment plan commits to p
 by reference; this is that reference. The exact production strings are versioned in the private
 implementation and pinned by commit hash per run (see the paper's Implementation Details /
 experiment plan; the earlier `RESULTS_INITIAL.md` pointer is superseded). `{...}` are fill-ins.
-Exception: the §8 ablation-arm prompts below are the recovered originals, released verbatim.
+Exception: the §8 ablation-arm prompts below are released verbatim for their recorded runs —
+8a–8c are the recovered pilot originals; 8d–8e are the later pre-registered v2-extension arms
+(executed 2026-07-07).
 
 ## 0. Research contract (prepended to every LLM stage)
 
@@ -127,7 +129,7 @@ arrays, and run manifest live in the private research repo (sanitized aggregates
 > the overlap penalty.) The currently-held book, which you must IGNORE for de-duplication purposes,
 > is: {held list}. One line each.
 
-### 8d. Debate-only (bull/bear, no forward lock) — pending arm (b), same batched protocol
+### 8d. Debate-only (bull/bear, no forward lock) — v2-extension arm (b), executed 2026-07-07 (dated retrospective amendment), same batched protocol
 
 > You evaluate each candidate below (symbol, company, node, thesis) as a portfolio add via a staged
 > DEBATE: for each, first write a one-line strongest BULL case, then a one-line strongest BEAR case,
@@ -137,7 +139,7 @@ arrays, and run manifest live in the private research repo (sanitized aggregates
 > be hash-locked before a forward window — decide from the debate alone. (This ablates the
 > bear-case-BEFORE-recommendation ordering and the forward lock, keeping everything else.)
 
-### 8e. No Forward-QPOP lock — pending arm (c), same batched protocol
+### 8e. No Forward-QPOP lock — v2-extension arm (c), executed 2026-07-07 (dated retrospective amendment), same batched protocol
 
 > You evaluate each candidate below (symbol, company, node, thesis) as a portfolio add with the full
 > discipline EXCEPT the forward lock: write the bear case BEFORE your recommendation, weigh
