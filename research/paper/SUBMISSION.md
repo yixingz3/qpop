@@ -1,8 +1,9 @@
 # Submission state
 
 *Forward-Registered, Auditable LLM-Assisted Research: A Reliability Methodology, with a
-Capital-Markets Testbed* — Yixing Zheng (NYU Stern). Source: [`paper.tex`](paper.tex) (v2 revision,
-34 pp on branch `paper-v2`; the posted SSRN v1 and the `arxiv/` copy are the 28 pp v0.1 build).
+Capital-Markets Testbed* — Yixing Zheng (NYU Stern). Source: [`paper.tex`](paper.tex) (v2.1
+revision, 36 pp on branch `paper-v2.1`; the live SSRN version is the 34 pp v2 rev. 8; the
+`arxiv/` copy is the 28 pp v0.1 build — do not upload).
 
 | Venue | Status | Date | Notes |
 |---|---|---|---|
