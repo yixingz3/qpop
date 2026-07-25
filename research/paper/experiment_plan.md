@@ -167,3 +167,8 @@ paper reports these rather than hiding them.
   points. H3's registered conjunction — one second domain satisfying (a)+(b)+(c) jointly — is
   unchanged, and on the pilot data H3 is not supported as registered (clauses read on different
   domains).
+- **2026-07-25 — model-identifier execution note (v2.1).** The registered bullet above requires
+  the exact model identifier per tier per run. Executed shortfall: the pilot-era runtime exposed
+  only tier aliases, so resolved dated model identifiers were recorded in 0/21 rounds (see the
+  paper's sanitized provenance table). The registration stands as plan-of-record; future runs must
+  record resolved identifiers where the runtime exposes them.

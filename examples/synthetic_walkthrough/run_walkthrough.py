@@ -24,15 +24,22 @@ from forward_qpop import Ledger, run_ledger_evalue, verify_file  # noqa: E402
 from forward_qpop.anchor import build_manifest, verify_anchor, write_manifest  # noqa: E402
 
 # ---- 1. Score decomposition (rubric anchors; derivation in README.md) --------
+# SINGLE numeric source of truth for the walkthrough (the YAML carries structure
+# only). Every value below IS a published anchor of the discrete reference rubric;
+# straddles resolved to the LOWER fully supported anchor per the rubric's rule.
 DIMS = {  # bottleneck_dims for the synthetic node
-    "physical_indispensability": 0.8,
-    "substitutability_inv": 0.7,
-    "capacity_lead_time": 0.8,
-    "supplier_concentration": 0.8,
-    "pricing_power": 0.6,
+    "physical_indispensability": 0.7,  # anchor: route exists only w/ qualified redesign
+    "substitutability_inv": 0.7,       # anchor: alternatives behind qualification barrier
+    "capacity_lead_time": 0.7,         # anchor: 2-3 years incl. qualification
+    "supplier_concentration": 0.9,     # anchor: 1-2 suppliers >=70% (two qualified OEMs)
+    "pricing_power": 0.5,              # anchor: mixed/episodic
 }
 bottleneck = sum(DIMS.values()) / len(DIMS)          # reference definition: mean
-purity, demand, valuation, crowding = 0.6, 0.7, 0.8, 0.85
+# purity: 35% of revenue -> the 0.7 'major line (30-70%)' anchor, on-anchor.
+# demand: booked capacity POs -> the 0.7 anchor verbatim.
+# valuation: 'partially priced' straddles fair(0.85)/rich(0.70) -> straddle rule -> 0.70.
+# crowding: known, not crowded -> the 0.85 anchor.
+purity, demand, valuation, crowding = 0.7, 0.7, 0.70, 0.85
 confidence = bottleneck * purity * demand * valuation * crowding
 CORE, SATELLITE = 0.22, 0.10
 tier = "core" if confidence >= CORE else "satellite" if confidence >= SATELLITE else "dropped"

@@ -7,15 +7,9 @@ nodes:
       Lithography excimer lasers consume UHP neon; reclaim/purification skids that
       re-qualify vented gas to 99.999% are capacity-constrained and certification-gated.
       (SYNTHETIC pedagogical node.)
-    bottleneck_dims:
-      physical_indispensability: 0.8   # no laser operation without qualified neon
-      substitutability_inv: 0.7        # alternative = new-build air-separation trains, slow
-      capacity_lead_time: 0.8          # skid certification + fab qualification ~2-3y
-      supplier_concentration: 0.8      # two qualified skid OEMs (synthetic premise)
-      pricing_power: 0.6               # episodic — spikes on supply shocks
-    demand_score: 0.7                  # booked capacity POs (synthetic primary evidence)
-    valuation_adjustment: 0.8          # partially priced after a supply-shock headline
-    crowding_adjustment: 0.85          # known story, not crowded
+    # Scores are assigned at EVALUATE time against the released discrete rubric
+    # (src/scoring_rubric.md); this walkthrough's single source of numeric truth
+    # is run_walkthrough.py — the YAML carries structure and triggers only.
     exit_triggers:
       - id: capacity_glut
         metric: "announced reclaim capacity additions vs installed base"

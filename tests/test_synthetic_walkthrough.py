@@ -22,7 +22,7 @@ def test_walkthrough_runs_clean_and_pins_its_numbers():
     )
     assert proc.returncode == 0, proc.stdout + proc.stderr
     out = proc.stdout
-    assert "confidence = 0.2113  ->  tier = satellite" in out
+    assert "confidence = 0.2041  ->  tier = satellite" in out
     assert "(n_triggers = 3)" in out          # WI-40 fixed membership, visibly
     assert "tamper demo: edited one frozen word -> verify fails" in out
     assert out.rstrip().endswith("WALKTHROUGH PASS")

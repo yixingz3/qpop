@@ -11,12 +11,11 @@ weights from step 0 (late/never-reporting registered triggers stay in the averag
 trigger values are strictly type-checked (`bool` only; `"false"` is rejected, never coerced to
 fired). In registered mode — which the ledger runner always uses, deriving membership from the
 admission's exit-trigger contract — the implementation matches the rule, so the per-hypothesis
-anytime-valid property holds under the stated assumptions below; the paper's v2 text still carries
-the pre-fix experimental caveat and updates at v2.1.* Module:
+anytime-valid property holds under the stated assumptions below; the paper's v2.1 revision carries the closure.* Module:
 [`src/forward_qpop/evalue.py`](../../src/forward_qpop/evalue.py); tests:
-[`tests/test_evalue.py`](../../tests/test_evalue.py) (the standalone e-process, 18 tests)
+[`tests/test_evalue.py`](../../tests/test_evalue.py) (the standalone e-process, 24 tests)
 and [`tests/test_evalue_ledger.py`](../../tests/test_evalue_ledger.py) (the ledger wiring,
-17 tests — see [§"How the ledger integrates it"](#how-the-ledger-integrates-it-wi-29-wired-2026-07-09) below).
+19 tests — see [§"How the ledger integrates it"](#how-the-ledger-integrates-it-wi-29-wired-2026-07-09) below).
 
 ## The problem it solves
 
@@ -71,12 +70,11 @@ So the decision rule
 controls the Type-I (false-"Falsified") error at `α` **at any stopping time** — continuous
 monitoring and optional stopping included. You may re-evaluate `decision(α)` after every
 trigger check and still keep the false-"Falsified" rate at `α`. This is exactly the
-guarantee a fixed-sample test lacks. *(That is the property of the mathematical rule under its
-assumptions — the stated conditional null `P(fire_t = 1 | past) <= p0`, non-overlapping
-observation periods, no re-counting of a persistent fired state, and fixed mixture weights over
-all registered triggers. The current implementation deviates from the fixed-weights requirement
-and from strict trigger typing — see the header note — so the delivered code is experimental, not
-a completed guarantee.)*
+guarantee a fixed-sample test lacks. *(The property holds under the stated assumptions — the
+conditional null `P(fire_t = 1 | past) <= p0`, non-overlapping observation periods, no
+re-counting of a persistent fired state, and fixed mixture weights over all registered triggers.
+Registered mode implements exactly those requirements since WI-40, 2026-07-25 — see the header
+note; legacy lazy mode remains exploratory-only.)*
 
 **Simulation check (in the test suite).** Under the null (`p0 = 0.15`, `p1 = 0.6`,
 4 triggers, horizon 60, `α = 0.10`), across 400 optional-stopping paths that stop the

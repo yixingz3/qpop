@@ -529,10 +529,13 @@ methods framework.)
 
 A correct node with a poor proxy (low purity) or a crowded entry yields \emph{low} confidence.
 Tier is \textbf{derived} from confidence (e.g.\ core $\geq 0.22$, satellite $\geq 0.10$, below
-$\to$ dropped), not asserted (Figure~\ref{fig:confidence}). Each factor is scored against the
-released \textbf{anchored rubric} (\texttt{src/scoring\_rubric.md}; condensed with a fully
-synthetic worked example in Appendix~\ref{app:rubric-walkthrough}), so two independent readers
-can score the same card and see why it crosses or misses a tier.
+$\to$ dropped), not asserted (Figure~\ref{fig:confidence}). A released \textbf{anchored
+reference rubric} (\texttt{src/scoring\_rubric.md}; condensed with a fully
+synthetic worked example in Appendix~\ref{app:rubric-walkthrough}) makes forward and adopter
+scoring inspectable --- a discrete anchor scale with a conservative straddle rule, so two
+independent readers derive the same factor vector and tier. It is a post-hoc public
+operationalization, not a reconstruction of the exact private rubric that generated historical
+pilot scores.
 
 \begin{figure}[t]
 \centering
@@ -1006,8 +1009,9 @@ Edit only by appending dated amendments.
     trigger reporting --- and it is machinery for the forward window, not pilot evidence. The rule: a
     betting-martingale e-process per registered trigger, an arithmetic-average combiner by default
     (dependence-safe per \citet{vovk2021evalues}; the product combiner is valid only under a genuine
-    independence assumption) and Ville-threshold decisions, covered by 18 module tests (including a
-    Monte-Carlo Type-I check under optional stopping) plus ledger-integration tests. The
+    independence assumption) and Ville-threshold decisions, covered by 24 module tests (including
+    Monte-Carlo Type-I checks under optional stopping and under partial trigger reporting) plus
+    19 ledger-integration tests. The
     guarantee is \textbf{per-hypothesis}: anytime-valid control
     for that hypothesis's
     registered triggers under a stated conditional null ($\Pr(\text{fire}_t = 1 \mid \text{past})
@@ -1040,8 +1044,13 @@ Recorded here so the forward log is reproducible and leakage-resistant; any chan
 additive amendment.
 
 \begin{itemize}
-  \item \textbf{Model versions \& prompts:} the exact model identifier (and version/date) for
-    each tier (\textsc{source} / first-pass \textsc{evaluate} / adjudication) is logged per run;
+  \item \textbf{Model versions \& prompts:} the registered protocol requires the exact model
+    identifier (and version/date) for
+    each tier (\textsc{source} / first-pass \textsc{evaluate} / adjudication) to be logged per
+    run. \emph{Executed shortfall (v2.1):} the pilot-era runtime exposed only tier aliases, so
+    resolved dated model identifiers were recorded in 0/21 rounds
+    (Table~\ref{tab:provenance}); future runs must record resolved identifiers where the runtime
+    exposes them. Prompts:
     prompt templates are committed in the repo and referenced by commit hash. A model-version
     change is an amendment, not a silent swap. \emph{Disclosure (v2):} that per-run log is
     private, and the \emph{executed} pinning mechanism is per-run \textbf{SHA-256 hashes of the
@@ -1638,9 +1647,10 @@ portability (the uranium funnel --- \S\,H3, clause (c)); the expanded rejection-
 rejections existed), reported as such --- \S\,H5); the
 \textbf{e-value / anytime-valid} module, now \emph{ledger-integrated} (a frozen per-admission
 \texttt{evalue} commitment hashed with the entry, plus a \texttt{forward-qpop evalue} CLI that runs the
-sequential test over the ledger; 18 module + 17 integration tests --- an experimental implementation
-of a per-hypothesis anytime-valid rule that does \emph{not yet deliver} the guarantee (two known
-defects tracked; \S\,Decision Rules footnote), not used in the pilot, and no live admission carries a
+sequential test over the ledger; 24 module + 19 integration tests --- the registered
+(fixed-membership) mode delivers the per-hypothesis guarantee under the stated assumptions
+(\S\,Decision Rules footnote; the v2 revision's two disclosed defects were closed 2026-07-25 with
+regression tests), not used in the pilot, and no live admission carries a
 commitment yet); and an external \textbf{OpenTimestamps} anchor (opt-in / manual by design,
 11 hermetic tests plus a dispatch-gated live CI job). \textbf{Delivered since the v2 revision}
 (2026-07-25): the e-value implementation fixes above (registered fixed-membership mode + strict
@@ -1759,9 +1769,11 @@ investment analysis or advice.
 
 \section{Limitations}
 The forward sample is small and early; intervals are wide and no live-money track record is claimed.
-LLM outputs are nondeterministic across model versions, so we log the exact model identifier per
-run, pin the rendered prompt artifacts by SHA-256 hash in the private provenance record, and treat
-a version change as a dated amendment. Survivorship enters through
+LLM outputs are nondeterministic across model versions. The registered protocol logs the exact
+model identifier per run; in the executed pilot the runtime exposed only tier aliases (0/21 rounds
+have resolved identifiers --- Table~\ref{tab:provenance}), so version nondeterminism is bounded by
+tier, not pinned by identifier, for that era. Rendered prompt artifacts are pinned by SHA-256 hash
+in the private provenance record, and a version change is a dated amendment. Survivorship enters through
 which domains get built. Most importantly, the admission rate is \emph{necessary but not sufficient}
 for forward predictive performance: a disciplined rejection process is a precondition for, not a
 guarantee of it, and only the pre-registered forward log can establish that. Finally, a screening engine's
@@ -1866,13 +1878,19 @@ before the framework could rely on it.
 
 \subsection*{The released scoring rubric (condensed)}
 
-The full anchored rubric ships as \texttt{src/scoring\_rubric.md} in the released repository:
+The full anchored rubric ships as \texttt{src/scoring\_rubric.md} in the released repository ---
+a \emph{post-hoc public operationalization} of the framework's five factors and multiplicative
+structure, authored for forward/adopter use, not a reconstruction of the exact private rubric or
+dim weighting behind historical pilot scores. It specifies:
 observable anchor descriptions for every factor and every \texttt{bottleneck\_dims} component,
-value ranges, the missing-data rule (an unassessable factor gets \emph{no number} --- the candidate
+a \textbf{discrete} anchor scale (published anchor values only --- no free interpolation) with a
+conservative \textbf{straddle rule} (evidence between anchors takes the lower fully supported
+one), the missing-data rule (an unassessable factor gets \emph{no number} --- the candidate
 is watchlisted, never scored with a neutral default), the assigner protocol (EVALUATE scores,
 ADJUDICATE re-judges admit-flags, operator overrides only via dated ledger amendment), and a
-two-reader disagreement rule (independent scores; any factor differing by more than $0.1$ is
-unsettled $\to$ watchlist). Condensed anchors:
+two-reader disagreement rule (\emph{tier-aware}: any disagreement that changes the derived tier
+is unsettled regardless of size $\to$ watchlist; within-tier, a $>0.1$ factor spread is likewise
+unsettled). Condensed anchors:
 
 \begin{center}
 \footnotesize
@@ -1889,9 +1907,11 @@ crowding adj.\ ($\leq$1) & 1.0 uncovered & 0.85 known; 0.70 consensus-long & $\l
 \end{tabularx}
 \end{center}
 
-Threshold provenance, stated plainly: the $0.22$/$0.10$ tier cuts are operational constants from
-the build-out configuration, set before the forward window and not fitted to outcomes (none
-existed); whether they are well-calibrated is a declared December-window question. The
+Threshold provenance, stated plainly: the $0.22$/$0.10$ tier cuts were chosen heuristically in
+the 2026-06-06 build-out configuration to partition the then-current seed map's
+multiplicative-confidence range (roughly $0.06$--$0.34$), before the 2026-06-08 forward window
+and before any prospective outcomes accrued; they were \emph{not fit to forward-window outcomes},
+and their calibration remains unvalidated --- a declared December-window question. The
 multiplicative form is veto logic --- no strong factor compensates past a weak one --- and its known
 cost (valuation and crowding correlate, so their weakness is double-penalized) is intentional,
 disclosed conservatism.
@@ -1901,10 +1921,12 @@ disclosed conservatism.
 \texttt{examples/synthetic\_walkthrough/} walks one \emph{fully fictional} candidate
 (``ZZNEO,'' a synthetic UHP-neon-reclaim OEM) through every stage, with each score read off a
 named rubric anchor: gate \textsc{pass} $\to$ triage pursue $\to$ bear case written first $\to$
-decomposition $0.740 \times 0.6 \times 0.7 \times 0.8 \times 0.85 = 0.2113$ $\to$
-\textbf{satellite} (deliberately \emph{threshold-marginal}: the minimum factor, purity $0.6$,
-moved to $0.63$ would cross the $0.22$ core cut --- the sensitivity rule requires the admission
-entry to say so) $\to$ pre-registration with three checkable exit triggers and a frozen e-value
+decomposition $0.70 \times 0.7 \times 0.7 \times 0.70 \times 0.85 = 0.2041$ $\to$
+\textbf{satellite} --- every input a published anchor value, with one straddle resolved to the
+lower anchor by rule; deliberately \emph{threshold-marginal}: had that straddle resolved high
+($0.85$), the product would be $0.2478$, across the core cut, so the admission entry must carry
+the marginality flag, and a second reader scoring the straddle high would trigger the tier-aware
+disagreement rule $\to$ watchlist $\to$ pre-registration with three checkable exit triggers and a frozen e-value
 commitment $\to$ a dated trigger-check update $\to$ the registered-mode sequential test (all three
 registered triggers in the mixture from step 0) $\to$ anchor $\to$ a tamper demonstration.
 The ledger-side steps are \emph{runnable from a clean clone, offline}
@@ -1919,7 +1941,8 @@ of the pilot era, generated by a committed script from the per-round manifests (
 only; a dash is an \emph{absent} field, never reconstructed). The honest gaps, quantified:
 exact dated model identifiers were recorded in \textbf{0/21} rounds (the runtime exposed tier
 aliases only), per-round token counts in \textbf{0/21}, agent counts in \textbf{3/21}; 20/21
-manifests are retrospective backfills from preserved run artifacts (the manifest generator runs
+manifests are retrospective backfills from preserved records --- queue summaries and, where
+available, raw/workflow artifacts; per-row hash coverage shows which (the manifest generator runs
 contemporaneously from 2026-07-11 onward). Within those limits the table gives the run-level
 record the method promises: pipeline generation, tier allocation, funnel counts, and artifact-hash
 coverage per round.

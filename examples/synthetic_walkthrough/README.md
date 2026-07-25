@@ -49,28 +49,34 @@ dilutes the thesis; a neon-frugal laser platform would break the node outright.
 
 | Factor | Score | Anchor justification (rubric row) |
 |---|---|---|
-| `physical_indispensability` | 0.8 | no qualified laser operation without UHP neon; between "no route without it" (0.9) and substitutable-at-cost (0.5) |
-| `substitutability`⁻¹ | 0.7 | alternatives exist (new ASU trains) but qualification barrier documented |
-| `capacity_lead_time` | 0.8 | skid certification + fab qualification ≈ 2–3 y |
-| `supplier_concentration` | 0.8 | two qualified OEMs (synthetic premise) |
-| `pricing_power` | 0.6 | episodic, not contractual — between mixed (0.5) and realized escalation (0.9) |
-| **`bottleneck_score`** | **0.740** | mean of the five dims (*reference definition*) |
-| `exposure_purity` | 0.6 | 35% of revenue → "major line, 30–70%" row, low end (margin undisclosed → no credit) |
-| `demand_score` | 0.7 | booked capacity POs in primary sources — the 0.7 anchor verbatim |
-| `valuation_adjustment` | 0.8 | constraint partially priced after a supply-shock headline (between 0.85 and 0.7) |
-| `crowding_adjustment` | 0.85 | known story, not crowded — the 0.85 anchor |
+| `physical_indispensability` | 0.7 | ON-ANCHOR: a route exists only via qualified redesign (new ASU trains + laser re-qualification) |
+| `substitutability`⁻¹ | 0.7 | ON-ANCHOR: alternatives exist behind a documented qualification barrier |
+| `capacity_lead_time` | 0.7 | ON-ANCHOR: 2–3 years including fab qualification |
+| `supplier_concentration` | 0.9 | ON-ANCHOR: two qualified OEMs ≥70% (synthetic premise) |
+| `pricing_power` | 0.5 | ON-ANCHOR: mixed/episodic, not contractual |
+| **`bottleneck_score`** | **0.70** | mean of the five dims (*reference definition*) |
+| `exposure_purity` | 0.7 | ON-ANCHOR: 35% of revenue = the "major line, 30–70%" row |
+| `demand_score` | 0.7 | ON-ANCHOR: booked capacity POs in primary sources |
+| `valuation_adjustment` | 0.70 | STRADDLE→LOWER: "partially priced" sits between fair (0.85) and rich (0.70); the rule takes 0.70 |
+| `crowding_adjustment` | 0.85 | ON-ANCHOR: known story, not crowded |
 
 ```
-confidence = 0.740 × 0.6 × 0.7 × 0.8 × 0.85 = 0.2113
-tier: 0.2113 < 0.22 (core)  and  ≥ 0.10  →  SATELLITE
+confidence = 0.70 × 0.7 × 0.7 × 0.70 × 0.85 = 0.2041
+tier: 0.2041 < 0.22 (core)  and  ≥ 0.10  →  SATELLITE
 ```
 
-**This case is deliberately threshold-marginal** (the rubric's sensitivity rule in action): the
-minimum factor is purity (0.6), and purity 0.63 — a plausible read if the undisclosed skid margin
-ran richer than the corporate average — would put confidence at 0.222, across the core line. Per
-the rubric, the admission entry must say so: *threshold-marginal; tier flips on ±0.05 of one
-factor; min factor = purity.* Two readers who differ by >0.1 on purity would send this to
-watchlist, not average their disagreement away.
+Every input is a published anchor value (the scale is discrete — no free interpolation), so two
+independent readers applying the rubric's straddle rule to the same evidence derive the **same
+factor vector**, the same tier, and the same marginality flag.
+
+**This case is deliberately threshold-marginal, and the margin is produced by the straddle rule
+itself:** had the valuation evidence fully supported the 0.85 "fair" anchor instead of straddling,
+confidence would be 0.70 × 0.7 × 0.7 × 0.85 × 0.85 = 0.2478 — across the core line. Per the
+rubric, the admission entry must say so: *threshold-marginal; the tier turns on one straddle
+resolution.* And per the tier-aware disagreement rule, a second reader who scored valuation 0.85
+would flip the derived tier — that disagreement is unsettled regardless of its size, sending the
+candidate to watchlist until a dated source settles it (the deterministic straddle rule exists
+precisely so both readers take 0.70 here).
 
 ## 4. ADJUDICATE [DOCUMENTED — expensive tier, admit-flags only]
 
