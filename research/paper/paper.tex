@@ -529,7 +529,10 @@ methods framework.)
 
 A correct node with a poor proxy (low purity) or a crowded entry yields \emph{low} confidence.
 Tier is \textbf{derived} from confidence (e.g.\ core $\geq 0.22$, satellite $\geq 0.10$, below
-$\to$ dropped), not asserted (Figure~\ref{fig:confidence}).
+$\to$ dropped), not asserted (Figure~\ref{fig:confidence}). Each factor is scored against the
+released \textbf{anchored rubric} (\texttt{src/scoring\_rubric.md}; condensed with a fully
+synthetic worked example in Appendix~\ref{app:rubric-walkthrough}), so two independent readers
+can score the same card and see why it crosses or misses a tier.
 
 \begin{figure}[t]
 \centering
@@ -994,27 +997,25 @@ Edit only by appending dated amendments.
     a sequential test with explicit Type-I error control} (an anytime-valid / e-value formulation
     from the
     safe-testing literature \citep{ramdas2023gametheoretic,shafer2021testing,vovk2021evalues};
-    specified in the pre-registered plan; an \emph{experimental} implementation is
-    ledger-integrated in the released package, not used in the pilot decisions and not yet
-    delivering the guarantee\footnote{The
-    e-value / anytime-valid module in the released package (\texttt{forward\_qpop.evalue}) is an
-    \emph{experimental implementation of a theoretically anytime-valid per-hypothesis rule} ---
-    it does \emph{not yet deliver} that guarantee, and it is not pilot evidence. The rule: a
+    specified in the pre-registered plan; the implementation is
+    ledger-integrated in the released package, not used in the pilot decisions\footnote{The
+    e-value module in the released package (\texttt{forward\_qpop.evalue}) implements the
+    per-hypothesis anytime-valid rule in its registered (fixed-membership) mode --- the v2
+    revision's two disclosed implementation defects were closed on 2026-07-25 (dated amendment in
+    the experiment plan) with regression tests, including a Type-I Monte-Carlo under partial
+    trigger reporting --- and it is machinery for the forward window, not pilot evidence. The rule: a
     betting-martingale e-process per registered trigger, an arithmetic-average combiner by default
     (dependence-safe per \citet{vovk2021evalues}; the product combiner is valid only under a genuine
     independence assumption) and Ville-threshold decisions, covered by 18 module tests (including a
-    Monte-Carlo Type-I check under optional stopping) plus 17 ledger-integration tests. The rule's
-    guarantee, once the implementation matches it, is \textbf{per-hypothesis}: anytime-valid control
+    Monte-Carlo Type-I check under optional stopping) plus ledger-integration tests. The
+    guarantee is \textbf{per-hypothesis}: anytime-valid control
     for that hypothesis's
     registered triggers under a stated conditional null ($\Pr(\text{fire}_t = 1 \mid \text{past})
     \leq p_0$), assuming non-overlapping observation periods --- a persistent fired state must not be
     re-counted as fresh evidence; no across-hypothesis (book-wide) multiplicity control is provided
-    under any configuration. Two known implementation defects currently break the stated rule ---
-    the mixture initializes each trigger's e-process only when that trigger first reports (changing
-    mixture membership/weights after observations, where the rule requires all registered triggers
-    initialized at 1 with fixed weights) and trigger values are coerced with \texttt{bool()} rather
-    than strictly type-checked --- and must be
-    closed, with regression tests, before the module drives a live outcome decision.
+    under any configuration. In registered mode every trigger named in the admission's contract
+    enters the mixture at $e = 1$ with fixed weights from the first step, and non-boolean trigger
+    values are rejected loudly rather than coerced.
     It is wired into the ledger: an admission entry \emph{can} carry a frozen \texttt{evalue}
     commitment (\texttt{p0}/\texttt{p1}/combine, hashed with the entry), belief-update entries may
     carry \texttt{trigger\_checks} observations, and \texttt{forward-qpop evalue <ledger.jsonl>} runs
@@ -1028,7 +1029,7 @@ Edit only by appending dated amendments.
     commitment at registration.}),
     the design intent being that repeated looks at \emph{one} hypothesis's registered triggers not
     inflate false ``Falsified'' calls for that hypothesis --- per-hypothesis anytime-valid control,
-    applied \emph{prospectively} once the implementation matches the rule. Book-wide
+    applied \emph{prospectively}. Book-wide
     (across-hypothesis) multiplicity control --- the
     factor-zoo analogue --- is \emph{not} provided and is declared future work.
 \end{itemize}
@@ -1048,12 +1049,14 @@ additive amendment.
     ``referenced by commit hash'' phrasing above describes the private implementation's
     versioning, corrected here as a dated amendment) --- the public \texttt{src/prompts.md}
     releases sanitized reference
-    templates (the H2 arm prompts verbatim), not the production bundle; the public paper names
-    only the cost tiers (cheap / mid / expensive). A sanitized
-    exact-version run table (identifiers, dates, invocation counts, token/cost totals, with
-    missing fields exposed as missing) is not yet released, so the cost-aware-cascade contribution
-    should be read as \emph{architectural} (the tier allocation and its asymmetry) rather than a
-    publicly reconstructible per-run cost accounting.
+    templates (the H2 arm prompts verbatim), not the production bundle. \emph{Updated (v2.1):}
+    the sanitized per-round provenance table is now released
+    (Table~\ref{tab:provenance}, Appendix~\ref{app:rubric-walkthrough}) --- pipeline generation,
+    tier allocation, funnel counts, and artifact-hash coverage per round, with the gaps quantified
+    rather than filled: no round recorded a dated model identifier (tier aliases only) or token
+    totals, so the cost-aware-cascade contribution
+    remains \emph{architectural} (the tier allocation and its asymmetry) rather than a
+    per-run cost accounting.
   \item \textbf{Source timestamps:} every evidence item carries the publication date of the
     source and the retrieval date; an admission may rely only on evidence dated \textbf{on or
     before} the admission date.
@@ -1639,7 +1642,11 @@ sequential test over the ledger; 18 module + 17 integration tests --- an experim
 of a per-hypothesis anytime-valid rule that does \emph{not yet deliver} the guarantee (two known
 defects tracked; \S\,Decision Rules footnote), not used in the pilot, and no live admission carries a
 commitment yet); and an external \textbf{OpenTimestamps} anchor (opt-in / manual by design,
-11 hermetic tests plus a dispatch-gated live CI job). Still pending:
+11 hermetic tests plus a dispatch-gated live CI job). \textbf{Delivered since the v2 revision}
+(2026-07-25): the e-value implementation fixes above (registered fixed-membership mode + strict
+typing, with regression tests); the released anchored scoring rubric; the synthetic end-to-end
+walkthrough; and the sanitized per-round provenance table
+(Appendix~\ref{app:rubric-walkthrough}). Still pending:
 
 \begin{itemize}
   \item \textbf{Forward outcomes} (H4) --- accrue over the forward window;
@@ -1696,6 +1703,9 @@ produced them are not public.
 Code (package)        & Yes                  & ledger, hash chain, OpenTimestamps anchor, e-value module (experimental), CLI, schema validation \\
 Gate + scoring engine & No                   & deterministic gate, confidence scoring, domain templating (runs the live funnel) \\
 Prompts         & Yes                        & sanitized reference templates for source / triage / evaluate / adjudicate / audit; the five H2 arm prompts released verbatim (three recovered pilot originals, two later pre-registered extension arms) \\
+Scoring rubric  & Yes                        & anchored reference rubric for all five factors + dims (\texttt{src/scoring\_rubric.md}) \\
+Synthetic walkthrough & Yes                  & end-to-end fictional-candidate example; ledger legs runnable offline, model stages documented (App.~\ref{app:rubric-walkthrough}) \\
+Run provenance  & Sanitized                  & per-round tier/pipeline/count table with quantified gaps (Table~\ref{tab:provenance}) \\
 Candidate cards & Synthetic sample only      & schema-conformant sample cards; the empirical 38-card batch and per-card arm outputs are private \\
 Ledger          & Synthetic                  & QPOP schema and sample hashes \\
 Live positions  & No                         & not released \\
@@ -1849,6 +1859,106 @@ draw no conclusion from them. What they generate is the falsifiable entry-rule
 hypothesis --- \emph{in this substrate, only involuntary dislocations leave an unpriced
 gap} --- which a properly documented, dated, pre-registered protocol would have to test
 before the framework could rely on it.
+
+
+\section{Anchored Rubric, Synthetic Walkthrough, and Run Provenance}
+\label{app:rubric-walkthrough}
+
+\subsection*{The released scoring rubric (condensed)}
+
+The full anchored rubric ships as \texttt{src/scoring\_rubric.md} in the released repository:
+observable anchor descriptions for every factor and every \texttt{bottleneck\_dims} component,
+value ranges, the missing-data rule (an unassessable factor gets \emph{no number} --- the candidate
+is watchlisted, never scored with a neutral default), the assigner protocol (EVALUATE scores,
+ADJUDICATE re-judges admit-flags, operator overrides only via dated ledger amendment), and a
+two-reader disagreement rule (independent scores; any factor differing by more than $0.1$ is
+unsettled $\to$ watchlist). Condensed anchors:
+
+\begin{center}
+\footnotesize
+\begin{tabularx}{\linewidth}{@{}lLLL@{}}
+\toprule
+\textbf{Factor} & \textbf{high ($\sim$0.9)} & \textbf{mid ($\sim$0.5--0.7)} & \textbf{low ($\leq$0.3)} \\
+\midrule
+bottleneck (mean of 5 dims) & no route around it; $\geq$3y lead; 1--2 suppliers $\geq$70\%; realized pricing power & substitutable at 2--3$\times$ cost; 1--2y lead; top-3 $\sim$50\% & convenience input; restartable capacity; fragmented; price-taker \\
+exposure purity & pure play ($>$70\% of economics, filings-verifiable) & major line 30--70\%; diluted 10--30\% & minor segment $<$10\%; trace exposure = reject territory \\
+demand & contracted multi-year backlog (primary) & POs visible; corroborated forecast pull & thematic inference; narrative demand \\
+valuation adj.\ ($\leq$1) & 1.0 dislocated/ignored & 0.85 fair; 0.70 rich & $\leq$0.5 priced-for-perfection \\
+crowding adj.\ ($\leq$1) & 1.0 uncovered & 0.85 known; 0.70 consensus-long & $\leq$0.5 mania markers \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+Threshold provenance, stated plainly: the $0.22$/$0.10$ tier cuts are operational constants from
+the build-out configuration, set before the forward window and not fitted to outcomes (none
+existed); whether they are well-calibrated is a declared December-window question. The
+multiplicative form is veto logic --- no strong factor compensates past a weak one --- and its known
+cost (valuation and crowding correlate, so their weakness is double-penalized) is intentional,
+disclosed conservatism.
+
+\subsection*{A synthetic candidate, end to end}
+
+\texttt{examples/synthetic\_walkthrough/} walks one \emph{fully fictional} candidate
+(``ZZNEO,'' a synthetic UHP-neon-reclaim OEM) through every stage, with each score read off a
+named rubric anchor: gate \textsc{pass} $\to$ triage pursue $\to$ bear case written first $\to$
+decomposition $0.740 \times 0.6 \times 0.7 \times 0.8 \times 0.85 = 0.2113$ $\to$
+\textbf{satellite} (deliberately \emph{threshold-marginal}: the minimum factor, purity $0.6$,
+moved to $0.63$ would cross the $0.22$ core cut --- the sensitivity rule requires the admission
+entry to say so) $\to$ pre-registration with three checkable exit triggers and a frozen e-value
+commitment $\to$ a dated trigger-check update $\to$ the registered-mode sequential test (all three
+registered triggers in the mixture from step 0) $\to$ anchor $\to$ a tamper demonstration.
+The ledger-side steps are \emph{runnable from a clean clone, offline}
+(\texttt{python examples/synthetic\_walkthrough/run\_walkthrough.py}, pinned by a released test);
+the model stages are documented against the released prompts and gate specification, per the
+release boundary --- the walkthrough demonstrates the method, not the private engine.
+
+\subsection*{Per-round run provenance (sanitized)}
+
+Table~\ref{tab:provenance} reports the per-round provenance record for every dated discovery round
+of the pilot era, generated by a committed script from the per-round manifests (whitelisted fields
+only; a dash is an \emph{absent} field, never reconstructed). The honest gaps, quantified:
+exact dated model identifiers were recorded in \textbf{0/21} rounds (the runtime exposed tier
+aliases only), per-round token counts in \textbf{0/21}, agent counts in \textbf{3/21}; 20/21
+manifests are retrospective backfills from preserved run artifacts (the manifest generator runs
+contemporaneously from 2026-07-11 onward). Within those limits the table gives the run-level
+record the method promises: pipeline generation, tier allocation, funnel counts, and artifact-hash
+coverage per round.
+
+\begin{table}[H]
+\centering
+\scriptsize
+\begin{tabularx}{\linewidth}{@{}lLllllcc@{}}
+\toprule
+\textbf{Round} & \textbf{Mode} & \textbf{Pipeline} & \textbf{S/T/E/A} & \textbf{h/s/o} & \textbf{c/p/a} & \textbf{\#h} & \textbf{bf} \\
+\midrule
+2026-06-07 & breadth-sweep & legacy\_opus & S/--/O/-- & --/--/-- & 40/27/0 & 0/5 & yes \\
+2026-06-07 & critical-minerals & sonnet\_opus & S/--/S/O & --/--/-- & 26/7/1 & 0/5 & yes \\
+2026-06-07 & seeding-batch & legacy\_opus & S/--/O/-- & --/--/-- & --/8/1 & 0/5 & yes \\
+2026-06-07 & thematic-sweep & legacy\_opus & S/--/O/-- & --/--/-- & --/7/0 & 0/5 & yes \\
+2026-06-07 & breadth-sweep & legacy\_opus & S/--/O/-- & --/--/-- & --/18/0 & 0/5 & yes \\
+2026-06-07 & breadth-sweep & legacy\_opus & S/--/O/-- & --/--/-- & --/6/0 & 0/5 & yes \\
+2026-06-07 & policy-sleeve & legacy\_opus & S/--/O/-- & --/--/-- & --/2/0 & 0/5 & yes \\
+2026-06-07 & gaps & sonnet\_opus & S/--/S/O & --/--/-- & --/12/1 & 0/5 & yes \\
+2026-06-08 & admit-hunt & three\_tier & S/H/S/O & 12/16/1 & 34/12/0 & 5/5 & yes \\
+2026-06-08 & breadth-sweep & three\_tier & S/H/S/O & 24/27/5 & 30/24/0 & 4/5 & yes \\
+2026-06-08 & funnel-efficiency-test & three\_tier & S/H/S/O & --/--/-- & --/--/0 & 0/5 & yes \\
+2026-06-08 & gaps & three\_tier & S/H/S/O & 12/16/1 & 35/12/0 & 5/5 & yes \\
+2026-06-16 & gaps & three\_tier & S/H/S/O & --/--/-- & 37/3/0 & 1/5 & yes \\
+2026-06-16 & operator-crosscheck & unrecorded & --/--/--/-- & --/--/-- & --/2/0 & 0/5 & yes \\
+2026-06-16 & strategic-metals-adhoc & adhoc\_opus & O/--/O/-- & --/--/-- & 34/--/0 & 0/5 & yes \\
+2026-06-18 & gaps & three\_tier & S/H/S/O & --/--/-- & 49/9/0 & 1/5 & yes \\
+2026-06-18 & gaps & three\_tier & S/H/S/O & --/--/-- & 51/20/0 & 1/5 & yes \\
+2026-06-25 & gaps & three\_tier & S/H/S/O & --/--/-- & 40/16/0 & 1/5 & yes \\
+2026-06-25 & gaps & three\_tier & S/H/S/O & --/--/-- & 41/13/0 & 1/5 & yes \\
+2026-07-06 & scheduled-track-b & three\_tier & S/H/S/O & --/--/-- & --/1/0 & 0/5 & yes \\
+2026-07-11 & gaps & three\_tier & S/H/S/O & --/--/-- & --/--/-- & 5/5 & no \\
+\bottomrule
+\end{tabularx}
+\caption{Sanitized per-round run provenance (21 rounds, 2026-06-07 through 2026-07-11). S/T/E/A = model tier per stage (S=Sonnet-class mid tier, H=Haiku-class cheap tier, O=Opus-class expensive tier); h/s/o = agent counts by tier; c/p/a = cards / gate-pass / admits; \#h = artifact hashes recorded (of 5); bf = backfilled manifest. Dashes are
+absent fields, disclosed as such in the underlying manifests with per-field reasons; token/cost
+totals were recorded in no round, so no cost accounting is claimed beyond the tier allocation.}
+\label{tab:provenance}
+\end{table}
 
 \bibliographystyle{plainnat}
 \bibliography{references}
