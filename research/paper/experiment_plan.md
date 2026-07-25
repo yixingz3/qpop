@@ -155,7 +155,11 @@ paper reports these rather than hiding them.
   implementation is **experimental and does not yet deliver** even the per-hypothesis guarantee
   (two tracked defects: e-process initialization/mixture weights when triggers first report;
   non-strict trigger typing) — see `research/docs/EVALUE_METHODS.md`. No pilot decision used it,
-  and no live admission carries an e-value commitment yet.
+  and no live admission carries an e-value commitment yet. *Follow-up (2026-07-25, WI-40):* both
+  defects are now closed with regression tests (fixed registered-trigger membership initialized at
+  e=1 with fixed weights; strict boolean trigger typing; Type-I Monte-Carlo under partial
+  reporting) — in registered mode the per-hypothesis guarantee holds under the stated assumptions;
+  the book-wide-control gap and report-time-alpha caveat are unchanged.
 - **2026-07-23 — H3 rate criterion replacement (future windows).** "Within 2× the first domain's
   rate" is degenerate against a zero first-domain rate (admits only exactly zero). For prospective
   windows it is replaced by an absolute non-inferiority criterion: the second domain's
