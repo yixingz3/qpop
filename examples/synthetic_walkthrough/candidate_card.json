@@ -1,0 +1,15 @@
+{
+  "symbol": "ZZNEO",
+  "company": "Synthetica Gas Works (FICTIONAL)",
+  "proposed_node": "neon_reclaim_skids",
+  "kind": "new_ticker",
+  "proposed_role": "direct",
+  "why_fit": "One of two qualified OEMs for UHP neon reclaim skids (SYNTHETIC premise); certification moat and 2-3y capacity lead time make it a direct beneficiary of the reclaim build-out.",
+  "evidence": [
+    {"source": "Synthetic 10-K", "tier": "primary", "summary": "Reclaim-skid segment = 35% of revenue; booked capacity POs disclosed.", "date": "2026-02-15", "url": "https://example.invalid/10k"},
+    {"source": "Synthetic trade press", "tier": "secondary", "summary": "Fab operators quoted on multi-quarter skid waitlists.", "date": "2026-03-02"}
+  ],
+  "known_risks": "Pricing power is episodic; a reclaim capacity glut or a neon-free laser platform would break the node; 65% of the company is unrelated industrial gas distribution.",
+  "missing_info": "Skid-segment gross margin not disclosed separately.",
+  "suggested_next_step": "GATE, then EVALUATE with bear-case-first if it clears."
+}

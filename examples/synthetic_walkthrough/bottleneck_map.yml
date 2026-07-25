@@ -1,0 +1,33 @@
+# SYNTHETIC domain map — every entity below is fictional (see README).
+# One node is enough to walk the full pipeline; real maps carry many.
+domain: uhp_neon_recycling   # ultra-high-purity neon reclaim for lithography (synthetic)
+nodes:
+  - id: neon_reclaim_skids
+    rationale: >
+      Lithography excimer lasers consume UHP neon; reclaim/purification skids that
+      re-qualify vented gas to 99.999% are capacity-constrained and certification-gated.
+      (SYNTHETIC pedagogical node.)
+    bottleneck_dims:
+      physical_indispensability: 0.8   # no laser operation without qualified neon
+      substitutability_inv: 0.7        # alternative = new-build air-separation trains, slow
+      capacity_lead_time: 0.8          # skid certification + fab qualification ~2-3y
+      supplier_concentration: 0.8      # two qualified skid OEMs (synthetic premise)
+      pricing_power: 0.6               # episodic — spikes on supply shocks
+    demand_score: 0.7                  # booked capacity POs (synthetic primary evidence)
+    valuation_adjustment: 0.8          # partially priced after a supply-shock headline
+    crowding_adjustment: 0.85          # known story, not crowded
+    exit_triggers:
+      - id: capacity_glut
+        metric: "announced reclaim capacity additions vs installed base"
+        op: ">"
+        threshold: "25% within 12 months"
+        data_source: { name: "OEM press releases + industry capacity tracker", tier: secondary }
+      - id: substitution_breakthrough
+        metric: "qualified laser platform running sub-99.99% neon or neon-free"
+        op: "exists"
+        data_source: { name: "litho OEM technical disclosures", tier: primary }
+      - id: crowding_reversal
+        metric: "price vs estimate-revision gap"
+        op: ">"
+        threshold: "2 sigma"
+        data_source: { name: "market data", tier: market_implied }
