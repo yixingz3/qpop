@@ -36,7 +36,9 @@ The released reference scale is **discrete**: a factor may take only the publish
 in its table below — no interpolation. **Straddle rule:** when the evidence fully supports one
 anchor and partially suggests the next higher one, take the **lower** fully supported anchor (the
 conservative tie-break; consistent with the framework's false-watchlist-over-false-admit
-asymmetry). **Never default a factor you cannot assess** (see Missing data below). Evidence tiers
+asymmetry). The 25% segment-revenue cut in `pricing_power` is an **uncalibrated
+public-reference convention** chosen for determinism, not an empirically validated historical
+threshold. **Never default a factor you cannot assess** (see Missing data below). Evidence tiers
 apply: an anchor claimed from tertiary sources alone is not established (source-tier rule).
 
 ### `bottleneck_score` — node: how binding is the chokepoint?
@@ -50,7 +52,7 @@ historical weighting and factor elaborations remain unspecified here.)
 | `substitutability`⁻¹ | no qualified alternative supplier/process | alternatives exist behind a documented qualification barrier (certification, change-control) | alternatives exist; switching costs real but bounded | commodity — many interchangeable sources |
 | `capacity_lead_time` | ≥3 years greenfield (permits, certification, construction) | 2–3 years including qualification | 1–2 years | <1 year, or idle capacity restartable |
 | `supplier_concentration` | 1–2 suppliers hold ≥70% share | 2–3 suppliers dominate; entrant unqualified | top-3 hold ~50% | fragmented |
-| `pricing_power` | realized price escalation visible in filings/contracts | escalators contracted across a material share (≥25%) of segment contracts/revenue | mixed/episodic — at most isolated escalator clauses (<25% coverage) | price-taker |
+| `pricing_power` | realized price escalation across ≥25% of segment revenue, visible in filings/contracts | escalators contracted but not yet fully realized across ≥25% of segment revenue | mixed/episodic pricing, or escalator clauses covering <25% of segment revenue | price-taker |
 
 ### `exposure_purity` — ticker: does this name capture the node's economics?
 

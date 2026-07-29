@@ -1009,9 +1009,10 @@ Edit only by appending dated amendments.
     trigger reporting --- and it is machinery for the forward window, not pilot evidence. The rule: a
     betting-martingale e-process per registered trigger, an arithmetic-average combiner by default
     (dependence-safe per \citet{vovk2021evalues}; the product combiner is valid only under a genuine
-    independence assumption) and Ville-threshold decisions, covered by 24 module tests (including
-    Monte-Carlo Type-I checks under optional stopping and under partial trigger reporting) plus
-    19 ledger-integration tests. The
+    independence assumption) and Ville-threshold decisions, covered by 25 module tests (including
+    Monte-Carlo Type-I checks under optional stopping and under partial trigger reporting, and an
+    adversarial selective-reporting demonstration) plus
+    29 ledger-integration tests. The
     guarantee is \textbf{per-hypothesis}: anytime-valid control
     for that hypothesis's
     registered triggers under a stated conditional null ($\Pr(\text{fire}_t = 1 \mid \text{past})
@@ -1025,6 +1026,13 @@ Edit only by appending dated amendments.
     carry \texttt{trigger\_checks} observations, and \texttt{forward-qpop evalue <ledger.jsonl>} runs
     the sequential test with its state persisted in a sidecar (exactly-once resumption; never
     mutating the ledger).
+    The runner verifies the ledger's hash chain before evaluating, re-derives every hypothesis
+    from its admission on each invocation (the state sidecar is a cache with no decision
+    authority), and decides on the persisted running maximum --- the rejection event is
+    $\sup_t e_t \geq 1/\alpha$, so a crossing is never forgotten. One further stated assumption:
+    the decision to report or skip a scheduled check must be predictable from past information and
+    independent of the current unseen outcome --- outcome-dependent selective reporting (e.g.,
+    reporting only fires) voids the control, demonstrated by an adversarial regression.
     The reporting-time significance level $\alpha$ is a CLI argument, \emph{not} part of the hashed
     commitment; any operational decision threshold must be committed in a separately dated policy.
     It was \emph{not} used in the pilot outcome decisions --- the pilot predates it --- and as of this

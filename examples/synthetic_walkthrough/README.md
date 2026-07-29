@@ -56,7 +56,7 @@ dilutes the thesis; a neon-frugal laser platform would break the node outright.
 | `substitutability`⁻¹ | 0.7 | ON-ANCHOR: alternatives exist behind a documented qualification barrier |
 | `capacity_lead_time` | 0.7 | ON-ANCHOR: technical-note evidence — 2–3 years including fab qualification |
 | `supplier_concentration` | 0.9 | ON-ANCHOR: two qualified OEMs ≥70% (synthetic premise) |
-| `pricing_power` | 0.5 | ON-ANCHOR: mixed/episodic — the single escalator clause covers ~5% of segment revenue, below the 0.7 anchor's ≥25% material-share boundary |
+| `pricing_power` | 0.5 | ON-ANCHOR: mixed/episodic — the single escalator clause covers ~5% of segment revenue, below the ≥25%-of-segment-revenue boundary shared by the 0.7 and 0.9 anchors |
 | **`bottleneck_score`** | **0.70** | mean of the five dims (*reference definition*) |
 | `exposure_purity` | 0.7 | ON-ANCHOR: 35% of revenue = the "major line, 30–70%" row |
 | `demand_score` | 0.7 | ON-ANCHOR: booked capacity POs in primary sources |

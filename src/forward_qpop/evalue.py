@@ -23,7 +23,7 @@ sequential test**.
    changes mixture membership mid-stream and carries no guarantee. Scope is
    **per-hypothesis only**: nothing here controls multiplicity across
    hypotheses/positions (book-wide control is future work), and the reporting-time
-   ``alpha`` is not part of the hashed commitment.
+   ``alpha`` is not part of the hashed commitment. **WI-44 (2026-07-28):** the ledger runner verifies the hash chain BEFORE evaluating, replays the verified ledger from each admission on every run (the state sidecar is a cache with no decision authority — tampered, legacy, or rewound sidecars are discarded and rebuilt), validates the raw exit-trigger contract (no row silently dropped; checks validated by presence, not truthiness), and decides on the persisted running maximum (the rejection event is sup_t e_t >= 1/alpha, so a crossing is never forgotten). Additional stated assumption: the decision to report or skip a scheduled check must be predictable from past information and independent of the current unseen outcome — outcome-dependent selective reporting (e.g., reporting only fires) voids the guarantee (demonstrated by an adversarial regression).
 
 The model (per trigger)
 -----------------------
@@ -102,14 +102,14 @@ onto a real :class:`forward_qpop.ledger.Ledger` without any schema-breaking chan
   ``Ledger.update(..., fields={"trigger_checks": {...}})``. Each belief_update is one
   monitoring step; the triggers it names must already be in the admission's
   ``exit_triggers`` contract.
-* :func:`run_ledger_evalue` walks a ledger, replays each hypothesis's belief_update
-  stream through its own :class:`SequentialTriggerTest`, and reports the merged e-value,
-  the ``1/alpha`` threshold, and the decision. State (the e-process, not the ledger) is
-  persisted in a JSON **sidecar** file next to the ledger (``<ledger>.evalue-state.json``
-  by default) so repeated invocations resume rather than silently re-deriving --
-  state resumption that folds each observation in exactly once, never mutating a ledger
-  row (resumption preserves the registered fixed membership, so in registered mode the
-  per-hypothesis guarantee carries across invocations — see the module note).
+* :func:`run_ledger_evalue` (WI-44) first verifies the ledger's hash chain, then
+  replays each hypothesis's belief_update stream FROM ITS ADMISSION through a fresh
+  :class:`SequentialTriggerTest` on every invocation, and reports the merged e-value,
+  the persisted running maximum ``max_e``, the ``1/alpha`` threshold, and the decision
+  (``falsified`` iff ``max_e >= 1/alpha`` -- the sup-rule). The JSON **sidecar**
+  (``<ledger>.evalue-state.json``) is regenerated each run purely for inspection: it is
+  a cache with NO decision authority, so tampered/legacy/rewound sidecars are simply
+  discarded and rebuilt, and the ledger is never mutated.
 * Hypotheses with no ``"evalue"`` config are reported as ``no_config`` (skipped, not
   fabricated) -- see :data:`EVALUE_CONFIG_FIELD`.
 
@@ -122,7 +122,7 @@ from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional, Tuple, Union
 
-from .ledger import Ledger
+from .ledger import Ledger, verify_file
 
 __all__ = [
     "EProcess",
@@ -375,11 +375,12 @@ class SequentialTriggerTest:
 class EvalueLedgerError(RuntimeError):
     """Raised when the ledger's e-value wiring is malformed -- loud, never silent.
 
-    Covers: an ``"evalue"`` admission config missing ``p0``/``p1``; a ``"trigger_checks"``
-    payload that isn't a ``{trigger_id: bool}`` mapping; a trigger id not present in the
-    hypothesis's registered ``exit_triggers``; or a state sidecar whose ``last_entry_hash``
-    can no longer be found in the ledger (the ledger was rewritten out from under the
-    sidecar -- resuming would silently skip or double-count observations).
+    Covers (WI-43/WI-44): a ledger that fails hash-chain verification; an ``"evalue"``
+    admission config missing ``p0``/``p1``; an empty, non-unique, or malformed
+    exit-trigger contract (rows without a nonempty string ``id`` are never dropped
+    silently); a ``"trigger_checks"`` payload that isn't a ``{trigger_id: bool}``
+    mapping (presence-checked -- falsey non-dict payloads fail); a trigger id not in
+    the registered contract; or a non-boolean trigger value.
     """
 
 
@@ -395,6 +396,7 @@ class EvalueReportRow:
     n_triggers: int = 0
     n_observations: int = 0
     e_value: Optional[float] = None
+    max_e: Optional[float] = None
     threshold: Optional[float] = None
     decision: Optional[str] = None
     ledger_outcome: Optional[str] = None
@@ -420,7 +422,10 @@ def save_evalue_state(state_path: Union[str, Path], state: dict) -> None:
     """Write the e-value state sidecar. Never touches the ledger file itself."""
     p = Path(state_path)
     p.parent.mkdir(parents=True, exist_ok=True)
-    p.write_text(json.dumps(state, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    p.write_text(
+        json.dumps(state, indent=2, sort_keys=True, allow_nan=False) + "\n",
+        encoding="utf-8",
+    )
 
 
 def _group_by_id(entries: Iterable[dict]) -> Dict[str, List[dict]]:
@@ -471,11 +476,23 @@ def run_ledger_evalue(
     if not (0.0 < alpha < 1.0):
         raise ValueError(f"alpha must be in (0, 1), got {alpha!r}")
 
+    # WI-44 (B29-01): the hash chain is verified FIRST -- a corrupted ledger can never
+    # produce or update an e-value report.
+    vres = verify_file(ledger_path)
+    if not vres.ok:
+        raise EvalueLedgerError(
+            f"ledger failed hash-chain verification; refusing to evaluate: "
+            f"{vres.problems[:2]}"
+        )
     entries = Ledger(ledger_path).entries()
     by_id = _group_by_id(entries)
     sp = Path(state_path) if state_path else default_state_path_for(ledger_path)
-    state = load_evalue_state(sp)
-    hyps_state: Dict[str, dict] = state.setdefault("hypotheses", {})
+    # WI-44 (B29-01): the sidecar is a pure CACHE with no decision authority. Every run
+    # replays the verified ledger from each admission and REGENERATES the sidecar, so a
+    # tampered, legacy, or rewound sidecar is simply discarded and rebuilt -- it can
+    # never alter membership, component state, progress, or the decision.
+    state: Dict[str, Any] = {"schema": EVALUE_STATE_SCHEMA, "hypotheses": {}}
+    hyps_state: Dict[str, dict] = state["hypotheses"]
 
     rows: List[EvalueReportRow] = []
     for hid, hentries in by_id.items():
@@ -487,13 +504,25 @@ def run_ledger_evalue(
             (e.get("status") for e in hentries if e.get("type") == "outcome"), None
         )
         cfg_present = isinstance(admission.get(EVALUE_CONFIG_FIELD), dict)
-        saved = hyps_state.get(hid)
 
-        if not cfg_present and saved is None:
+        if not cfg_present:
             rows.append(EvalueReportRow(id=hid, status="no_config", ledger_outcome=ledger_outcome))
             continue
 
-        trigger_id_list = [t["id"] for t in admission.get("exit_triggers", []) if "id" in t]
+        # WI-44 (B29-02): validate the RAW contract -- a row without a nonempty string
+        # id must fail loudly, never be silently dropped from the registered set.
+        raw_triggers = admission.get("exit_triggers", [])
+        if not isinstance(raw_triggers, list):
+            raise EvalueLedgerError(f"{hid}: exit_triggers must be a list")
+        trigger_id_list: List[str] = []
+        for t in raw_triggers:
+            if not isinstance(t, dict) or not isinstance(t.get("id"), str) or not t["id"].strip():
+                raise EvalueLedgerError(
+                    f"{hid}: every exit-trigger row must be a mapping with a nonempty "
+                    f"string 'id' (got {t!r}); an e-value commitment cannot drop "
+                    f"contract rows"
+                )
+            trigger_id_list.append(t["id"])
         registered_trigger_ids = set(trigger_id_list)
         # WI-43 (B27-03): an e-value commitment REQUIRES a nonempty, uniquely identified
         # exit-trigger contract -- the runner must never silently fall back to lazy mode.
@@ -504,85 +533,52 @@ def run_ledger_evalue(
                 f"with unique ids (got {trigger_id_list!r}); refusing to run in lazy mode"
             )
         expected_registered = tuple(sorted(registered_trigger_ids))
+        test = SequentialTriggerTest(
+            p0=p0,
+            p1=p1,
+            combine=combine,
+            # WI-40: the admission's registered exit-trigger contract fixes the
+            # mixture membership from step 0 (every registered trigger at e=1).
+            registered=expected_registered,
+        )
 
-        if saved is not None:
-            test = SequentialTriggerTest.from_state(saved["test_state"])
-            # WI-43 (B27-03): resumption must reconcile the sidecar to the FROZEN admission.
-            # A legacy/lazy sidecar (no registered set) or any membership/config mismatch
-            # fails loudly -- delete the sidecar to rebuild from the immutable ledger.
-            if (
-                test.registered is None
-                or tuple(test.registered) != expected_registered
-                or (test.p0, test.p1, test.combine) != (p0, p1, combine)
-            ):
-                raise EvalueLedgerError(
-                    f"{hid}: state sidecar does not match the frozen admission "
-                    f"(sidecar registered={list(test.registered) if test.registered else None}, "
-                    f"p0/p1/combine={test.p0}/{test.p1}/{test.combine}; admission "
-                    f"registered={list(expected_registered)}, {p0}/{p1}/{combine}) -- "
-                    f"legacy/lazy or mismatched state; delete the sidecar to rebuild from "
-                    f"the ledger"
-                )
-            resume_after_hash = saved.get("last_entry_hash")
-            skipping = resume_after_hash is not None
-        else:
-            test = SequentialTriggerTest(
-                p0=p0,
-                p1=p1,
-                combine=combine,
-                # WI-40: the admission's registered exit-trigger contract fixes the
-                # mixture membership from step 0 (every registered trigger at e=1).
-                registered=expected_registered,
-            )
-            resume_after_hash = None
-            skipping = False
-
-        # `resume_after_hash` is the fixed target we're skipping up through (from the
-        # sidecar); `last_processed_hash` is a running tracker of the latest entry seen,
-        # re-saved at the end. Keeping these as two variables matters: overwriting the
-        # target while still searching for it would make the search unfindable.
-        found_resume_point = not skipping
+        # WI-44 (B29-01/03): full replay of the verified ledger, latching the running
+        # maximum merged e-value after each complete belief-update step -- the decision
+        # is the mathematical rejection event sup_t e_t >= 1/alpha, so a crossing can
+        # never be forgotten by later shrinkage or across invocations.
+        max_e = 1.0
         last_processed_hash = None
         for e in hentries:
-            eh = e.get("entry_hash")
-            if skipping:
-                if eh == resume_after_hash:
-                    skipping = False
-                    found_resume_point = True
-                last_processed_hash = eh
+            last_processed_hash = e.get("entry_hash")
+            if e.get("type") != "belief_update":
                 continue
-            if e.get("type") == "belief_update":
-                checks = e.get(TRIGGER_CHECKS_FIELD)
-                if checks:
-                    if not isinstance(checks, dict):
-                        raise EvalueLedgerError(
-                            f"{hid}: {TRIGGER_CHECKS_FIELD!r} must be a dict of "
-                            f"{{trigger_id: bool}}, got {type(checks).__name__}"
-                        )
-                    for tid, fired in sorted(checks.items()):
-                        if registered_trigger_ids and tid not in registered_trigger_ids:
-                            raise EvalueLedgerError(
-                                f"{hid}: {TRIGGER_CHECKS_FIELD!r} references unregistered "
-                                f"trigger id {tid!r} (registered: {sorted(registered_trigger_ids)})"
-                            )
-                        if not isinstance(fired, bool):
-                            raise EvalueLedgerError(
-                                f"{hid}: trigger {tid!r} value must be a JSON boolean, "
-                                f"got {type(fired).__name__}: {fired!r} (WI-40: no "
-                                f"coercion -- bool('false') would count as fired)"
-                            )
-                        test.observe(tid, fired)
-            last_processed_hash = eh
+            if TRIGGER_CHECKS_FIELD not in e:
+                continue
+            # WI-44 (B29-02): presence, not truthiness -- a falsey non-dict payload
+            # ([], "", 0, false) is malformed, and an empty dict is a legal
+            # zero-observation step.
+            checks = e.get(TRIGGER_CHECKS_FIELD)
+            if not isinstance(checks, dict):
+                raise EvalueLedgerError(
+                    f"{hid}: {TRIGGER_CHECKS_FIELD!r} must be a dict of "
+                    f"{{trigger_id: bool}}, got {type(checks).__name__}: {checks!r}"
+                )
+            for tid, fired in sorted(checks.items()):
+                if tid not in registered_trigger_ids:
+                    raise EvalueLedgerError(
+                        f"{hid}: {TRIGGER_CHECKS_FIELD!r} references unregistered "
+                        f"trigger id {tid!r} (registered: {sorted(registered_trigger_ids)})"
+                    )
+                if not isinstance(fired, bool):
+                    raise EvalueLedgerError(
+                        f"{hid}: trigger {tid!r} value must be a JSON boolean, "
+                        f"got {type(fired).__name__}: {fired!r} (WI-40: no "
+                        f"coercion -- bool('false') would count as fired)"
+                    )
+                test.observe(tid, fired)
+            max_e = max(max_e, test.e_value())
 
-        if not found_resume_point:
-            raise EvalueLedgerError(
-                f"{hid}: state sidecar's last_entry_hash was not found in the ledger -- "
-                f"the ledger was rewritten/truncated since the last `evalue` run; refusing "
-                f"to silently skip or double-count observations (delete the sidecar to "
-                f"restart this hypothesis from scratch if that's intended)"
-            )
-
-        hyps_state[hid] = {"test_state": test.to_state(), "last_entry_hash": last_processed_hash}
+        hyps_state[hid] = {"test_state": test.to_state(), "last_entry_hash": last_processed_hash, "max_e": max_e}
         e_value = test.e_value()
         rows.append(
             EvalueReportRow(
@@ -594,8 +590,9 @@ def run_ledger_evalue(
                 n_triggers=len(test.trigger_ids()),
                 n_observations=test.total_observations(),
                 e_value=e_value,
+                max_e=max_e,
                 threshold=1.0 / alpha,
-                decision=test.decision(alpha),
+                decision=FALSIFIED if max_e >= 1.0 / alpha else CONTINUE,
                 ledger_outcome=ledger_outcome,
             )
         )

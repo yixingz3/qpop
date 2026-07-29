@@ -11,7 +11,7 @@ weights from step 0 (late/never-reporting registered triggers stay in the averag
 trigger values are strictly type-checked (`bool` only; `"false"` is rejected, never coerced to
 fired). In registered mode — which the ledger runner always uses, deriving membership from the
 admission's exit-trigger contract — the implementation matches the rule, so the per-hypothesis
-anytime-valid property holds under the stated assumptions below; the paper's v2.1 revision carries the closure.* Module:
+anytime-valid property holds under the stated assumptions below; the paper's v2.1 revision carries the closure. **WI-44 (2026-07-28):** the ledger runner verifies the hash chain BEFORE evaluating, replays the verified ledger from each admission on every run (the state sidecar is a cache with no decision authority — tampered, legacy, or rewound sidecars are discarded and rebuilt), validates the raw exit-trigger contract (no row silently dropped; checks validated by presence, not truthiness), and decides on the persisted running maximum (the rejection event is sup_t e_t >= 1/alpha, so a crossing is never forgotten). Additional stated assumption: the decision to report or skip a scheduled check must be predictable from past information and independent of the current unseen outcome — outcome-dependent selective reporting (e.g., reporting only fires) voids the guarantee (demonstrated by an adversarial regression).* Module:
 [`src/forward_qpop/evalue.py`](../../src/forward_qpop/evalue.py); tests:
 [`tests/test_evalue.py`](../../tests/test_evalue.py) (the standalone e-process, 24 tests)
 and [`tests/test_evalue_ledger.py`](../../tests/test_evalue_ledger.py) (the ledger wiring,
@@ -139,7 +139,10 @@ ordinary domain-specific payload, hashed like every other frozen field):
    `SequentialTriggerTest`, and reports the merged e-value, the `1/α` threshold
    (`--alpha`, default `0.05`), and the decision (`continue` / `falsified`). Hypotheses
    with no `"evalue"` config are reported as `no_config` — **skipped, not fabricated**.
-4. **State resumes across invocations, never mutating the ledger.** Each run persists
+4. **The sidecar is a cache, not an authority (WI-44).** Every run verifies the hash
+   chain and re-derives each hypothesis from its admission; the sidecar is regenerated
+   (with the running maximum `max_e`) purely for inspection.
+   Historical note — the pre-WI-44 design resumed from the sidecar: Each run persists
    `SequentialTriggerTest.to_state()` plus the last-processed `entry_hash` per hypothesis
    in a JSON **sidecar** (`<ledger>.evalue-state.json` by default — `--state` to
    override). The next run loads that sidecar via `SequentialTriggerTest.from_state()`

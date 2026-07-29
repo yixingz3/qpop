@@ -40,8 +40,8 @@ pipeline admits under *weakened discipline configurations*, relative to a refere
 (reference-relative — attributing the difference to any single removed component requires matched,
 nested arms). The two compose cleanly: the
 paper wires an e-process (`forward-qpop evalue`) as the per-hypothesis Type-I
-control (guarantee in registered mode under stated assumptions; defects closed WI-40 2026-07-25 —
-see `EVALUE_METHODS.md`), and OAR sits above it as the aggregate over-admission measure across a
+control (guarantee in registered mode under stated assumptions; WI-40 defects closed 2026-07-25,
+WI-44 runner hardening 2026-07-28 — see `EVALUE_METHODS.md`), and OAR sits above it as the aggregate over-admission measure across a
 whole batch.
 
 **Why finance was a good first testbed, and why the metric is domain-general.** Markets are a

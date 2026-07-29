@@ -386,3 +386,27 @@ def test_type_i_control_under_partial_reporting():
         f"false-falsified rate {false_calls / paths:.3f} > alpha={alpha} "
         f"under partial reporting"
     )
+
+
+def test_outcome_dependent_selective_reporting_is_outside_the_guarantee():
+    """B29-03 route-2 demonstration: the guarantee ASSUMES the report/skip decision is
+    independent of the current unseen outcome. An operator who reports only fires (and
+    silently skips non-fires) inflates the false-'falsified' rate well past alpha —
+    documented as OUTSIDE the guarantee in the module note, methods note, and paper."""
+    p0, p1, alpha, horizon, paths = 0.15, 0.6, 0.10, 60, 200
+    rng = random.Random(20260728)
+    false_calls = 0
+    for _ in range(paths):
+        st = SequentialTriggerTest(p0=p0, p1=p1, registered=("t0", "t1", "t2", "t3"))
+        for _step in range(horizon):
+            for tid in ("t0", "t1", "t2", "t3"):
+                fired = rng.random() < p0  # the NULL is true
+                if fired:                  # outcome-DEPENDENT reporting: fires only
+                    st.observe(tid, True)
+            if st.decision(alpha) == "falsified":
+                false_calls += 1
+                break
+    assert false_calls / paths > alpha, (
+        "selective reporting should visibly break Type-I control; if this ever holds "
+        "at <= alpha the demonstration (and its documentation) needs re-examination"
+    )

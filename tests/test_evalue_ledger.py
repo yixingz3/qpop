@@ -223,20 +223,22 @@ def test_invalid_alpha_rejected():
 
 
 def test_rewritten_ledger_since_sidecar_loud_fails():
-    """If the sidecar's last_entry_hash can no longer be found in the ledger (the ledger
-    was truncated/rewritten out from under it), resuming must fail loudly rather than
-    silently re-deriving from scratch or skipping everything."""
+    """WI-44: the sidecar has NO decision authority. A ledger truncated back to a valid
+    prefix (chain still verifies) is simply re-derived from that canonical prefix and the
+    sidecar regenerated -- a stale pointer can neither skip nor double-count anything."""
     p = _tmp()
     led = _seed_with_config(p)
     _observe(led, "H-1", {"trig_a": True}, "2026-01-02")
     run_ledger_evalue(p)  # writes a sidecar pointing at the belief_update's entry_hash
 
-    # Simulate a rewritten ledger: truncate back to just the admission entry.
+    # Truncate back to just the admission entry: a VALID single-entry chain.
     lines = p.read_text(encoding="utf-8").splitlines()
     p.write_text(lines[0] + "\n", encoding="utf-8")
 
-    with pytest.raises(EvalueLedgerError, match="rewritten|truncated"):
-        run_ledger_evalue(p)
+    rows, state = run_ledger_evalue(p)
+    assert rows[0].status == "ok"
+    assert rows[0].n_observations == 0 and abs(rows[0].e_value - 1.0) < 1e-12
+    assert state["hypotheses"]["H-1"]["last_entry_hash"] == json.loads(lines[0])["entry_hash"]
 
 
 # --------------------------------------------------------------------------- #
@@ -290,30 +292,6 @@ def test_cli_evalue_loud_fail_returns_nonzero(capsys):
     assert "FAILED" in out
 
 
-if __name__ == "__main__":
-    import sys
-
-    fns = [v for k, v in sorted(globals().items()) if k.startswith("test_") and callable(v)]
-    failed = 0
-    skipped = 0
-    for fn in fns:
-        try:
-            import inspect
-
-            params = inspect.signature(fn).parameters
-            if "capsys" in params or "tmp_path" in params:
-                print("SKIP (needs pytest fixture)", fn.__name__)
-                skipped += 1
-                continue
-            fn()
-            print("PASS", fn.__name__)
-        except Exception as exc:  # noqa: BLE001
-            failed += 1
-            print("FAIL", fn.__name__, "->", repr(exc))
-    print(f"\n{len(fns) - failed - skipped}/{len(fns)} passed ({skipped} skipped, need pytest)")
-    sys.exit(1 if failed else 0)
-
-
 # --------------------------------------------------------------------------- #
 # WI-40: ledger runs use fixed registered membership + strict boolean typing
 # --------------------------------------------------------------------------- #
@@ -360,24 +338,27 @@ def test_evalue_config_with_empty_trigger_contract_fails_loudly():
         assert "lazy" in str(e)
 
 
-def test_legacy_sidecar_without_registered_set_cannot_silently_resume():
+def test_legacy_sidecar_without_registered_set_is_discarded_and_rebuilt():
+    """WI-44: a pre-WI-40 lazy sidecar (no registered set) is ignored -- the run replays
+    the verified ledger from the admission and regenerates canonical registered state."""
     p = _tmp()
     led = _seed_with_config(p)  # registers trig_a + trig_b
     _observe(led, "H-1", {"trig_a": True}, "2026-01-02")
     rows, state = run_ledger_evalue(p, alpha=0.05)
-    # Simulate a pre-WI-40 lazy sidecar: strip the registered set from saved state.
     hyp = state["hypotheses"]["H-1"]
     hyp["test_state"].pop("registered", None)
     save_evalue_state(default_state_path_for(p), state)
     _observe(led, "H-1", {"trig_b": True}, "2026-01-03")
-    try:
-        run_ledger_evalue(p, alpha=0.05)
-        assert False, "expected EvalueLedgerError for a legacy/lazy sidecar"
-    except EvalueLedgerError as e:
-        assert "sidecar" in str(e)
+    rows2, state2 = run_ledger_evalue(p, alpha=0.05)
+    assert rows2[0].n_triggers == 2 and rows2[0].n_observations == 2
+    # canonical: both fires -> average of {6.0, 6.0} = 6.0
+    assert abs(rows2[0].e_value - 6.0) < 1e-9
+    assert state2["hypotheses"]["H-1"]["test_state"].get("registered") == ["trig_a", "trig_b"]
 
 
-def test_mismatched_sidecar_config_fails_loudly():
+def test_mismatched_sidecar_config_is_discarded_and_rebuilt():
+    """WI-44: a sidecar with drifted config (or any tampering) cannot influence the
+    result -- the frozen admission is the only source of p0/p1/combine."""
     p = _tmp()
     led = _seed_with_config(p, p0=0.1, p1=0.6)
     _observe(led, "H-1", {"trig_a": True}, "2026-01-02")
@@ -385,8 +366,131 @@ def test_mismatched_sidecar_config_fails_loudly():
     state["hypotheses"]["H-1"]["test_state"]["p0"] = 0.2  # config drift
     save_evalue_state(default_state_path_for(p), state)
     _observe(led, "H-1", {"trig_b": True}, "2026-01-03")
-    try:
-        run_ledger_evalue(p, alpha=0.05)
-        assert False, "expected EvalueLedgerError for mismatched sidecar config"
-    except EvalueLedgerError as e:
-        assert "does not match the frozen admission" in str(e)
+    rows2, state2 = run_ledger_evalue(p, alpha=0.05)
+    assert rows2[0].p0 == 0.1 and abs(rows2[0].e_value - 6.0) < 1e-9
+    assert state2["hypotheses"]["H-1"]["test_state"]["p0"] == 0.1
+
+
+
+# --------------------------------------------------------------------------- #
+# WI-44 (B29-01/02/03): canonical-history authority, contract validation, sup-decision
+# --------------------------------------------------------------------------- #
+def test_hash_broken_ledger_cannot_produce_a_report():
+    p = _tmp()
+    led = _seed_with_config(p)
+    _observe(led, "H-1", {"trig_a": True}, "2026-01-02")
+    raw = p.read_text(encoding="utf-8")
+    p.write_text(raw.replace('"claim"', '"cIaim"', 1), encoding="utf-8")
+    with pytest.raises(EvalueLedgerError, match="hash-chain"):
+        run_ledger_evalue(p)
+
+
+def test_rogue_sidecar_process_cannot_change_the_decision():
+    p = _tmp()
+    led = _seed_with_config(p)
+    _observe(led, "H-1", {"trig_a": True}, "2026-01-02")
+    rows, state = run_ledger_evalue(p, alpha=0.05)
+    ts = state["hypotheses"]["H-1"]["test_state"]
+    ts["procs"]["rogue"] = {"p0": 0.1, "p1": 0.6, "e": 1e12, "n": 1}
+    save_evalue_state(default_state_path_for(p), state)
+    rows2, state2 = run_ledger_evalue(p, alpha=0.05)
+    assert rows2[0].n_triggers == 2 and rows2[0].decision == "continue"
+    assert "rogue" not in state2["hypotheses"]["H-1"]["test_state"]["procs"]
+
+
+def test_rewound_progress_pointer_cannot_double_count():
+    p = _tmp()
+    led = _seed_with_config(p)
+    _observe(led, "H-1", {"trig_a": True}, "2026-01-02")
+    rows, state = run_ledger_evalue(p, alpha=0.05)
+    state["hypotheses"]["H-1"]["last_entry_hash"] = json.loads(
+        p.read_text(encoding="utf-8").splitlines()[0]
+    )["entry_hash"]  # rewind to the admission
+    save_evalue_state(default_state_path_for(p), state)
+    rows2, _ = run_ledger_evalue(p, alpha=0.05)
+    assert rows2[0].n_observations == 1 and abs(rows2[0].e_value - rows[0].e_value) < 1e-12
+
+
+def test_threshold_crossing_is_latched_via_max_e():
+    """sup_t e_t >= 1/alpha is the rejection event: later shrinkage (or a later
+    invocation) must not un-falsify a crossed hypothesis."""
+    p = _tmp()
+    led = _seed_with_config(p, p0=0.1, p1=0.6)
+    for i, fired in enumerate([True, True, True, False, False, False]):
+        _observe(led, "H-1", {"trig_a": fired}, f"2026-01-{i + 2:02d}")
+    rows, _ = run_ledger_evalue(p, alpha=0.05)  # threshold 20
+    row = rows[0]
+    assert row.max_e >= 20.0 > row.e_value  # crossed at (216+1)/2, ended below
+    assert row.decision == "falsified"
+    rows2, _ = run_ledger_evalue(p, alpha=0.05)  # and it stays falsified on re-run
+    assert rows2[0].decision == "falsified"
+
+
+def test_malformed_contract_rows_fail_loudly():
+    p = _tmp()
+    led = Ledger(p)
+    led.register(
+        "H-1", "claim", prior=0.5,
+        evidence=[{"summary": "s", "tier": "primary", "date": "2026-01-01"}],
+        exit_triggers=[
+            {"id": "trig_a", "metric": "m", "op": ">", "data_source": {"tier": "secondary"}},
+            {"metric": "no-id-row", "op": "<", "data_source": {"tier": "secondary"}},
+        ],
+        fields={"evalue": {"p0": 0.1, "p1": 0.6}},
+    )
+    with pytest.raises(EvalueLedgerError, match="cannot drop contract rows"):
+        run_ledger_evalue(p)
+
+
+def test_blank_and_duplicate_trigger_ids_fail_loudly():
+    for bad_triggers, match in [
+        ([{"id": "  ", "metric": "m", "op": ">", "data_source": {"tier": "secondary"}}],
+         "cannot drop contract rows"),
+        ([{"id": "t", "metric": "m", "op": ">", "data_source": {"tier": "secondary"}},
+          {"id": "t", "metric": "n", "op": "<", "data_source": {"tier": "secondary"}}],
+         "unique ids"),
+    ]:
+        p = _tmp()
+        led = Ledger(p)
+        led.register("H-1", "claim", prior=0.5,
+                     evidence=[{"summary": "s", "tier": "primary", "date": "2026-01-01"}],
+                     exit_triggers=bad_triggers,
+                     fields={"evalue": {"p0": 0.1, "p1": 0.6}})
+        with pytest.raises(EvalueLedgerError, match=match):
+            run_ledger_evalue(p)
+
+
+def test_falsey_non_dict_trigger_checks_fail_and_do_not_advance():
+    for falsey in ([], "", 0, False):
+        p = _tmp()
+        led = _seed_with_config(p)
+        led.update("H-1",
+                   evidence=[{"summary": "c", "tier": "secondary", "date": "2026-01-02"}],
+                   fields={"trigger_checks": falsey})
+        with pytest.raises(EvalueLedgerError, match="must be a dict"):
+            run_ledger_evalue(p)
+        assert not default_state_path_for(p).exists()  # no progress persisted
+
+
+if __name__ == "__main__":
+    import sys
+
+    fns = [v for k, v in sorted(globals().items()) if k.startswith("test_") and callable(v)]
+    failed = 0
+    skipped = 0
+    for fn in fns:
+        try:
+            import inspect
+
+            params = inspect.signature(fn).parameters
+            if "capsys" in params or "tmp_path" in params:
+                print("SKIP (needs pytest fixture)", fn.__name__)
+                skipped += 1
+                continue
+            fn()
+            print("PASS", fn.__name__)
+        except Exception as exc:  # noqa: BLE001
+            failed += 1
+            print("FAIL", fn.__name__, "->", repr(exc))
+    print(f"\n{len(fns) - failed - skipped}/{len(fns)} passed ({skipped} skipped, need pytest)")
+    sys.exit(1 if failed else 0)
