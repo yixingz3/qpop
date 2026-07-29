@@ -1007,9 +1007,9 @@ Edit only by appending dated amendments.
     from the
     safe-testing literature \citep{ramdas2023gametheoretic,shafer2021testing,vovk2021evalues};
     specified in the pre-registered plan; the implementation is
-    ledger-integrated in the public repository implementation (pinned at commit
-    \href{https://github.com/yixingz3/qpop/commit/83d6b24e42e797ae3ab0cf3256c48b5b8165cf6a}{\texttt{83d6b24}}), not used in the pilot decisions\footnote{The
-    e-value module in the public repository implementation at commit \href{https://github.com/yixingz3/qpop/commit/83d6b24e42e797ae3ab0cf3256c48b5b8165cf6a}{\texttt{83d6b24}}
+    ledger-integrated in the public repository implementation (version pinned in the
+    release footnote on page~1), not used in the pilot decisions\footnote{The
+    e-value module in the public repository implementation
     (\texttt{forward\_qpop.evalue}) implements the
     per-hypothesis anytime-valid rule in its registered (fixed-membership) mode --- the v2
     revision's two disclosed implementation defects were closed on 2026-07-25 (dated amendment in
@@ -1667,8 +1667,8 @@ portability (the uranium funnel --- \S\,H3, clause (c)); the expanded rejection-
 rejections existed), reported as such --- \S\,H5); the
 \textbf{e-value / anytime-valid} module, now \emph{ledger-integrated} (a frozen per-admission
 \texttt{evalue} commitment hashed with the entry, plus a \texttt{forward-qpop evalue} CLI that runs the
-sequential test over the ledger; 25 module + 45 integration tests at the pinned public
-repository commit \href{https://github.com/yixingz3/qpop/commit/83d6b24e42e797ae3ab0cf3256c48b5b8165cf6a}{\texttt{83d6b24}} --- the registered
+sequential test over the ledger; 25 module + 45 integration tests in the public
+repository (version pinned in the release footnote on page~1) --- the registered
 (fixed-membership) mode delivers the per-hypothesis guarantee under the stated assumptions
 (\S\,Decision Rules footnote; the v2 revision's two disclosed defects were closed 2026-07-25,
 with additional runner/integrity/numeric conformance hardening through 2026-07-28 at the pinned
@@ -1732,7 +1732,7 @@ produced them are not public.
 \toprule
 \textbf{Artifact} & \textbf{Released?} & \textbf{Contains} \\
 \midrule
-Code (public repository; commit \href{https://github.com/yixingz3/qpop/commit/83d6b24e42e797ae3ab0cf3256c48b5b8165cf6a}{\texttt{83d6b24}}) & Yes & ledger, hash chain, OpenTimestamps anchor, e-value module (registered mode: per-hypothesis guarantee under stated assumptions; lazy mode exploratory), CLI, schema validation; the PyPI package tracks this on its normal release cycle \\
+Code (public repository) & Yes & ledger, hash chain, OpenTimestamps anchor, e-value module (registered mode: per-hypothesis guarantee under stated assumptions; lazy mode exploratory), CLI, schema validation; the PyPI package tracks this on its normal release cycle \\
 Gate + scoring engine & No                   & deterministic gate, confidence scoring, domain templating (runs the live funnel) \\
 Prompts         & Yes                        & sanitized reference templates for source / triage / evaluate / adjudicate / audit; the five H2 arm prompts released verbatim (three recovered pilot originals, two later pre-registered extension arms) \\
 Scoring rubric  & Yes                        & anchored reference rubric for all five factors + dims (\texttt{src/scoring\_rubric.md}) \\
@@ -1814,7 +1814,7 @@ additionally needs the anchored head below. It does \emph{not}, on its own, esta
 later could carry a backdated \texttt{created} field. A full ``registered \emph{before} the outcome''
 guarantee therefore requires an external timestamp anchor: a signed Git commit or release, a public
 CI artifact, or a public append-only timestamp service (e.g.\ OpenTimestamps, or a Sigstore/Rekor
-transparency-log entry). The public repository implementation (commit \href{https://github.com/yixingz3/qpop/commit/83d6b24e42e797ae3ab0cf3256c48b5b8165cf6a}{\texttt{83d6b24}}) now
+transparency-log entry). The public repository implementation now
 \emph{implements} this as an opt-in step --- an
 OpenTimestamps backend with \texttt{anchor} / \texttt{verify-external} subcommands and a sidecar
 receipt, covered by 11 hermetic tests plus a dispatch-gated live CI job (Rekor was evaluated and
