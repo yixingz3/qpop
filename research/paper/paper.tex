@@ -90,8 +90,11 @@ explicit rejection mechanism. We release the framework, a worked AI-supply-chain
 candidate flow, and a template for new domains.\footnote{Code, JSON schemas, synthetic fixtures, and
 this paper's source: \url{https://github.com/yixingz3/qpop}. The ledger, hash chain, timestamp anchor,
 e-value module, prompts, and example domains are public; the live gate/scoring/domain-templating
-engine is private --- see \S\,Reproducibility. The \texttt{forward-qpop} ledger is also
-on PyPI (\texttt{pip install forward-qpop}).}
+engine is private --- see \S\,Reproducibility. The base \texttt{forward-qpop} ledger is also
+on PyPI (\texttt{pip install forward-qpop}); all v2.1 e-value/external-anchor conformance
+statements and test counts refer to the public repository implementation at commit
+\texttt{83d6b24e42e797ae3ab0cf3256c48b5b8165cf6a} --- PyPI 0.1.2 (2026-06-28) predates those
+additions, whose package publication follows the normal release cycle.}
 \end{abstract}
 
 \paragraph{AI disclosure.} Large language models are used in this work in two roles: as the \emph{object of study} --- the agent-assisted research workflow this paper evaluates --- and as \emph{tools} in preparing the manuscript (drafting, code, and editorial assistance). The author reviewed and is solely responsible for all claims, citations, code, and conclusions.
@@ -1004,8 +1007,10 @@ Edit only by appending dated amendments.
     from the
     safe-testing literature \citep{ramdas2023gametheoretic,shafer2021testing,vovk2021evalues};
     specified in the pre-registered plan; the implementation is
-    ledger-integrated in the released package, not used in the pilot decisions\footnote{The
-    e-value module in the released package (\texttt{forward\_qpop.evalue}) implements the
+    ledger-integrated in the public repository implementation (pinned at commit
+    \texttt{83d6b24}), not used in the pilot decisions\footnote{The
+    e-value module in the public repository implementation at commit \texttt{83d6b24}
+    (\texttt{forward\_qpop.evalue}) implements the
     per-hypothesis anytime-valid rule in its registered (fixed-membership) mode --- the v2
     revision's two disclosed implementation defects were closed on 2026-07-25 (dated amendment in
     the experiment plan) with regression tests, including a Type-I Monte-Carlo under partial
@@ -1031,8 +1036,8 @@ Edit only by appending dated amendments.
     no decision authority (never read back; the ledger is never written).
     The runner verifies the ledger's hash chain before evaluating, re-derives every hypothesis
     from its admission on each invocation (the state sidecar is a regenerated derived inspection
-    snapshot with no decision authority, never read back), and decides on the persisted running
-    maximum --- the rejection event is
+    snapshot with no decision authority, never read back), and decides on the replay-derived
+    running maximum (persisted only in that derived inspection snapshot) --- the rejection event is
     $\sup_t e_t \geq 1/\alpha$, so a crossing within the verified recorded history is never
     forgotten; because chain-only verification cannot distinguish a rolled-back valid prefix from
     the true head, detecting suffix deletion requires an anchored/expected head (the anchor
@@ -1662,10 +1667,12 @@ portability (the uranium funnel --- \S\,H3, clause (c)); the expanded rejection-
 rejections existed), reported as such --- \S\,H5); the
 \textbf{e-value / anytime-valid} module, now \emph{ledger-integrated} (a frozen per-admission
 \texttt{evalue} commitment hashed with the entry, plus a \texttt{forward-qpop evalue} CLI that runs the
-sequential test over the ledger; 25 module + 45 integration tests --- the registered
+sequential test over the ledger; 25 module + 45 integration tests at the pinned public
+repository commit \texttt{83d6b24} --- the registered
 (fixed-membership) mode delivers the per-hypothesis guarantee under the stated assumptions
-(\S\,Decision Rules footnote; the v2 revision's two disclosed defects were closed 2026-07-25 with
-regression tests), not used in the pilot, and no live admission carries a
+(\S\,Decision Rules footnote; the v2 revision's two disclosed defects were closed 2026-07-25,
+with additional runner/integrity/numeric conformance hardening through 2026-07-28 at the pinned
+commit, all regression-tested), not used in the pilot, and no live admission carries a
 commitment yet); and an external \textbf{OpenTimestamps} anchor (opt-in / manual by design,
 11 hermetic tests plus a dispatch-gated live CI job). \textbf{Delivered since the v2 revision}
 (2026-07-25): the e-value implementation fixes above (registered fixed-membership mode + strict
@@ -1725,7 +1732,7 @@ produced them are not public.
 \toprule
 \textbf{Artifact} & \textbf{Released?} & \textbf{Contains} \\
 \midrule
-Code (package)        & Yes                  & ledger, hash chain, OpenTimestamps anchor, e-value module (registered mode: per-hypothesis guarantee under stated assumptions; lazy mode exploratory), CLI, schema validation \\
+Code (public repository; commit \texttt{83d6b24}) & Yes & ledger, hash chain, OpenTimestamps anchor, e-value module (registered mode: per-hypothesis guarantee under stated assumptions; lazy mode exploratory), CLI, schema validation; the PyPI package tracks this on its normal release cycle \\
 Gate + scoring engine & No                   & deterministic gate, confidence scoring, domain templating (runs the live funnel) \\
 Prompts         & Yes                        & sanitized reference templates for source / triage / evaluate / adjudicate / audit; the five H2 arm prompts released verbatim (three recovered pilot originals, two later pre-registered extension arms) \\
 Scoring rubric  & Yes                        & anchored reference rubric for all five factors + dims (\texttt{src/scoring\_rubric.md}) \\
@@ -1807,7 +1814,8 @@ additionally needs the anchored head below. It does \emph{not}, on its own, esta
 later could carry a backdated \texttt{created} field. A full ``registered \emph{before} the outcome''
 guarantee therefore requires an external timestamp anchor: a signed Git commit or release, a public
 CI artifact, or a public append-only timestamp service (e.g.\ OpenTimestamps, or a Sigstore/Rekor
-transparency-log entry). The released package now \emph{implements} this as an opt-in step --- an
+transparency-log entry). The public repository implementation (commit \texttt{83d6b24}) now
+\emph{implements} this as an opt-in step --- an
 OpenTimestamps backend with \texttt{anchor} / \texttt{verify-external} subcommands and a sidecar
 receipt, covered by 11 hermetic tests plus a dispatch-gated live CI job (Rekor was evaluated and
 declined on dependency weight). It is \textbf{manual and per-invocation}, not automatic on every
