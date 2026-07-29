@@ -60,3 +60,5 @@ research/paper/arxiv/*.toc
 *.anchor.json
 *.ots
 *.external-anchor.json
+build_last.log
+texput.log
