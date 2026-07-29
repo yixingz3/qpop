@@ -1710,7 +1710,7 @@ produced them are not public.
 \toprule
 \textbf{Artifact} & \textbf{Released?} & \textbf{Contains} \\
 \midrule
-Code (package)        & Yes                  & ledger, hash chain, OpenTimestamps anchor, e-value module (experimental), CLI, schema validation \\
+Code (package)        & Yes                  & ledger, hash chain, OpenTimestamps anchor, e-value module (registered mode: per-hypothesis guarantee under stated assumptions; lazy mode exploratory), CLI, schema validation \\
 Gate + scoring engine & No                   & deterministic gate, confidence scoring, domain templating (runs the live funnel) \\
 Prompts         & Yes                        & sanitized reference templates for source / triage / evaluate / adjudicate / audit; the five H2 arm prompts released verbatim (three recovered pilot originals, two later pre-registered extension arms) \\
 Scoring rubric  & Yes                        & anchored reference rubric for all five factors + dims (\texttt{src/scoring\_rubric.md}) \\
@@ -1901,8 +1901,8 @@ unsettled). Condensed anchors:
 bottleneck (mean of 5 dims) & no route around it; $\geq$3y lead; 1--2 suppliers $\geq$70\%; realized pricing power & substitutable at 2--3$\times$ cost; 1--2y lead; top-3 $\sim$50\% & convenience input; restartable capacity; fragmented; price-taker \\
 exposure purity & pure play ($>$70\% of economics, filings-verifiable) & major line 30--70\%; diluted 10--30\% & minor segment $<$10\%; trace exposure = reject territory \\
 demand & contracted multi-year backlog (primary) & POs visible; corroborated forecast pull & thematic inference; narrative demand \\
-valuation adj.\ ($\leq$1) & 1.0 dislocated/ignored & 0.85 fair; 0.70 rich & $\leq$0.5 priced-for-perfection \\
-crowding adj.\ ($\leq$1) & 1.0 uncovered & 0.85 known; 0.70 consensus-long & $\leq$0.5 mania markers \\
+valuation adj.\ ($\leq$1) & 1.0 dislocated/ignored & 0.85 fair; 0.70 rich & 0.50 priced-for-perfection (floor) \\
+crowding adj.\ ($\leq$1) & 1.0 uncovered & 0.85 known; 0.70 consensus-long & 0.50 mania markers (floor) \\
 \bottomrule
 \end{tabularx}
 \end{center}
@@ -1922,11 +1922,12 @@ disclosed conservatism.
 (``ZZNEO,'' a synthetic UHP-neon-reclaim OEM) through every stage, with each score read off a
 named rubric anchor: gate \textsc{pass} $\to$ triage pursue $\to$ bear case written first $\to$
 decomposition $0.70 \times 0.7 \times 0.7 \times 0.70 \times 0.85 = 0.2041$ $\to$
-\textbf{satellite} --- every input a published anchor value, with one straddle resolved to the
-lower anchor by rule; deliberately \emph{threshold-marginal}: had that straddle resolved high
-($0.85$), the product would be $0.2478$, across the core cut, so the admission entry must carry
-the marginality flag, and a second reader scoring the straddle high would trigger the tier-aware
-disagreement rule $\to$ watchlist $\to$ pre-registration with three checkable exit triggers and a frozen e-value
+\textbf{satellite} --- every score a published anchor assigned from evidence in the released
+card (one genuine straddle, pricing power, resolved to the lower anchor by rule);
+\emph{threshold-marginal} under the rubric's discrete definition: one step of valuation to its
+adjacent anchor ($0.70 \to 0.85$) gives $0.2478$, across the core cut, so the admission entry
+must carry the flag, and a reader who read that evidence as ``roughly fair'' would trigger the
+tier-aware disagreement rule $\to$ watchlist $\to$ pre-registration with three checkable exit triggers and a frozen e-value
 commitment $\to$ a dated trigger-check update $\to$ the registered-mode sequential test (all three
 registered triggers in the mixture from step 0) $\to$ anchor $\to$ a tamper demonstration.
 The ledger-side steps are \emph{runnable from a clean clone, offline}

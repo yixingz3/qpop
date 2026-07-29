@@ -1,4 +1,5 @@
-"""Sequential trigger test (e-value rule) — EXPERIMENTAL implementation, per-hypothesis scope.
+"""Sequential trigger test (e-value rule) — per-hypothesis scope; registered mode delivers
+the anytime-valid guarantee under stated assumptions (WI-40); legacy lazy mode is exploratory.
 
 A Forward-QPOP position is judged against *several* pre-registered exit triggers, and
 each trigger is re-checked at every monitoring step (daily, per rebalance, ...). Naively
@@ -459,9 +460,9 @@ def run_ledger_evalue(
     State-resuming across repeated invocations: observations are folded in once each
     (tracked via ``last_entry_hash`` in the sidecar),
     so re-running after new belief_update entries land resumes rather than re-derives.
-    Resumption preserves whatever statistical properties the underlying test has — see
-    the module-level warning: the current implementation is experimental and does not
-    yet deliver the anytime-valid guarantee.
+    Resumption preserves the underlying test's properties: in registered (fixed-membership)
+    mode — which this runner always uses — the per-hypothesis anytime-valid guarantee carries
+    across invocations under the module-note assumptions; legacy lazy mode remains exploratory.
     The ledger file itself is read-only here -- state lives entirely in the sidecar.
 
     Returns ``(rows, state)``; ``state`` is the (possibly updated) sidecar dict, already

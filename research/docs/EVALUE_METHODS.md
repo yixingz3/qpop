@@ -144,9 +144,9 @@ ordinary domain-specific payload, hashed like every other frozen field):
    in a JSON **sidecar** (`<ledger>.evalue-state.json` by default — `--state` to
    override). The next run loads that sidecar via `SequentialTriggerTest.from_state()`
    and folds in only the belief_update entries appended since — resumption folds each
-   observation in exactly once, so it preserves whatever statistical properties the
-   underlying test has across repeated command invocations (which, per the header note,
-   is currently an experimental rule, not a delivered guarantee). If
+   observation in exactly once, so the registered-mode per-hypothesis guarantee carries
+   across repeated command invocations under the header note's assumptions (legacy lazy
+   mode remains exploratory). If
    the ledger is ever rewritten/truncated out from under a sidecar (its recorded
    `last_entry_hash` can no longer be found), the command fails loudly rather than
    silently re-deriving or double-counting.

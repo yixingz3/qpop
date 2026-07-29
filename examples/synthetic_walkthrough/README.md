@@ -22,9 +22,11 @@ Two kinds of steps appear below, and the boundary is marked honestly:
 [`candidate_card.json`](candidate_card.json) (validates against
 `schemas/candidate_card.schema.json`): `ZZNEO`, proposed for the synthetic node
 `neon_reclaim_skids` ([`bottleneck_map.yml`](bottleneck_map.yml)) as a **direct** beneficiary —
-one of two qualified reclaim-skid OEMs, with dated primary evidence (segment = 35% of revenue,
-booked POs) and the risks stated up front (episodic pricing power; 65% of the company is
-unrelated distribution).
+one of two qualified reclaim-skid OEMs, with dated evidence for **every scored factor**: segment
+= 35% of revenue, booked POs, the two OEMs' ≥70% share of certified installs, rich valuation with
+the cycle already in consensus, moderate non-crowded positioning, one partial price-escalator
+clause — and the risks stated up front (episodic pricing power; 65% of the company is unrelated
+distribution).
 
 ## 1. GATE [DOCUMENTED — deterministic, no LLM]
 
@@ -53,11 +55,11 @@ dilutes the thesis; a neon-frugal laser platform would break the node outright.
 | `substitutability`⁻¹ | 0.7 | ON-ANCHOR: alternatives exist behind a documented qualification barrier |
 | `capacity_lead_time` | 0.7 | ON-ANCHOR: 2–3 years including fab qualification |
 | `supplier_concentration` | 0.9 | ON-ANCHOR: two qualified OEMs ≥70% (synthetic premise) |
-| `pricing_power` | 0.5 | ON-ANCHOR: mixed/episodic, not contractual |
+| `pricing_power` | 0.5 | STRADDLE→LOWER: evidence fully supports "mixed/episodic" (0.5) and one partial escalator clause only *suggests* "contracted escalators, partial" (0.7) → the rule takes 0.5 |
 | **`bottleneck_score`** | **0.70** | mean of the five dims (*reference definition*) |
 | `exposure_purity` | 0.7 | ON-ANCHOR: 35% of revenue = the "major line, 30–70%" row |
 | `demand_score` | 0.7 | ON-ANCHOR: booked capacity POs in primary sources |
-| `valuation_adjustment` | 0.70 | STRADDLE→LOWER: "partially priced" sits between fair (0.85) and rich (0.70); the rule takes 0.70 |
+| `valuation_adjustment` | 0.70 | ON-ANCHOR: "rich; consensus already carries the thesis" — the card's peer-premium + cycle-in-consensus evidence |
 | `crowding_adjustment` | 0.85 | ON-ANCHOR: known story, not crowded |
 
 ```
@@ -65,18 +67,18 @@ confidence = 0.70 × 0.7 × 0.7 × 0.70 × 0.85 = 0.2041
 tier: 0.2041 < 0.22 (core)  and  ≥ 0.10  →  SATELLITE
 ```
 
-Every input is a published anchor value (the scale is discrete — no free interpolation), so two
-independent readers applying the rubric's straddle rule to the same evidence derive the **same
-factor vector**, the same tier, and the same marginality flag.
+Every score is a published anchor value assigned from evidence **in the released card** (the
+scale is discrete — no free interpolation; the one straddle, pricing power, is resolved by the
+rule), so two independent readers derive the **same factor vector**, tier, and marginality flag
+without seeing this table.
 
-**This case is deliberately threshold-marginal, and the margin is produced by the straddle rule
-itself:** had the valuation evidence fully supported the 0.85 "fair" anchor instead of straddling,
-confidence would be 0.70 × 0.7 × 0.7 × 0.85 × 0.85 = 0.2478 — across the core line. Per the
-rubric, the admission entry must say so: *threshold-marginal; the tier turns on one straddle
-resolution.* And per the tier-aware disagreement rule, a second reader who scored valuation 0.85
-would flip the derived tier — that disagreement is unsettled regardless of its size, sending the
-candidate to watchlist until a dated source settles it (the deterministic straddle rule exists
-precisely so both readers take 0.70 here).
+**This case is threshold-marginal under the rubric's definition** (a one-step move of any single
+factor to its adjacent published anchor flips the tier): valuation one step up (0.70 → 0.85,
+"roughly fair") gives 0.70 × 0.7 × 0.7 × 0.85 × 0.85 = 0.2478 — across the core line — so the
+admission entry must carry the marginality flag. And per the tier-aware disagreement rule, a
+second reader who read the valuation evidence as "roughly fair" rather than "rich" would flip the
+derived tier — that disagreement is unsettled regardless of its size, sending the candidate to
+watchlist until a dated source settles it.
 
 ## 4. ADJUDICATE [DOCUMENTED — expensive tier, admit-flags only]
 

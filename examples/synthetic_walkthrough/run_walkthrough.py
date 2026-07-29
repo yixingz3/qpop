@@ -32,12 +32,12 @@ DIMS = {  # bottleneck_dims for the synthetic node
     "substitutability_inv": 0.7,       # anchor: alternatives behind qualification barrier
     "capacity_lead_time": 0.7,         # anchor: 2-3 years incl. qualification
     "supplier_concentration": 0.9,     # anchor: 1-2 suppliers >=70% (two qualified OEMs)
-    "pricing_power": 0.5,              # anchor: mixed/episodic
+    "pricing_power": 0.5,              # straddle->lower: episodic + one partial escalator clause
 }
 bottleneck = sum(DIMS.values()) / len(DIMS)          # reference definition: mean
 # purity: 35% of revenue -> the 0.7 'major line (30-70%)' anchor, on-anchor.
 # demand: booked capacity POs -> the 0.7 anchor verbatim.
-# valuation: 'partially priced' straddles fair(0.85)/rich(0.70) -> straddle rule -> 0.70.
+# valuation: on-anchor 0.70 'rich; consensus already carries the thesis' (card evidence).
 # crowding: known, not crowded -> the 0.85 anchor.
 purity, demand, valuation, crowding = 0.7, 0.7, 0.70, 0.85
 confidence = bottleneck * purity * demand * valuation * crowding

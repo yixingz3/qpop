@@ -41,8 +41,8 @@ apply: an anchor claimed from tertiary sources alone is not established (source-
 
 ### `bottleneck_score` — node: how binding is the chokepoint?
 
-*Reference definition:* the mean of the five `bottleneck_dims`, each anchored below. (The private
-engine may weight dims differently; every dim is scored against these same anchors.)
+*Reference definition:* the mean of the five `bottleneck_dims`, each anchored below. (The released reference scores every dim against these anchors; the private engine's
+historical weighting and factor elaborations remain unspecified here.)
 
 | Dim | 0.9 — binding | 0.7 — strong | 0.5 — contestable | 0.2 — soft |
 |---|---|---|---|---|
@@ -60,7 +60,7 @@ engine may weight dims differently; every dim is scored against these same ancho
 | 0.7 | major line — 30–70% of economics; the node drives the growth story |
 | 0.5 | material but diluted — 10–30%; a conglomerate arm |
 | 0.3 | minor segment — <10% of economics |
-| ≤0.2 | trace or narrative-only exposure (the "integrated major with a 1% chokepoint segment" case) — reject territory |
+| 0.2 | trace or narrative-only exposure (the "integrated major with a 1% chokepoint segment" case) — reject territory; evidence below this description is a reject, not a lower numeric choice |
 
 ### `demand_score` — node: order visibility, not enthusiasm
 
@@ -70,7 +70,7 @@ engine may weight dims differently; every dim is scored against these same ancho
 | 0.7 | purchase orders or capacity bookings visible in primary sources |
 | 0.5 | credible forecast pull, corroborated by secondary sources |
 | 0.3 | thematic inference only |
-| ≤0.2 | narrative demand — no dated evidence |
+| 0.2 | narrative demand — no dated evidence; anything weaker is a reject, not a lower numeric choice |
 
 ### `valuation_adjustment` — trade (≤1): how much of the scarcity is already priced?
 
@@ -79,7 +79,7 @@ engine may weight dims differently; every dim is scored against these same ancho
 | 1.00 | dislocated or ignored — valuation below information-peer median while the constraint is absent from consensus estimates |
 | 0.85 | roughly fair; constraint partially priced |
 | 0.70 | rich; consensus already carries the thesis |
-| ≤0.50 | priced for perfection — the thesis reduces to "the multiple holds" (usually a bear-case watchlist, whatever the other factors say) |
+| 0.50 | priced for perfection — the thesis reduces to "the multiple holds" (usually a bear-case watchlist, whatever the other factors say); nothing below 0.50 is assigned |
 
 ### `crowding_adjustment` — trade (≤1): positioning and attention
 
@@ -88,7 +88,7 @@ engine may weight dims differently; every dim is scored against these same ancho
 | 1.00 | uncovered/ignored — thin coverage, low chatter |
 | 0.85 | known but not crowded |
 | 0.70 | consensus long; price extended vs estimate revisions |
-| ≤0.50 | mania markers — parabolic price on flat revisions |
+| 0.50 | mania markers — parabolic price on flat revisions; nothing below 0.50 is assigned |
 
 Both adjustments are capped at 1: they can only *cut* confidence. Information already in the
 price is, to that extent, not edge.
@@ -105,11 +105,13 @@ rather than corrected.
 
 ## Sensitivity (report it, don't hide it)
 
-Near a tier cut the product is most sensitive to its *smallest* factor. Practice: report the
-product **and** the minimum factor with every score, and treat a card whose tier flips under a
-±0.05 move in any single factor as *threshold-marginal* — say so in the admission entry. The
+Near a tier cut the product is most sensitive to its *smallest* factor. Because the scale is
+discrete, marginality is defined on legal moves only: a card is *threshold-marginal* when moving
+**any single factor one step to its adjacent published anchor** flips the derived tier — say so
+in the admission entry, and report the product **and** the minimum factor with every score. The
 [synthetic walkthrough](../examples/synthetic_walkthrough/) lands at 0.2041 vs the 0.22 core cut
-precisely to make this concrete — and its margin is *produced by the straddle rule itself*.
+precisely to make this concrete: one step of valuation (0.70 → 0.85) gives 0.2478, across the
+cut.
 
 ## Missing data and disagreement
 
