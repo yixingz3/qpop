@@ -23,7 +23,7 @@ sequential test**.
    changes mixture membership mid-stream and carries no guarantee. Scope is
    **per-hypothesis only**: nothing here controls multiplicity across
    hypotheses/positions (book-wide control is future work), and the reporting-time
-   ``alpha`` is not part of the hashed commitment. **WI-44 (2026-07-28):** the ledger runner verifies the hash chain BEFORE evaluating, replays the verified ledger from each admission on every run (the state sidecar is a cache with no decision authority — tampered, legacy, or rewound sidecars are discarded and rebuilt), validates the raw exit-trigger contract (no row silently dropped; checks validated by presence, not truthiness), and decides on the persisted running maximum (the rejection event is sup_t e_t >= 1/alpha, so a crossing within the verified history is never forgotten; it is latched within the verified ledger's recorded history; deleting a SUFFIX of the chain leaves a valid prefix that chain-only verification cannot distinguish from the true head, so rollback detection requires an anchored/expected head (the anchor feature / --expected-head).). Additional stated assumption: the decision to report or skip a scheduled check must be predictable from past information and independent of the current unseen outcome — outcome-dependent selective reporting (e.g., reporting only fires) voids the guarantee (demonstrated by an adversarial regression).
+   ``alpha`` is not part of the hashed commitment. **WI-44 (2026-07-28):** the ledger runner verifies the hash chain BEFORE evaluating, replays the verified ledger from each admission on every run (the state sidecar is a regenerated derived inspection snapshot with no decision authority — never read back; tampered, legacy, or rewound sidecars are simply overwritten), validates the raw exit-trigger contract (no row silently dropped; checks validated by presence, not truthiness), and decides on the persisted running maximum (the rejection event is sup_t e_t >= 1/alpha, so a crossing within the verified recorded history is never forgotten — deleting a SUFFIX of the chain leaves a valid prefix that chain-only verification cannot distinguish from the true head, so rollback detection needs an anchored/expected head via the anchor feature / --expected-head). Additional stated assumption: the decision to report or skip a scheduled check must be predictable from past information and independent of the current unseen outcome — outcome-dependent selective reporting (e.g., reporting only fires) voids the guarantee (demonstrated by an adversarial regression).
 
 The model (per trigger)
 -----------------------
@@ -102,14 +102,15 @@ onto a real :class:`forward_qpop.ledger.Ledger` without any schema-breaking chan
   ``Ledger.update(..., fields={"trigger_checks": {...}})``. Each belief_update is one
   monitoring step; the triggers it names must already be in the admission's
   ``exit_triggers`` contract.
-* :func:`run_ledger_evalue` (WI-44) first verifies the ledger's hash chain, then
-  replays each hypothesis's belief_update stream FROM ITS ADMISSION through a fresh
-  :class:`SequentialTriggerTest` on every invocation, and reports the merged e-value,
-  the persisted running maximum ``max_e``, the ``1/alpha`` threshold, and the decision
-  (``falsified`` iff ``max_e >= 1/alpha`` -- the sup-rule). The JSON **sidecar**
-  (``<ledger>.evalue-state.json``) is regenerated each run purely for inspection: it is
-  a cache with NO decision authority, so tampered/legacy/rewound sidecars are simply
-  discarded and rebuilt, and the ledger is never mutated.
+* :func:`run_ledger_evalue` (WI-44/45/46) parses ONE snapshot, verifies that exact
+  in-memory sequence, lifecycle-validates every row, and replays each hypothesis FROM
+  ITS ADMISSION through a fresh :class:`SequentialTriggerTest` on every invocation. It
+  reports the merged e-value (finite-or-null display), ``log_e``, the latched
+  ``max_log_e``, ``log_threshold = -log(alpha)``, and the log-domain decision
+  (``falsified`` iff ``max_log_e >= -log(alpha)`` -- the sup-rule). The JSON sidecar
+  (``<ledger>.evalue-state.json``) is a regenerated derived inspection snapshot with NO
+  decision authority (never read back); the ledger is never written, and state/report
+  paths that alias it are rejected.
 * Hypotheses with no ``"evalue"`` config are reported as ``no_config`` (skipped, not
   fabricated) -- see :data:`EVALUE_CONFIG_FIELD`.
 
@@ -123,7 +124,9 @@ from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional, Tuple, Union
 
-from .ledger import Ledger, verify_entries
+import os
+
+from .ledger import GENESIS, TERMINAL_STATUSES, Ledger, verify_entries
 
 __all__ = [
     "EProcess",
@@ -150,7 +153,8 @@ _COMBINERS = ("product", "average")
 # Ledger integration (WI-29): field names for the two additive, schema-compatible hooks.
 EVALUE_CONFIG_FIELD: str = "evalue"          # admission entry: {"p0", "p1", "combine"?}
 TRIGGER_CHECKS_FIELD: str = "trigger_checks"  # belief_update entry: {trigger_id: fired_bool}
-EVALUE_STATE_SCHEMA: str = "forward-qpop/evalue-state@1"
+# @2 (WI-46): e-processes serialized as finite logs (log_e / max_log_e), never linear e.
+EVALUE_STATE_SCHEMA: str = "forward-qpop/evalue-state@2"
 
 
 def _check_p0_p1(p0: float, p1: float) -> None:
@@ -224,14 +228,23 @@ class EProcess:
 
     @classmethod
     def from_state(cls, state: dict) -> "EProcess":
+        def _real(x, name):
+            if isinstance(x, bool) or not isinstance(x, (int, float)) or not math.isfinite(x):
+                raise ValueError(f"e-process state has invalid {name}: {x!r}")
+            return float(x)
+
         if "log_e" in state:
-            log_e = state["log_e"]
-        else:  # legacy linear-e snapshot
-            e = state["e"]
-            if not (isinstance(e, (int, float)) and e > 0 and math.isfinite(e)):
+            log_e = _real(state["log_e"], "log_e")
+        else:  # legacy linear-e snapshot (@1)
+            e = _real(state["e"], "e")
+            if e <= 0:
                 raise ValueError(f"legacy e-process state has invalid e: {e!r}")
             log_e = math.log(e)
-        return cls(p0=state["p0"], p1=state["p1"], log_e=log_e, n=state["n"])
+        n = state["n"]
+        if isinstance(n, bool) or not isinstance(n, int) or n < 0:
+            raise ValueError(f"e-process state has invalid n: {n!r}")
+        return cls(p0=_real(state["p0"], "p0"), p1=_real(state["p1"], "p1"),
+                   log_e=log_e, n=n)
 
 
 def product_evalues(evalues: Iterable[float]) -> float:
@@ -395,6 +408,12 @@ class SequentialTriggerTest:
             for tid in st.registered:
                 if tid not in st._procs:
                     st._procs[tid] = EProcess(p0=st.p0, p1=st.p1)
+        for tid, proc in st._procs.items():
+            if (proc.p0, proc.p1) != (st.p0, st.p1):
+                raise ValueError(
+                    f"child e-process {tid!r} config ({proc.p0}, {proc.p1}) disagrees "
+                    f"with the enclosing test ({st.p0}, {st.p1})"
+                )
         return st
 
 
@@ -432,11 +451,27 @@ class EvalueReportRow:
     max_e: Optional[float] = None
     max_log_e: Optional[float] = None
     threshold: Optional[float] = None
+    log_threshold: Optional[float] = None
     decision: Optional[str] = None
     ledger_outcome: Optional[str] = None
 
     def to_dict(self) -> Dict[str, Any]:
         return asdict(self)
+
+
+
+def _same_file(a, b) -> bool:
+    """True if the two paths refer to the same file by resolution OR identity (WI-46).
+
+    Resolved-string equality catches relative/case/symlink aliases; ``os.path.samefile``
+    additionally catches hard links when both paths exist."""
+    pa, pb = Path(a), Path(b)
+    if pa.resolve() == pb.resolve():
+        return True
+    try:
+        return os.path.samefile(pa, pb)
+    except OSError:
+        return False
 
 
 def default_state_path_for(ledger_path: Union[str, Path]) -> Path:
@@ -519,8 +554,24 @@ def run_ledger_evalue(
             f"ledger failed hash-chain verification; refusing to evaluate: "
             f"{vres.problems[:2]}"
         )
+    # WI-46 (B33-01): validate every row's shape BEFORE grouping -- unknown types,
+    # invalid outcome statuses, and id-less rows are domain errors, not silent no-ops.
+    _KNOWN_TYPES = ("admission", "belief_update", "outcome")
+    for i, e in enumerate(entries):
+        if not isinstance(e, dict) or not isinstance(e.get("id"), str) or not e["id"].strip():
+            raise EvalueLedgerError(f"entry {i}: not a mapping with a nonblank string id")
+        if e.get("type") not in _KNOWN_TYPES:
+            raise EvalueLedgerError(
+                f"entry {i} (id={e['id']!r}): unsupported type {e.get('type')!r}"
+            )
+        if e.get("type") == "outcome" and e.get("status") not in TERMINAL_STATUSES:
+            raise EvalueLedgerError(
+                f"entry {i} (id={e['id']!r}): outcome status {e.get('status')!r} is not "
+                f"one of {TERMINAL_STATUSES}"
+            )
     if expected_head is not None:
-        actual = entries[-1].get("entry_hash") if entries else None
+        # An empty ledger's head is the all-zero GENESIS (matches the anchor module).
+        actual = entries[-1].get("entry_hash") if entries else GENESIS
         if actual != expected_head:
             raise EvalueLedgerError(
                 f"ledger head {actual!r} does not match the expected/anchored head "
@@ -530,11 +581,10 @@ def run_ledger_evalue(
     by_id = _group_by_id(entries)
     sp = Path(state_path) if state_path else default_state_path_for(ledger_path)
     # WI-45 (B31-01): the sidecar/report paths must never alias the ledger itself.
-    lp_resolved = Path(ledger_path).resolve()
-    if sp.resolve() == lp_resolved:
+    if _same_file(ledger_path, sp):
         raise EvalueLedgerError(
-            f"state_path resolves to the ledger file itself ({lp_resolved}); refusing "
-            f"to overwrite the ledger"
+            f"state_path refers to the ledger file itself ({Path(ledger_path).resolve()}); "
+            f"refusing to overwrite the ledger"
         )
     # WI-44 (B29-01): the sidecar is a pure CACHE with no decision authority. Every run
     # replays the verified ledger from each admission and REGENERATES the sidecar, so a
@@ -673,7 +723,8 @@ def run_ledger_evalue(
                 log_e=test.log_e_value(),
                 max_e=_finite_or_none(max_log_e),
                 max_log_e=max_log_e,
-                threshold=1.0 / alpha,
+                threshold=(1.0 / alpha) if math.isfinite(1.0 / alpha) else None,
+                log_threshold=-math.log(alpha),
                 decision=FALSIFIED if max_log_e >= -math.log(alpha) else CONTINUE,
                 ledger_outcome=ledger_outcome,
             )

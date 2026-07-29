@@ -6,8 +6,8 @@ belief_update entries' ``"trigger_checks"`` field, and state resumes across repe
 `run_ledger_evalue` / `forward-qpop evalue` invocations via a JSON sidecar next to the
 ledger -- never mutating the ledger itself.
 
-Runs under pytest, or standalone (``python tests/test_evalue_ledger.py``) with no
-third-party dependencies -- set ``PYTHONPATH=src`` if the package is not installed.
+Runs under pytest, or standalone (``python tests/test_evalue_ledger.py``); both modes
+import pytest (used for raises/skips) -- set ``PYTHONPATH=src`` if the package is not installed.
 """
 import json
 import tempfile
@@ -472,30 +472,6 @@ def test_falsey_non_dict_trigger_checks_fail_and_do_not_advance():
         assert not default_state_path_for(p).exists()  # no progress persisted
 
 
-if __name__ == "__main__":
-    import sys
-
-    fns = [v for k, v in sorted(globals().items()) if k.startswith("test_") and callable(v)]
-    failed = 0
-    skipped = 0
-    for fn in fns:
-        try:
-            import inspect
-
-            params = inspect.signature(fn).parameters
-            if "capsys" in params or "tmp_path" in params:
-                print("SKIP (needs pytest fixture)", fn.__name__)
-                skipped += 1
-                continue
-            fn()
-            print("PASS", fn.__name__)
-        except Exception as exc:  # noqa: BLE001
-            failed += 1
-            print("FAIL", fn.__name__, "->", repr(exc))
-    print(f"\n{len(fns) - failed - skipped}/{len(fns)} passed ({skipped} skipped, need pytest)")
-    sys.exit(1 if failed else 0)
-
-
 # --------------------------------------------------------------------------- #
 # WI-45 (B31-01/02/03): snapshot+lifecycle integrity, alias guard, log-space finiteness
 # --------------------------------------------------------------------------- #
@@ -613,3 +589,136 @@ def test_product_combiner_log_merge_matches_sum_of_logs():
     st.observe("b", True)
     import math
     assert abs(st.log_e_value() - 2 * math.log(6.0)) < 1e-9
+
+
+# --------------------------------------------------------------------------- #
+# WI-46 (B33-01/02/04): write-side lifecycle, row shapes, hard links, finite CLI
+# --------------------------------------------------------------------------- #
+def test_public_writer_lifecycle_guards():
+    from forward_qpop.ledger import IntegrityError
+    p = _tmp()
+    led = Ledger(p)
+    with pytest.raises(IntegrityError, match="no admission"):
+        led.update("H-GHOST", evidence=[{"summary": "s", "tier": "primary", "date": "2026-01-01"}])
+    with pytest.raises(IntegrityError, match="no admission"):
+        led.close("H-GHOST", "supported")
+    led.register("H-1", "claim", prior=0.5)
+    with pytest.raises(IntegrityError, match="already exists"):
+        led.register("H-1", "claim2", prior=0.5)
+    led.close("H-1", "supported")
+    with pytest.raises(IntegrityError, match="terminal outcome"):
+        led.update("H-1", evidence=[{"summary": "s", "tier": "primary", "date": "2026-01-02"}])
+    with pytest.raises(IntegrityError, match="terminal outcome"):
+        led.close("H-1", "weakened")
+
+
+def test_malformed_replay_rows_raise_domain_errors():
+    for row, match in [
+        ({"id": "H-X", "type": "mystery"}, "unsupported type"),
+        ({"id": "H-X", "type": "outcome", "status": "banana"}, "banana"),
+        ({"type": "belief_update"}, "nonblank string id"),
+    ]:
+        p = _tmp()
+        led = _seed_with_config(p)
+        _append_raw(p, row)
+        with pytest.raises(EvalueLedgerError, match=match):
+            run_ledger_evalue(p)
+
+
+def test_hard_link_aliases_cannot_overwrite_the_ledger(tmp_path):
+    import os
+    p = tmp_path / "ledger.jsonl"
+    led = _seed_with_config(p)
+    _observe(led, "H-1", {"trig_a": True}, "2026-01-02")
+    link = tmp_path / "state-link.json"
+    try:
+        os.link(p, link)
+    except OSError:
+        pytest.skip("hard links unsupported on this filesystem")
+    before = p.read_text(encoding="utf-8")
+    with pytest.raises(EvalueLedgerError, match="refers to the ledger"):
+        run_ledger_evalue(p, state_path=link)
+    assert p.read_text(encoding="utf-8") == before
+    # CLI --out hard link likewise refuses and leaves the ledger intact.
+    rc = cli_main(["evalue", str(p), "--out", str(link), "--no-persist"])
+    assert rc == 1
+    assert p.read_text(encoding="utf-8") == before
+
+
+def test_cli_table_and_json_are_finite_safe_at_extremes(tmp_path, capsys):
+    p = tmp_path / "ledger.jsonl"
+    led = _seed_with_config(p, p0=0.1, p1=0.9)
+    for i in range(400):
+        _observe(led, "H-1", {"trig_a": True}, f"2026-{(i // 28) + 1:02d}-{(i % 28) + 1:02d}")
+    # Default table must complete despite linear-e overflow.
+    rc = cli_main(["evalue", str(p), "--no-persist"])
+    assert rc == 0
+    out = capsys.readouterr().out
+    assert "exp(" in out and "falsified" in out
+    # Tiny alpha: threshold overflows linearly; JSON modes must stay strict-finite.
+    rc = cli_main(["evalue", str(p), "--alpha", "1e-320", "--json", "--no-persist"])
+    assert rc == 0
+    payload = capsys.readouterr().out
+    parsed = json.loads(payload, parse_constant=lambda c: (_ for _ in ()).throw(ValueError(c)))
+    assert parsed[0]["threshold"] is None and parsed[0]["log_threshold"] > 700
+
+
+def test_expected_head_accepts_anchor_head_for_empty_and_nonempty_ledgers(tmp_path):
+    from forward_qpop.ledger import GENESIS
+    empty = tmp_path / "empty.jsonl"
+    empty.write_text("", encoding="utf-8")
+    rows, _ = run_ledger_evalue(empty, expected_head=GENESIS, persist=False)
+    assert rows == []
+    p = tmp_path / "ledger.jsonl"
+    led = _seed_with_config(p)
+    head = json.loads(p.read_text(encoding="utf-8").splitlines()[-1])["entry_hash"]
+    rows, _ = run_ledger_evalue(p, expected_head=head, persist=False)
+    assert rows[0].status == "ok"
+
+
+def test_from_state_rejects_malformed_numeric_fields():
+    from forward_qpop.evalue import EProcess, SequentialTriggerTest
+    for bad in [{"p0": 0.1, "p1": 0.6, "log_e": float("inf"), "n": 1},
+                {"p0": 0.1, "p1": 0.6, "log_e": 0.0, "n": -1},
+                {"p0": 0.1, "p1": 0.6, "log_e": 0.0, "n": True},
+                {"p0": True, "p1": 0.6, "log_e": 0.0, "n": 0}]:
+        with pytest.raises(ValueError):
+            EProcess.from_state(bad)
+    st = SequentialTriggerTest(p0=0.1, p1=0.6, registered=("a",))
+    state = st.to_state()
+    state["procs"]["a"]["p0"] = 0.3  # child config drift
+    with pytest.raises(ValueError, match="disagrees"):
+        SequentialTriggerTest.from_state(state)
+
+
+# WI-46: pin the standalone-discoverable count so appended tests cannot silently
+# vanish behind the runner again (pytest collects the same 45 regardless).
+EXPECTED_STANDALONE_TESTS = 45
+_discovered = [n for n in dir() if n.startswith("test_")]
+assert len(_discovered) == EXPECTED_STANDALONE_TESTS, (
+    f"standalone discovery sees {len(_discovered)} tests, expected "
+    f"{EXPECTED_STANDALONE_TESTS} -- test added above the runner, or pin not bumped?"
+)
+
+if __name__ == "__main__":
+    import sys
+
+    fns = [v for k, v in sorted(globals().items()) if k.startswith("test_") and callable(v)]
+    failed = 0
+    skipped = 0
+    for fn in fns:
+        try:
+            import inspect
+
+            params = inspect.signature(fn).parameters
+            if "capsys" in params or "tmp_path" in params:
+                print("SKIP (needs pytest fixture)", fn.__name__)
+                skipped += 1
+                continue
+            fn()
+            print("PASS", fn.__name__)
+        except Exception as exc:  # noqa: BLE001
+            failed += 1
+            print("FAIL", fn.__name__, "->", repr(exc))
+    print(f"\n{len(fns) - failed - skipped}/{len(fns)} passed ({skipped} skipped, need pytest)")
+    sys.exit(1 if failed else 0)

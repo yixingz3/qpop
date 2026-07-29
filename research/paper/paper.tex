@@ -1015,7 +1015,7 @@ Edit only by appending dated amendments.
     independence assumption) and Ville-threshold decisions, covered by 25 module tests (including
     Monte-Carlo Type-I checks under optional stopping and under partial trigger reporting, and an
     adversarial selective-reporting demonstration) plus
-    39 ledger-integration tests. The
+    45 ledger-integration tests. The
     guarantee is \textbf{per-hypothesis}: anytime-valid control
     for that hypothesis's
     registered triggers under a stated conditional null ($\Pr(\text{fire}_t = 1 \mid \text{past})
@@ -1030,8 +1030,9 @@ Edit only by appending dated amendments.
     the sequential test; the sidecar it writes is a regenerated derived inspection snapshot with
     no decision authority (never read back; the ledger is never written).
     The runner verifies the ledger's hash chain before evaluating, re-derives every hypothesis
-    from its admission on each invocation (the state sidecar is a cache with no decision
-    authority), and decides on the persisted running maximum --- the rejection event is
+    from its admission on each invocation (the state sidecar is a regenerated derived inspection
+    snapshot with no decision authority, never read back), and decides on the persisted running
+    maximum --- the rejection event is
     $\sup_t e_t \geq 1/\alpha$, so a crossing within the verified recorded history is never
     forgotten; because chain-only verification cannot distinguish a rolled-back valid prefix from
     the true head, detecting suffix deletion requires an anchored/expected head (the anchor
@@ -1661,7 +1662,7 @@ portability (the uranium funnel --- \S\,H3, clause (c)); the expanded rejection-
 rejections existed), reported as such --- \S\,H5); the
 \textbf{e-value / anytime-valid} module, now \emph{ledger-integrated} (a frozen per-admission
 \texttt{evalue} commitment hashed with the entry, plus a \texttt{forward-qpop evalue} CLI that runs the
-sequential test over the ledger; 25 module + 39 integration tests --- the registered
+sequential test over the ledger; 25 module + 45 integration tests --- the registered
 (fixed-membership) mode delivers the per-hypothesis guarantee under the stated assumptions
 (\S\,Decision Rules footnote; the v2 revision's two disclosed defects were closed 2026-07-25 with
 regression tests), not used in the pilot, and no live admission carries a
@@ -1800,8 +1801,9 @@ gap is closed by adding a source lens, never by loosening the gates, and we use 
 comparisons against external lists as the way to detect coverage gaps when entering a new domain.
 
 \paragraph{What the ledger proves --- and what it does not.} The hash chain establishes
-\emph{tamper-evidence}: any post-hoc edit, insertion, deletion, or reorder of a closed entry is
-detectable. It does \emph{not}, on its own, establish \emph{wall-clock time} --- a ledger written
+\emph{tamper-evidence}: any post-hoc edit, insertion, interior deletion, or reorder of a closed
+entry is detectable; deleting a \emph{suffix} leaves a valid shorter chain, so rollback detection
+additionally needs the anchored head below. It does \emph{not}, on its own, establish \emph{wall-clock time} --- a ledger written
 later could carry a backdated \texttt{created} field. A full ``registered \emph{before} the outcome''
 guarantee therefore requires an external timestamp anchor: a signed Git commit or release, a public
 CI artifact, or a public append-only timestamp service (e.g.\ OpenTimestamps, or a Sigstore/Rekor

@@ -100,6 +100,25 @@ class Ledger:
             if e.get("type") == OUTCOME and e.get("status") in TERMINAL_STATUSES
         }
 
+
+    def _require_open(self, id: str, action: str) -> None:
+        """WI-46 write-side lifecycle: `action` requires exactly one open admission."""
+        rows = [e for e in self.entries() if e.get("id") == id]
+        admissions = [e for e in rows if e.get("type") == ADMISSION]
+        if not admissions:
+            raise IntegrityError(
+                f"cannot {action} {id!r}: no admission exists for this id (orphan write)"
+            )
+        if len(admissions) > 1:
+            raise IntegrityError(
+                f"cannot {action} {id!r}: {len(admissions)} admissions exist (malformed ledger)"
+            )
+        if any(e.get("type") == OUTCOME and e.get("status") in TERMINAL_STATUSES for e in rows):
+            raise IntegrityError(
+                f"cannot {action} {id!r}: it already has a terminal outcome; closed "
+                f"entries are immutable -- open a new id to revise"
+            )
+
     # ---------- write (append-only) ----------
     def _append(self, entry: dict) -> dict:
         ch = content_hash(entry)
@@ -133,10 +152,10 @@ class Ledger:
         ``fields`` carries any domain-specific payload (e.g. a decomposed-confidence
         dict, scores, a ticker) — it is hashed like every other frozen field.
         """
-        if id in self._terminal_ids():
+        if any(e.get("id") == id for e in self.entries()):
             raise IntegrityError(
-                f"hypothesis {id!r} already has a terminal outcome; open a new id to "
-                f"revise (closed entries are immutable)"
+                f"hypothesis {id!r} already exists in this ledger; ids are single-use "
+                f"(WI-46 lifecycle: exactly one admission per id -- open a new id)"
             )
         entry: dict = {
             "id": id,
@@ -170,6 +189,7 @@ class Ledger:
         Tertiary sources alone cannot move confidence (pass ``allow_tertiary_only=True``
         to override that discipline explicitly).
         """
+        self._require_open(id, "update")
         if not evidence:
             raise ValueError("a belief update requires cited evidence")
         if not allow_tertiary_only and not any(
@@ -201,6 +221,7 @@ class Ledger:
 
         ``outcome`` is one of ``supported`` / ``weakened`` / ``falsified``.
         """
+        self._require_open(id, "close")
         if outcome not in TERMINAL_STATUSES:
             raise ValueError(
                 f"outcome must be one of {TERMINAL_STATUSES}, got {outcome!r}"

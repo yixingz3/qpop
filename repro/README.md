@@ -12,12 +12,12 @@ needs `pdflatex` + `bibtex`. Total time is under a minute, excluding the paper b
 make test            # or: python -m pytest -q
 ```
 
-Expected: **`97 passed, 1 skipped`** (incl. 2 synthetic-walkthrough tests) — 9 ledger + 7 local-anchor + 11 external-anchor (WI-19;
+Expected: **`103 passed, 1 skipped`** (incl. 2 synthetic-walkthrough tests) — 9 ledger + 7 local-anchor + 11 external-anchor (WI-19;
 1 skipped by default — a true-network OpenTimestamps round-trip, opt in with
 `QPOP_TEST_LIVE_OTS=1`) + 5 schema tests + 25 e-value module tests (incl. Monte-Carlo Type-I
 checks under all-triggers-report and partial-reporting patterns, the WI-40
 fixed-membership/strict-typing regressions, and the WI-44 selective-reporting demonstration)
-+ 39 e-value ledger-integration tests (frozen commitments, verified-snapshot replay,
++ 45 e-value ledger-integration tests (frozen commitments, verified-snapshot replay,
 lifecycle validation, sidecar/alias immunity, log-space sup-decision latching,
 trigger checks, sidecar state — WI-29), covering field-tamper, insert, delete, reorder,
 terminal re-registration, tertiary-only blocking, local- and external-anchor drift-detection,

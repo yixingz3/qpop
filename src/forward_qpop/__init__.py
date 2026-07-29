@@ -3,7 +3,8 @@
 Register a hypothesis (a claim + dated evidence + measurable exit triggers + a prior)
 *before* the evaluation window opens. Each entry is content-hashed over its frozen
 fields and chained to its predecessor, so the record proves **what was predicted, and
-when** — and any later edit, insertion, deletion, or reorder is detectable.
+when** — and any later edit, insertion, interior deletion, or reorder is detectable (suffix
+rollback additionally needs an anchored head — see the anchor module).
 
 This is the domain-agnostic core of the "Forward-QPOP" protocol from the methods paper
 *Forward-Registered, Auditable LLM-Assisted Research* — usable for any pre-registered

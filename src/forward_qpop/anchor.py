@@ -1,6 +1,6 @@
 """External-anchor helpers for a Forward-QPOP ledger.
 
-The hash chain proves *tamper-evidence* -- that no entry was edited, inserted, deleted,
+The hash chain proves *tamper-evidence* -- that no entry was edited, inserted, interior-deleted,
 or reordered -- but not *wall-clock time*: a ledger written today could carry a backdated
 ``created`` field. To prove an entry existed *before* an outcome, the ledger's head must be
 bound to an external, append-only, publicly-dated record.
@@ -78,7 +78,7 @@ just means "run it again," rather than a hot path where degraded availability wo
 felt on every write.
 
 **What this buys you, and what it doesn't:** the hash chain alone proves
-*tamper-evidence* -- that no past entry was edited, inserted, deleted, or reordered --
+*tamper-evidence* -- that no past entry was edited, inserted, interior-deleted, or reordered --
 at every ``verify()`` call, with zero network dependency. It does **not** prove
 *wall-clock time* (that an entry existed before its outcome was known) on its own; only
 an anchored entry (local manifest + git push, or ``anchor external``) carries that

@@ -25,9 +25,10 @@ sidecar; `verify-external` checks that sidecar's digest against the current ledg
 network failure exits non-zero with a clear message -- it never silently claims anchored.
 `evalue` replays each hypothesis's `trigger_checks` (belief_update entries) through its
 pre-registered `SequentialTriggerTest` (the `"evalue"` admission config) and reports the
-merged e-value, the `1/alpha` threshold, and the decision; state resumes across runs from a
-`<ledger>.evalue-state.json` sidecar (never mutates the ledger) -- see
-`research/docs/EVALUE_METHODS.md` for the wiring.
+merged e-value, `log_threshold = -log(alpha)`, and the log-domain decision from the latched
+running maximum; every run verifies and fully replays the ledger, regenerating the
+`<ledger>.evalue-state.json` sidecar as a derived inspection snapshot (never read back; the
+ledger is never written) -- see `research/docs/EVALUE_METHODS.md` for the wiring.
 """
 from __future__ import annotations
 
@@ -259,9 +260,13 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
             return 1
         report = [r.to_dict() for r in rows]
         if args.out:
+            from .evalue import _same_file
             outp = Path(args.out)
-            if outp.resolve() == Path(args.path).resolve():
-                print("evalue FAILED: --out resolves to the ledger file itself")
+            if _same_file(outp, args.path):
+                print("evalue FAILED: --out refers to the ledger file itself")
+                return 1
+            if args.state and _same_file(outp, args.state):
+                print("evalue FAILED: --out refers to the state sidecar path")
                 return 1
             outp.parent.mkdir(parents=True, exist_ok=True)
             outp.write_text(
@@ -278,7 +283,15 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
 
 
 def _print_evalue_report(rows: List[EvalueReportRow], alpha: float) -> None:
-    print(f"e-value sequential trigger test -- alpha={alpha}, threshold(1/alpha)={1.0 / alpha:.4f}")
+    import math as _math
+    thr = None
+    try:
+        t = _math.exp(-_math.log(alpha))
+        thr = t if _math.isfinite(t) else None
+    except OverflowError:
+        thr = None
+    thr_s = f"{thr:.4f}" if thr is not None else f"exp({-_math.log(alpha):.2f}) [overflow]"
+    print(f"e-value sequential trigger test -- alpha={alpha}, threshold(1/alpha)={thr_s}")
     print(f"{'ID':20} {'STATUS':10} {'E-VALUE':>12} {'DECISION':10} {'LEDGER-OUTCOME':15}")
     for r in rows:
         outcome = r.ledger_outcome or "open"
@@ -286,7 +299,8 @@ def _print_evalue_report(rows: List[EvalueReportRow], alpha: float) -> None:
             print(f"{r.id:20} {r.status:10} {'--':>12} {'--':10} {outcome:15}")
             continue
         falsified_flag = " *" if r.decision == FALSIFIED else ""
-        print(f"{r.id:20} {r.status:10} {r.e_value:12.4f} {r.decision:10} {outcome:15}{falsified_flag}")
+        ev = f"{r.e_value:12.4f}" if r.e_value is not None else f"exp({r.log_e:.2f})"
+        print(f"{r.id:20} {r.status:10} {ev:>12} {r.decision:10} {outcome:15}{falsified_flag}")
 
 
 if __name__ == "__main__":

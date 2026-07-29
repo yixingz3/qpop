@@ -88,7 +88,9 @@ Code? `pip install forward-qpop` gives you the same ledger from the command line
 | **`/qpop:verify`** | verify a ledger's integrity — detect any post-hoc edit, insertion, or reorder |
 
 The ledger is a real hash chain (`entry_hash = sha256(content_hash ‖ prev_hash)`): edit a past entry,
-insert one, delete one, or reorder them, and `verify` fails (and exits non-zero — drop it in CI).
+insert one, delete one from the interior, or reorder them, and `verify` fails (and exits
+non-zero — drop it in CI). Deleting a *suffix* leaves a valid shorter chain: detecting rollback
+needs an anchored head (`anchor` / `--expected-head`).
 
 ## Status — what's runnable today
 
@@ -98,7 +100,7 @@ insert one, delete one, or reorder them, and `verify` fails (and exits non-zero 
 |---|---|
 | Claude Code plugin discipline (`auditable-research` + `/qpop:*`) | **Working — v0.1** |
 | Hash-chained Python ledger (`forward_qpop`) + CLI | **Working** (98 tests collected: 97 passed, 1 network test skipped by default) |
-| Sequential trigger test (`evalue`) — per-hypothesis anytime-valid rule wired to the ledger (`forward-qpop evalue`); guarantee holds in registered (fixed-membership) mode under stated assumptions (WI-40 + WI-44 hardening: verified-chain-first replay, cache-only sidecar, sup-decision latching, outcome-independent reporting assumption); no book-wide multiplicity control | **Working — per-hypothesis scope** (25 e-process + 39 ledger-integration tests) — e-value / Ville, [methods note](research/docs/EVALUE_METHODS.md) |
+| Sequential trigger test (`evalue`) — per-hypothesis anytime-valid rule wired to the ledger (`forward-qpop evalue`); guarantee holds in registered (fixed-membership) mode under stated assumptions (WI-40/44/45/46 hardening: single verified-snapshot replay, lifecycle validation at write and replay, derived-snapshot sidecar, log-space sup-decision latching, alias-safe paths, outcome-independent reporting assumption); no book-wide multiplicity control | **Working — per-hypothesis scope** (25 e-process + 45 ledger-integration tests) — e-value / Ville, [methods note](research/docs/EVALUE_METHODS.md) |
 | Local anchor manifest (`anchor` / `verify-anchor`) | **Working** — manifest + drift-detection + git / local OpenTimestamps stamp |
 | External timestamp anchor (`anchor external` / `verify-external`) | **Working — manual/opt-in by design** (WI-30, 2026-07-09; not an auto-hook on ledger writes) — submits to OpenTimestamps, sidecar receipt + drift-detection ([details](#external-anchor-what-it-proves-and-what-it-doesnt)) |
 | JSON Schemas for cards / entries / runs | **Included** ([`schemas/`](schemas)) |
