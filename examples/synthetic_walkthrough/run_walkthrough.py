@@ -32,7 +32,7 @@ DIMS = {  # bottleneck_dims for the synthetic node
     "substitutability_inv": 0.7,       # anchor: alternatives behind qualification barrier
     "capacity_lead_time": 0.7,         # anchor: 2-3 years incl. qualification
     "supplier_concentration": 0.9,     # anchor: 1-2 suppliers >=70% (two qualified OEMs)
-    "pricing_power": 0.5,              # straddle->lower: episodic + one partial escalator clause
+    "pricing_power": 0.5,              # on-anchor: episodic; escalator clause ~5% coverage < 25% boundary
 }
 bottleneck = sum(DIMS.values()) / len(DIMS)          # reference definition: mean
 # purity: 35% of revenue -> the 0.7 'major line (30-70%)' anchor, on-anchor.

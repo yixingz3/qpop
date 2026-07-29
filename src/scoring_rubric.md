@@ -50,7 +50,7 @@ historical weighting and factor elaborations remain unspecified here.)
 | `substitutability`⁻¹ | no qualified alternative supplier/process | alternatives exist behind a documented qualification barrier (certification, change-control) | alternatives exist; switching costs real but bounded | commodity — many interchangeable sources |
 | `capacity_lead_time` | ≥3 years greenfield (permits, certification, construction) | 2–3 years including qualification | 1–2 years | <1 year, or idle capacity restartable |
 | `supplier_concentration` | 1–2 suppliers hold ≥70% share | 2–3 suppliers dominate; entrant unqualified | top-3 hold ~50% | fragmented |
-| `pricing_power` | realized price escalation visible in filings/contracts | contracted escalators, partial | mixed/episodic | price-taker |
+| `pricing_power` | realized price escalation visible in filings/contracts | escalators contracted across a material share (≥25%) of segment contracts/revenue | mixed/episodic — at most isolated escalator clauses (<25% coverage) | price-taker |
 
 ### `exposure_purity` — ticker: does this name capture the node's economics?
 
@@ -106,9 +106,13 @@ rather than corrected.
 ## Sensitivity (report it, don't hide it)
 
 Near a tier cut the product is most sensitive to its *smallest* factor. Because the scale is
-discrete, marginality is defined on legal moves only: a card is *threshold-marginal* when moving
-**any single factor one step to its adjacent published anchor** flips the derived tier — say so
-in the admission entry, and report the product **and** the minimum factor with every score. The
+discrete, marginality is defined on legal moves only: a card is *threshold-marginal* when **at
+least one legal single-factor move to either adjacent published anchor** flips the derived tier.
+For the derived `bottleneck_score` (a mean with no anchors of its own), a legal move is one
+bottleneck dim shifted one adjacent-anchor step, then the mean recomputed. Say so in the
+admission entry, and report the product **and** the minimum factor with every score. A
+sensitivity computed this way is a **counterfactual**, not an alternative reading of the
+evidence — deterministic assignment and sensitivity are separate statements. The
 [synthetic walkthrough](../examples/synthetic_walkthrough/) lands at 0.2041 vs the 0.22 core cut
 precisely to make this concrete: one step of valuation (0.70 → 0.85) gives 0.2478, across the
 cut.

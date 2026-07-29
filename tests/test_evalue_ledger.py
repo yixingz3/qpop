@@ -21,6 +21,7 @@ from forward_qpop.evalue import (
     EvalueLedgerError,
     default_state_path_for,
     run_ledger_evalue,
+    save_evalue_state,
 )
 
 
@@ -337,3 +338,55 @@ def test_ledger_rejects_non_boolean_trigger_value():
         assert False, "expected EvalueLedgerError for a string trigger value"
     except EvalueLedgerError as e:
         assert "boolean" in str(e)
+
+
+# --------------------------------------------------------------------------- #
+# WI-43 (B27-03): no silent lazy path; sidecar reconciled to the frozen admission
+# --------------------------------------------------------------------------- #
+def test_evalue_config_with_empty_trigger_contract_fails_loudly():
+    p = _tmp()
+    led = Ledger(p)
+    led.register(
+        "H-1", "claim", prior=0.5,
+        evidence=[{"summary": "s", "tier": "primary", "date": "2026-01-01"}],
+        exit_triggers=[],
+        fields={"evalue": {"p0": 0.1, "p1": 0.6}},
+    )
+    _observe(led, "H-1", {}, "2026-01-02")
+    try:
+        run_ledger_evalue(p, alpha=0.05)
+        assert False, "expected EvalueLedgerError for an empty exit-trigger contract"
+    except EvalueLedgerError as e:
+        assert "lazy" in str(e)
+
+
+def test_legacy_sidecar_without_registered_set_cannot_silently_resume():
+    p = _tmp()
+    led = _seed_with_config(p)  # registers trig_a + trig_b
+    _observe(led, "H-1", {"trig_a": True}, "2026-01-02")
+    rows, state = run_ledger_evalue(p, alpha=0.05)
+    # Simulate a pre-WI-40 lazy sidecar: strip the registered set from saved state.
+    hyp = state["hypotheses"]["H-1"]
+    hyp["test_state"].pop("registered", None)
+    save_evalue_state(default_state_path_for(p), state)
+    _observe(led, "H-1", {"trig_b": True}, "2026-01-03")
+    try:
+        run_ledger_evalue(p, alpha=0.05)
+        assert False, "expected EvalueLedgerError for a legacy/lazy sidecar"
+    except EvalueLedgerError as e:
+        assert "sidecar" in str(e)
+
+
+def test_mismatched_sidecar_config_fails_loudly():
+    p = _tmp()
+    led = _seed_with_config(p, p0=0.1, p1=0.6)
+    _observe(led, "H-1", {"trig_a": True}, "2026-01-02")
+    rows, state = run_ledger_evalue(p, alpha=0.05)
+    state["hypotheses"]["H-1"]["test_state"]["p0"] = 0.2  # config drift
+    save_evalue_state(default_state_path_for(p), state)
+    _observe(led, "H-1", {"trig_b": True}, "2026-01-03")
+    try:
+        run_ledger_evalue(p, alpha=0.05)
+        assert False, "expected EvalueLedgerError for mismatched sidecar config"
+    except EvalueLedgerError as e:
+        assert "does not match the frozen admission" in str(e)

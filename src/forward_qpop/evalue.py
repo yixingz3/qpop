@@ -493,21 +493,46 @@ def run_ledger_evalue(
             rows.append(EvalueReportRow(id=hid, status="no_config", ledger_outcome=ledger_outcome))
             continue
 
-        registered_trigger_ids = {t["id"] for t in admission.get("exit_triggers", []) if "id" in t}
+        trigger_id_list = [t["id"] for t in admission.get("exit_triggers", []) if "id" in t]
+        registered_trigger_ids = set(trigger_id_list)
+        # WI-43 (B27-03): an e-value commitment REQUIRES a nonempty, uniquely identified
+        # exit-trigger contract -- the runner must never silently fall back to lazy mode.
+        p0, p1, combine = _evalue_config(admission)
+        if not registered_trigger_ids or len(trigger_id_list) != len(registered_trigger_ids):
+            raise EvalueLedgerError(
+                f"{hid}: an 'evalue' commitment requires a nonempty exit_triggers contract "
+                f"with unique ids (got {trigger_id_list!r}); refusing to run in lazy mode"
+            )
+        expected_registered = tuple(sorted(registered_trigger_ids))
 
         if saved is not None:
             test = SequentialTriggerTest.from_state(saved["test_state"])
+            # WI-43 (B27-03): resumption must reconcile the sidecar to the FROZEN admission.
+            # A legacy/lazy sidecar (no registered set) or any membership/config mismatch
+            # fails loudly -- delete the sidecar to rebuild from the immutable ledger.
+            if (
+                test.registered is None
+                or tuple(test.registered) != expected_registered
+                or (test.p0, test.p1, test.combine) != (p0, p1, combine)
+            ):
+                raise EvalueLedgerError(
+                    f"{hid}: state sidecar does not match the frozen admission "
+                    f"(sidecar registered={list(test.registered) if test.registered else None}, "
+                    f"p0/p1/combine={test.p0}/{test.p1}/{test.combine}; admission "
+                    f"registered={list(expected_registered)}, {p0}/{p1}/{combine}) -- "
+                    f"legacy/lazy or mismatched state; delete the sidecar to rebuild from "
+                    f"the ledger"
+                )
             resume_after_hash = saved.get("last_entry_hash")
             skipping = resume_after_hash is not None
         else:
-            p0, p1, combine = _evalue_config(admission)
             test = SequentialTriggerTest(
                 p0=p0,
                 p1=p1,
                 combine=combine,
                 # WI-40: the admission's registered exit-trigger contract fixes the
                 # mixture membership from step 0 (every registered trigger at e=1).
-                registered=tuple(sorted(registered_trigger_ids)) or None,
+                registered=expected_registered,
             )
             resume_after_hash = None
             skipping = False
