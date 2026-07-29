@@ -218,9 +218,19 @@ class Ledger:
     # ---------- verify ----------
     def verify(self) -> VerifyResult:
         """Recompute every content hash and the full chain; report any break."""
+        return verify_entries(self.entries())
+
+
+def verify_entries(entries: List[dict]) -> VerifyResult:
+    """Verify an already-parsed entry sequence in memory (WI-45).
+
+    Verifying the exact in-memory snapshot that will be consumed removes the
+    verify-then-re-read window: callers parse once, verify that object, replay
+    that same object."""
+    if True:
         problems: List[str] = []
         prev = GENESIS
-        for i, e in enumerate(self.entries()):
+        for i, e in enumerate(entries):
             tag = f"entry {i} (id={e.get('id', '?')}, type={e.get('type', '?')})"
             stored_ch = _strip(e.get("content_hash", ""))
             recomputed = content_hash(e)
@@ -234,7 +244,7 @@ class Ledger:
             if e.get("entry_hash", "") != entry_hash(stored_ch, e.get("prev_hash", GENESIS)):
                 problems.append(f"{tag}: entry_hash inconsistent with content_hash || prev_hash")
             prev = e.get("entry_hash", "")
-        return VerifyResult(ok=not problems, n_entries=len(self.entries()), problems=problems)
+        return VerifyResult(ok=not problems, n_entries=len(entries), problems=problems)
 
 
 def verify_file(path: Union[str, Path]) -> VerifyResult:

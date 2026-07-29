@@ -6,7 +6,8 @@ leakage-resistant research.**
 Register a hypothesis — a claim, dated evidence, measurable exit triggers, and a prior —
 *before* the evaluation window opens. Each entry is content-hashed over its frozen fields and
 chained to its predecessor, so the record proves **what was predicted** and that no entry was later
-edited, inserted, deleted, or reordered. Proving it was registered *before* an outcome (wall-clock
+edited, inserted, interior-deleted, or reordered (deleting a *suffix* leaves a valid shorter
+chain — detecting rollback needs an anchored head: `anchor` / `--expected-head`). Proving it was registered *before* an outcome (wall-clock
 time) needs an external anchor — see [`anchor` / `verify-anchor` / `anchor external` /
 `verify-external`](#cli).
 
@@ -75,7 +76,7 @@ forward-qpop verify-external ledger.jsonl                # detect drift since th
 # per-hypothesis anytime-valid under stated assumptions — fixed registered-trigger
 # membership + strict boolean checks (see research/docs/EVALUE_METHODS.md);
 # NO book-wide (across-hypothesis) multiplicity control
-forward-qpop evalue ledger.jsonl --alpha 0.05            # table report; resumes via a state sidecar
+forward-qpop evalue ledger.jsonl --alpha 0.05            # verified full replay; sidecar = derived snapshot
 forward-qpop evalue ledger.jsonl --json --out report.json  # JSON report, also written to a file
 ```
 
@@ -86,8 +87,9 @@ writes a sidecar that falsely claims success.
 `evalue` reads a hypothesis's pre-registered `p0`/`p1`/`combine` from its admission entry's
 `"evalue"` field and its per-step trigger observations from belief_update entries' `"trigger_checks"`
 field (both additive, non-breaking conventions — see
-[`research/docs/EVALUE_METHODS.md`](../../research/docs/EVALUE_METHODS.md)); state resumes across
-runs via a `<ledger>.evalue-state.json` sidecar and never mutates the ledger. Hypotheses with no
+[`research/docs/EVALUE_METHODS.md`](../../research/docs/EVALUE_METHODS.md)); every run verifies and
+replays the full ledger, regenerating `<ledger>.evalue-state.json` as a derived inspection
+snapshot (never read back; the ledger is never written). Hypotheses with no
 `"evalue"` config are reported `no_config`, not fabricated.
 
 ## Why forward, and why a chain

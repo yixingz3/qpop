@@ -494,3 +494,122 @@ if __name__ == "__main__":
             print("FAIL", fn.__name__, "->", repr(exc))
     print(f"\n{len(fns) - failed - skipped}/{len(fns)} passed ({skipped} skipped, need pytest)")
     sys.exit(1 if failed else 0)
+
+
+# --------------------------------------------------------------------------- #
+# WI-45 (B31-01/02/03): snapshot+lifecycle integrity, alias guard, log-space finiteness
+# --------------------------------------------------------------------------- #
+def _append_raw(path: Path, row: dict) -> None:
+    """Append a hash-valid row directly (to craft malformed-but-verifiable lifecycles)."""
+    from forward_qpop.ledger import content_hash, entry_hash
+    lines = path.read_text(encoding="utf-8").splitlines()
+    prev = json.loads(lines[-1])["entry_hash"] if lines else "0" * 64
+    ch = content_hash(row)
+    row = dict(row, content_hash=ch, prev_hash=prev, entry_hash=entry_hash(ch, prev))
+    with path.open("a", encoding="utf-8") as fh:
+        fh.write(json.dumps(row, sort_keys=True) + "\n")
+
+
+def test_state_path_aliasing_the_ledger_is_rejected():
+    p = _tmp()
+    led = _seed_with_config(p)
+    _observe(led, "H-1", {"trig_a": True}, "2026-01-02")
+    before = p.read_text(encoding="utf-8")
+    with pytest.raises(EvalueLedgerError, match="refusing\s+to overwrite the ledger"):
+        run_ledger_evalue(p, state_path=p)
+    assert p.read_text(encoding="utf-8") == before  # ledger untouched
+
+
+def test_orphan_rows_without_admission_fail_loudly():
+    p = _tmp()
+    led = _seed_with_config(p)
+    _append_raw(p, {"id": "H-GHOST", "type": "belief_update",
+                    "trigger_checks": {"x": True}})
+    with pytest.raises(EvalueLedgerError, match="no admission"):
+        run_ledger_evalue(p)
+
+
+def test_duplicate_admission_fails_loudly():
+    p = _tmp()
+    led = _seed_with_config(p)
+    _append_raw(p, {"id": "H-1", "type": "admission",
+                    "evalue": {"p0": 0.4, "p1": 0.9}})
+    with pytest.raises(EvalueLedgerError, match="admission entries; expected 1"):
+        run_ledger_evalue(p)
+
+
+def test_updates_after_terminal_outcome_fail_loudly():
+    p = _tmp()
+    led = _seed_with_config(p)
+    _append_raw(p, {"id": "H-1", "type": "outcome", "status": "supported"})
+    _append_raw(p, {"id": "H-1", "type": "belief_update",
+                    "trigger_checks": {"trig_a": True}})
+    with pytest.raises(EvalueLedgerError, match="after the terminal outcome"):
+        run_ledger_evalue(p)
+
+
+def test_malformed_present_evalue_config_is_not_no_config():
+    p = _tmp()
+    led = Ledger(p)
+    led.register("H-1", "claim", prior=0.5,
+                 evidence=[{"summary": "s", "tier": "primary", "date": "2026-01-01"}],
+                 exit_triggers=[{"id": "t", "metric": "m", "op": ">",
+                                 "data_source": {"tier": "secondary"}}],
+                 fields={"evalue": "not-a-dict"})
+    with pytest.raises(EvalueLedgerError, match="present but not a mapping"):
+        run_ledger_evalue(p)
+
+
+def test_expected_head_rejects_suffix_rollback():
+    p = _tmp()
+    led = _seed_with_config(p)
+    _observe(led, "H-1", {"trig_a": True}, "2026-01-02")
+    lines = p.read_text(encoding="utf-8").splitlines()
+    head = json.loads(lines[-1])["entry_hash"]
+    p.write_text(lines[0] + "\n", encoding="utf-8")  # delete the suffix: chain still valid
+    with pytest.raises(EvalueLedgerError, match="suffix rollback"):
+        run_ledger_evalue(p, expected_head=head)
+
+
+def test_extreme_alpha_decision_is_log_correct_not_inf_vs_inf():
+    """B31-02 pin: 397 fires at p0=0.1/p1=0.6 gives log e = 397*log(6) = 711.33 <
+    -log(1e-320) = 736.83 -> continue. Linear floats would compare inf >= inf."""
+    p = _tmp()
+    led = _seed_with_config(p, p0=0.1, p1=0.6)
+    for i in range(397):
+        _observe(led, "H-1", {"trig_a": True}, f"2026-{(i // 28) + 1:02d}-{(i % 28) + 1:02d}")
+    rows, _ = run_ledger_evalue(p, alpha=1e-320)
+    assert rows[0].decision == "continue"
+    assert rows[0].e_value is None  # linear display overflows -> rendered as null
+    assert rows[0].max_log_e < 736.83
+
+
+def test_long_strongly_falsified_history_completes_with_persistence():
+    p = _tmp()
+    led = _seed_with_config(p, p0=0.1, p1=0.9)
+    for i in range(400):
+        _observe(led, "H-1", {"trig_a": True}, f"2026-{(i // 28) + 1:02d}-{(i % 28) + 1:02d}")
+    rows, _ = run_ledger_evalue(p, alpha=0.05)  # must not raise on persist
+    assert rows[0].decision == "falsified"
+    sidecar = default_state_path_for(p).read_text(encoding="utf-8")
+    parsed = json.loads(sidecar, parse_constant=lambda c: (_ for _ in ()).throw(ValueError(c)))
+    assert parsed["hypotheses"]["H-1"]["max_log_e"] > 0
+
+
+def test_json_report_modes_are_strict_finite():
+    p = _tmp()
+    led = _seed_with_config(p, p0=0.1, p1=0.9)
+    for i in range(400):
+        _observe(led, "H-1", {"trig_a": True}, f"2026-{(i // 28) + 1:02d}-{(i % 28) + 1:02d}")
+    rows, _ = run_ledger_evalue(p, alpha=0.05, persist=False)
+    strict = json.dumps([r.to_dict() for r in rows], allow_nan=False)  # must not raise
+    assert "Infinity" not in strict and "NaN" not in strict
+
+
+def test_product_combiner_log_merge_matches_sum_of_logs():
+    from forward_qpop.evalue import SequentialTriggerTest
+    st = SequentialTriggerTest(p0=0.1, p1=0.6, combine="product", registered=("a", "b"))
+    st.observe("a", True)
+    st.observe("b", True)
+    import math
+    assert abs(st.log_e_value() - 2 * math.log(6.0)) < 1e-9

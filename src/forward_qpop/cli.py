@@ -148,7 +148,8 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     pev.add_argument("--alpha", type=float, default=0.05, help="Per-hypothesis Type-I level; 'falsified' iff e-value >= 1/alpha (default: 0.05). Reporting-time argument, not part of the hashed commitment — freeze any operational threshold in a dated policy.")
     pev.add_argument("--state", default=None, help="State sidecar path (default: <ledger>.evalue-state.json).")
     pev.add_argument("--json", dest="as_json", action="store_true", help="Print the report as JSON instead of a table.")
-    pev.add_argument("--out", default=None, help="Also write the JSON report to this path.")
+    pev.add_argument("--out", default=None, help="Also write the JSON report to this path (must not alias the ledger).")
+    pev.add_argument("--expected-head", default=None, dest="expected_head", help="Require the ledger head entry_hash to equal this anchored/expected value — rejects suffix rollback, which chain-only verification cannot detect.")
     pev.add_argument("--no-persist", dest="no_persist", action="store_true", help="Compute the report without writing/updating the state sidecar (dry run).")
 
     args = p.parse_args(argv)
@@ -250,7 +251,8 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     if args.cmd == "evalue":
         try:
             rows, _state = run_ledger_evalue(
-                args.path, alpha=args.alpha, state_path=args.state, persist=not args.no_persist,
+                args.path, alpha=args.alpha, state_path=args.state,
+                persist=not args.no_persist, expected_head=args.expected_head,
             )
         except (EvalueLedgerError, ValueError) as exc:
             print(f"evalue FAILED: {exc}")
@@ -258,10 +260,16 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         report = [r.to_dict() for r in rows]
         if args.out:
             outp = Path(args.out)
+            if outp.resolve() == Path(args.path).resolve():
+                print("evalue FAILED: --out resolves to the ledger file itself")
+                return 1
             outp.parent.mkdir(parents=True, exist_ok=True)
-            outp.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+            outp.write_text(
+                json.dumps(report, indent=2, sort_keys=True, allow_nan=False) + "\n",
+                encoding="utf-8",
+            )
         if args.as_json:
-            print(json.dumps(report, indent=2, sort_keys=True))
+            print(json.dumps(report, indent=2, sort_keys=True, allow_nan=False))
         else:
             _print_evalue_report(rows, args.alpha)
         return 0  # a "falsified" decision is a valid outcome, not a command failure

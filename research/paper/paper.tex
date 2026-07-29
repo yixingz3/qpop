@@ -714,7 +714,10 @@ Each entry \textbf{also binds the previous entry's hash} (\texttt{prev\_hash}), 
   \texttt{entry\_hash} = \mathrm{sha256}(\texttt{content\_hash} \mathbin{\|} \texttt{prev\_hash})
 \]
 
-not merely a set of independently-hashed rows. Two properties follow:
+not merely a set of independently-hashed rows. One honest boundary up front: a hash chain
+proves \emph{internal consistency}, not completeness --- deleting a \emph{suffix} leaves a valid
+shorter chain, so ``registered before the outcome and still present'' additionally needs an
+externally anchored head (the package's anchor feature). Two properties follow:
 
 \begin{itemize}
   \item \textbf{Per-entry integrity:} any later edit to a \emph{closed} entry breaks its
@@ -1012,7 +1015,7 @@ Edit only by appending dated amendments.
     independence assumption) and Ville-threshold decisions, covered by 25 module tests (including
     Monte-Carlo Type-I checks under optional stopping and under partial trigger reporting, and an
     adversarial selective-reporting demonstration) plus
-    29 ledger-integration tests. The
+    39 ledger-integration tests. The
     guarantee is \textbf{per-hypothesis}: anytime-valid control
     for that hypothesis's
     registered triggers under a stated conditional null ($\Pr(\text{fire}_t = 1 \mid \text{past})
@@ -1024,12 +1027,15 @@ Edit only by appending dated amendments.
     It is wired into the ledger: an admission entry \emph{can} carry a frozen \texttt{evalue}
     commitment (\texttt{p0}/\texttt{p1}/combine, hashed with the entry), belief-update entries may
     carry \texttt{trigger\_checks} observations, and \texttt{forward-qpop evalue <ledger.jsonl>} runs
-    the sequential test with its state persisted in a sidecar (exactly-once resumption; never
-    mutating the ledger).
+    the sequential test; the sidecar it writes is a regenerated derived inspection snapshot with
+    no decision authority (never read back; the ledger is never written).
     The runner verifies the ledger's hash chain before evaluating, re-derives every hypothesis
     from its admission on each invocation (the state sidecar is a cache with no decision
     authority), and decides on the persisted running maximum --- the rejection event is
-    $\sup_t e_t \geq 1/\alpha$, so a crossing is never forgotten. One further stated assumption:
+    $\sup_t e_t \geq 1/\alpha$, so a crossing within the verified recorded history is never
+    forgotten; because chain-only verification cannot distinguish a rolled-back valid prefix from
+    the true head, detecting suffix deletion requires an anchored/expected head (the anchor
+    feature). One further stated assumption:
     the decision to report or skip a scheduled check must be predictable from past information and
     independent of the current unseen outcome --- outcome-dependent selective reporting (e.g.,
     reporting only fires) voids the control, demonstrated by an adversarial regression.
@@ -1655,7 +1661,7 @@ portability (the uranium funnel --- \S\,H3, clause (c)); the expanded rejection-
 rejections existed), reported as such --- \S\,H5); the
 \textbf{e-value / anytime-valid} module, now \emph{ledger-integrated} (a frozen per-admission
 \texttt{evalue} commitment hashed with the entry, plus a \texttt{forward-qpop evalue} CLI that runs the
-sequential test over the ledger; 24 module + 19 integration tests --- the registered
+sequential test over the ledger; 25 module + 39 integration tests --- the registered
 (fixed-membership) mode delivers the per-hypothesis guarantee under the stated assumptions
 (\S\,Decision Rules footnote; the v2 revision's two disclosed defects were closed 2026-07-25 with
 regression tests), not used in the pilot, and no live admission carries a

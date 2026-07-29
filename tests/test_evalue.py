@@ -284,22 +284,6 @@ def test_invalid_combine_rejected():
         pass
 
 
-if __name__ == "__main__":
-    import sys
-
-    fns = [v for k, v in sorted(globals().items()) if k.startswith("test_") and callable(v)]
-    failed = 0
-    for fn in fns:
-        try:
-            fn()
-            print("PASS", fn.__name__)
-        except Exception as exc:  # noqa: BLE001
-            failed += 1
-            print("FAIL", fn.__name__, "->", repr(exc))
-    print(f"\n{len(fns) - failed}/{len(fns)} passed")
-    sys.exit(1 if failed else 0)
-
-
 # --------------------------------------------------------------------------- #
 # WI-40: fixed registered-trigger membership + strict boolean typing
 # (regressions for the two defects named in the v2 review round)
@@ -410,3 +394,19 @@ def test_outcome_dependent_selective_reporting_is_outside_the_guarantee():
         "selective reporting should visibly break Type-I control; if this ever holds "
         "at <= alpha the demonstration (and its documentation) needs re-examination"
     )
+
+
+if __name__ == "__main__":
+    import sys
+
+    fns = [v for k, v in sorted(globals().items()) if k.startswith("test_") and callable(v)]
+    failed = 0
+    for fn in fns:
+        try:
+            fn()
+            print("PASS", fn.__name__)
+        except Exception as exc:  # noqa: BLE001
+            failed += 1
+            print("FAIL", fn.__name__, "->", repr(exc))
+    print(f"\n{len(fns) - failed}/{len(fns)} passed")
+    sys.exit(1 if failed else 0)

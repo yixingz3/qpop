@@ -23,7 +23,7 @@ sequential test**.
    changes mixture membership mid-stream and carries no guarantee. Scope is
    **per-hypothesis only**: nothing here controls multiplicity across
    hypotheses/positions (book-wide control is future work), and the reporting-time
-   ``alpha`` is not part of the hashed commitment. **WI-44 (2026-07-28):** the ledger runner verifies the hash chain BEFORE evaluating, replays the verified ledger from each admission on every run (the state sidecar is a cache with no decision authority — tampered, legacy, or rewound sidecars are discarded and rebuilt), validates the raw exit-trigger contract (no row silently dropped; checks validated by presence, not truthiness), and decides on the persisted running maximum (the rejection event is sup_t e_t >= 1/alpha, so a crossing is never forgotten). Additional stated assumption: the decision to report or skip a scheduled check must be predictable from past information and independent of the current unseen outcome — outcome-dependent selective reporting (e.g., reporting only fires) voids the guarantee (demonstrated by an adversarial regression).
+   ``alpha`` is not part of the hashed commitment. **WI-44 (2026-07-28):** the ledger runner verifies the hash chain BEFORE evaluating, replays the verified ledger from each admission on every run (the state sidecar is a cache with no decision authority — tampered, legacy, or rewound sidecars are discarded and rebuilt), validates the raw exit-trigger contract (no row silently dropped; checks validated by presence, not truthiness), and decides on the persisted running maximum (the rejection event is sup_t e_t >= 1/alpha, so a crossing within the verified history is never forgotten; it is latched within the verified ledger's recorded history; deleting a SUFFIX of the chain leaves a valid prefix that chain-only verification cannot distinguish from the true head, so rollback detection requires an anchored/expected head (the anchor feature / --expected-head).). Additional stated assumption: the decision to report or skip a scheduled check must be predictable from past information and independent of the current unseen outcome — outcome-dependent selective reporting (e.g., reporting only fires) voids the guarantee (demonstrated by an adversarial regression).
 
 The model (per trigger)
 -----------------------
@@ -118,11 +118,12 @@ CLI: ``forward-qpop evalue <ledger.jsonl> [--alpha 0.05] [--state <path>] [--jso
 from __future__ import annotations
 
 import json
+import math
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional, Tuple, Union
 
-from .ledger import Ledger, verify_file
+from .ledger import Ledger, verify_entries
 
 __all__ = [
     "EProcess",
@@ -175,21 +176,21 @@ class EProcess:
 
     p0: float
     p1: float
-    e: float = 1.0
+    log_e: float = 0.0
     n: int = 0
 
     def __post_init__(self) -> None:
         _check_p0_p1(self.p0, self.p1)
 
-    # Per-observation likelihood-ratio multipliers of the point alternative vs. the
-    # null boundary p0. Precomputing keeps observe() a single multiply.
+    # WI-45 (B31-02): the martingale lives in LOG space so long valid histories can
+    # neither overflow to Infinity nor underflow-then-NaN; decisions compare logs.
     @property
-    def _lr_fired(self) -> float:
-        return self.p1 / self.p0
+    def _log_lr_fired(self) -> float:
+        return math.log(self.p1) - math.log(self.p0)
 
     @property
-    def _lr_not_fired(self) -> float:
-        return (1.0 - self.p1) / (1.0 - self.p0)
+    def _log_lr_not_fired(self) -> float:
+        return math.log(1.0 - self.p1) - math.log(1.0 - self.p0)
 
     def observe(self, fired: bool) -> float:
         """Fold in one binary trigger check; return the updated e-value.
@@ -202,21 +203,35 @@ class EProcess:
             raise TypeError(
                 f"fired must be a bool, got {type(fired).__name__}: {fired!r}"
             )
-        self.e *= self._lr_fired if fired else self._lr_not_fired
+        self.log_e += self._log_lr_fired if fired else self._log_lr_not_fired
         self.n += 1
-        return self.e
+        return self.e_value()
+
+    def log_e_value(self) -> float:
+        return self.log_e
 
     def e_value(self) -> float:
-        return self.e
+        """Linear display value; ``inf`` past float range. Decisions use logs."""
+        try:
+            return math.exp(self.log_e)
+        except OverflowError:
+            return float("inf")
 
     # ---------- serialization ----------
     def to_state(self) -> dict:
-        """A plain JSON-serializable snapshot (so a ledger can persist it per entry)."""
-        return {"p0": self.p0, "p1": self.p1, "e": self.e, "n": self.n}
+        """A plain JSON-serializable snapshot (always finite: logs, not linear e)."""
+        return {"p0": self.p0, "p1": self.p1, "log_e": self.log_e, "n": self.n}
 
     @classmethod
     def from_state(cls, state: dict) -> "EProcess":
-        return cls(p0=state["p0"], p1=state["p1"], e=state["e"], n=state["n"])
+        if "log_e" in state:
+            log_e = state["log_e"]
+        else:  # legacy linear-e snapshot
+            e = state["e"]
+            if not (isinstance(e, (int, float)) and e > 0 and math.isfinite(e)):
+                raise ValueError(f"legacy e-process state has invalid e: {e!r}")
+            log_e = math.log(e)
+        return cls(p0=state["p0"], p1=state["p1"], log_e=log_e, n=state["n"])
 
 
 def product_evalues(evalues: Iterable[float]) -> float:
@@ -315,10 +330,25 @@ class SequentialTriggerTest:
         """Total observe() calls folded in across every trigger id."""
         return sum(p.n for p in self._procs.values())
 
+    def log_e_value(self) -> float:
+        """The merged LOG e-value (0.0 if none seen) -- the decision-bearing quantity.
+
+        product: sum of component logs. average: log-sum-exp minus log(k), the
+        numerically stable arithmetic-mean merge (WI-45)."""
+        logs = [p.log_e_value() for p in self._procs.values()]
+        if not logs:
+            return 0.0
+        if self.combine == "product":
+            return sum(logs)
+        m = max(logs)
+        return m + math.log(sum(math.exp(x - m) for x in logs)) - math.log(len(logs))
+
     def e_value(self) -> float:
-        """The merged e-value across every trigger's e-process (1.0 if none seen)."""
-        es = [p.e_value() for p in self._procs.values()]
-        return product_evalues(es) if self.combine == "product" else average_evalues(es)
+        """Linear display value of the merge; ``inf`` past float range (display only)."""
+        try:
+            return math.exp(self.log_e_value())
+        except OverflowError:
+            return float("inf")
 
     def decision(self, alpha: float) -> str:
         """``"falsified"`` iff the merged e-value >= 1/alpha (Ville), else ``"continue"``.
@@ -330,7 +360,9 @@ class SequentialTriggerTest:
         """
         if not (0.0 < alpha < 1.0):
             raise ValueError(f"alpha must be in (0, 1), got {alpha!r}")
-        return FALSIFIED if self.e_value() >= 1.0 / alpha else CONTINUE
+        # WI-45: compare in log space -- immune to overflow/underflow at extreme
+        # parameters (log(1/alpha) is finite for every alpha in (0,1)).
+        return FALSIFIED if self.log_e_value() >= -math.log(alpha) else CONTINUE
 
     # ---------- serialization ----------
     def to_state(self) -> dict:
@@ -396,7 +428,9 @@ class EvalueReportRow:
     n_triggers: int = 0
     n_observations: int = 0
     e_value: Optional[float] = None
+    log_e: Optional[float] = None
     max_e: Optional[float] = None
+    max_log_e: Optional[float] = None
     threshold: Optional[float] = None
     decision: Optional[str] = None
     ledger_outcome: Optional[str] = None
@@ -457,18 +491,18 @@ def run_ledger_evalue(
     ledger_path: Union[str, Path],
     *,
     alpha: float = 0.05,
+    expected_head: Optional[str] = None,
     state_path: Optional[Union[str, Path]] = None,
     persist: bool = True,
 ) -> Tuple[List[EvalueReportRow], dict]:
-    """Fold newly-recorded trigger checks into each hypothesis's e-process and report.
+    """Replay the verified ledger and report each hypothesis's sequential test (WI-45).
 
-    State-resuming across repeated invocations: observations are folded in once each
-    (tracked via ``last_entry_hash`` in the sidecar),
-    so re-running after new belief_update entries land resumes rather than re-derives.
-    Resumption preserves the underlying test's properties: in registered (fixed-membership)
-    mode — which this runner always uses — the per-hypothesis anytime-valid guarantee carries
-    across invocations under the module-note assumptions; legacy lazy mode remains exploratory.
-    The ledger file itself is read-only here -- state lives entirely in the sidecar.
+    One immutable snapshot is parsed, hash-chain-verified in memory, lifecycle-validated
+    (one admission first, at most one terminal outcome last, no orphan rows), and replayed
+    from each admission on every invocation. The JSON sidecar is a regenerated **derived
+    inspection snapshot** with no decision authority -- it is never read back. Decisions
+    use the persisted running maximum in LOG space (``max_log_e >= -log(alpha)``). The
+    ledger file itself is never written; state/report paths that alias it are rejected.
 
     Returns ``(rows, state)``; ``state`` is the (possibly updated) sidecar dict, already
     written to disk unless ``persist=False`` (dry run).
@@ -476,17 +510,32 @@ def run_ledger_evalue(
     if not (0.0 < alpha < 1.0):
         raise ValueError(f"alpha must be in (0, 1), got {alpha!r}")
 
-    # WI-44 (B29-01): the hash chain is verified FIRST -- a corrupted ledger can never
-    # produce or update an e-value report.
-    vres = verify_file(ledger_path)
+    # WI-45 (B31-01): parse ONE immutable snapshot, verify that exact in-memory
+    # sequence, and replay that same sequence -- no verify-then-re-read window.
+    entries = Ledger(ledger_path).entries()
+    vres = verify_entries(entries)
     if not vres.ok:
         raise EvalueLedgerError(
             f"ledger failed hash-chain verification; refusing to evaluate: "
             f"{vres.problems[:2]}"
         )
-    entries = Ledger(ledger_path).entries()
+    if expected_head is not None:
+        actual = entries[-1].get("entry_hash") if entries else None
+        if actual != expected_head:
+            raise EvalueLedgerError(
+                f"ledger head {actual!r} does not match the expected/anchored head "
+                f"{expected_head!r} -- possible suffix rollback (chain-only verification "
+                f"cannot detect deletion of a suffix; see the anchor feature)"
+            )
     by_id = _group_by_id(entries)
     sp = Path(state_path) if state_path else default_state_path_for(ledger_path)
+    # WI-45 (B31-01): the sidecar/report paths must never alias the ledger itself.
+    lp_resolved = Path(ledger_path).resolve()
+    if sp.resolve() == lp_resolved:
+        raise EvalueLedgerError(
+            f"state_path resolves to the ledger file itself ({lp_resolved}); refusing "
+            f"to overwrite the ledger"
+        )
     # WI-44 (B29-01): the sidecar is a pure CACHE with no decision authority. Every run
     # replays the verified ledger from each admission and REGENERATES the sidecar, so a
     # tampered, legacy, or rewound sidecar is simply discarded and rebuilt -- it can
@@ -496,18 +545,38 @@ def run_ledger_evalue(
 
     rows: List[EvalueReportRow] = []
     for hid, hentries in by_id.items():
-        admission = next((e for e in hentries if e.get("type") == "admission"), None)
-        if admission is None:
-            continue  # every hypothesis id roots at an admission entry; nothing to do
+        # WI-45 (B31-01): validate the hypothesis LIFECYCLE before replay.
+        admissions = [e for e in hentries if e.get("type") == "admission"]
+        outcomes = [e for e in hentries if e.get("type") == "outcome"]
+        if not admissions:
+            raise EvalueLedgerError(
+                f"{hid}: entries exist with no admission (orphan/pre-admission rows)"
+            )
+        if len(admissions) > 1:
+            raise EvalueLedgerError(f"{hid}: {len(admissions)} admission entries; expected 1")
+        if hentries[0] is not admissions[0]:
+            raise EvalueLedgerError(f"{hid}: the admission is not the first entry for this id")
+        if len(outcomes) > 1:
+            raise EvalueLedgerError(f"{hid}: {len(outcomes)} terminal outcomes; expected <= 1")
+        if outcomes and hentries[-1] is not outcomes[0]:
+            raise EvalueLedgerError(
+                f"{hid}: entries appear after the terminal outcome -- a closed hypothesis "
+                f"is immutable (open a new id to revise)"
+            )
+        admission = admissions[0]
 
         ledger_outcome = next(
             (e.get("status") for e in hentries if e.get("type") == "outcome"), None
         )
-        cfg_present = isinstance(admission.get(EVALUE_CONFIG_FIELD), dict)
-
-        if not cfg_present:
+        if EVALUE_CONFIG_FIELD not in admission:
             rows.append(EvalueReportRow(id=hid, status="no_config", ledger_outcome=ledger_outcome))
             continue
+        if not isinstance(admission.get(EVALUE_CONFIG_FIELD), dict):
+            raise EvalueLedgerError(
+                f"{hid}: {EVALUE_CONFIG_FIELD!r} is present but not a mapping "
+                f"(got {type(admission.get(EVALUE_CONFIG_FIELD)).__name__}); only a "
+                f"genuinely absent field is no_config"
+            )
 
         # WI-44 (B29-02): validate the RAW contract -- a row without a nonempty string
         # id must fail loudly, never be silently dropped from the registered set.
@@ -546,7 +615,7 @@ def run_ledger_evalue(
         # maximum merged e-value after each complete belief-update step -- the decision
         # is the mathematical rejection event sup_t e_t >= 1/alpha, so a crossing can
         # never be forgotten by later shrinkage or across invocations.
-        max_e = 1.0
+        max_log_e = 0.0
         last_processed_hash = None
         for e in hentries:
             last_processed_hash = e.get("entry_hash")
@@ -576,10 +645,21 @@ def run_ledger_evalue(
                         f"coercion -- bool('false') would count as fired)"
                     )
                 test.observe(tid, fired)
-            max_e = max(max_e, test.e_value())
+            max_log_e = max(max_log_e, test.log_e_value())
 
-        hyps_state[hid] = {"test_state": test.to_state(), "last_entry_hash": last_processed_hash, "max_e": max_e}
-        e_value = test.e_value()
+        hyps_state[hid] = {
+            "test_state": test.to_state(),
+            "last_entry_hash": last_processed_hash,
+            "max_log_e": max_log_e,
+        }
+        def _finite_or_none(log_x):
+            try:
+                v = math.exp(log_x)
+            except OverflowError:
+                return None
+            return v if math.isfinite(v) else None
+
+        e_value = _finite_or_none(test.log_e_value())
         rows.append(
             EvalueReportRow(
                 id=hid,
@@ -590,9 +670,11 @@ def run_ledger_evalue(
                 n_triggers=len(test.trigger_ids()),
                 n_observations=test.total_observations(),
                 e_value=e_value,
-                max_e=max_e,
+                log_e=test.log_e_value(),
+                max_e=_finite_or_none(max_log_e),
+                max_log_e=max_log_e,
                 threshold=1.0 / alpha,
-                decision=FALSIFIED if max_e >= 1.0 / alpha else CONTINUE,
+                decision=FALSIFIED if max_log_e >= -math.log(alpha) else CONTINUE,
                 ledger_outcome=ledger_outcome,
             )
         )

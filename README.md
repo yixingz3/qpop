@@ -97,8 +97,8 @@ insert one, delete one, or reorder them, and `verify` fails (and exits non-zero 
 | Area | Status |
 |---|---|
 | Claude Code plugin discipline (`auditable-research` + `/qpop:*`) | **Working — v0.1** |
-| Hash-chained Python ledger (`forward_qpop`) + CLI | **Working** (66/67 tests, 1 network test skipped by default) |
-| Sequential trigger test (`evalue`) — per-hypothesis anytime-valid rule wired to the ledger (`forward-qpop evalue`); guarantee holds in registered (fixed-membership) mode under stated assumptions (WI-40 + WI-44 hardening: verified-chain-first replay, cache-only sidecar, sup-decision latching, outcome-independent reporting assumption); no book-wide multiplicity control | **Working — per-hypothesis scope** (25 e-process + 29 ledger-integration tests) — e-value / Ville, [methods note](research/docs/EVALUE_METHODS.md) |
+| Hash-chained Python ledger (`forward_qpop`) + CLI | **Working** (98 tests collected: 97 passed, 1 network test skipped by default) |
+| Sequential trigger test (`evalue`) — per-hypothesis anytime-valid rule wired to the ledger (`forward-qpop evalue`); guarantee holds in registered (fixed-membership) mode under stated assumptions (WI-40 + WI-44 hardening: verified-chain-first replay, cache-only sidecar, sup-decision latching, outcome-independent reporting assumption); no book-wide multiplicity control | **Working — per-hypothesis scope** (25 e-process + 39 ledger-integration tests) — e-value / Ville, [methods note](research/docs/EVALUE_METHODS.md) |
 | Local anchor manifest (`anchor` / `verify-anchor`) | **Working** — manifest + drift-detection + git / local OpenTimestamps stamp |
 | External timestamp anchor (`anchor external` / `verify-external`) | **Working — manual/opt-in by design** (WI-30, 2026-07-09; not an auto-hook on ledger writes) — submits to OpenTimestamps, sidecar receipt + drift-detection ([details](#external-anchor-what-it-proves-and-what-it-doesnt)) |
 | JSON Schemas for cards / entries / runs | **Included** ([`schemas/`](schemas)) |
@@ -120,7 +120,8 @@ The hash chain is **tamper-evidence, not a clock.** Be precise about the guarant
 | Claim | Chain alone? | What closes the gap |
 |---|---|---|
 | A past entry was edited | ✅ detected | hash verification |
-| An entry was inserted / deleted / reordered | ✅ detected | hash-chain verification |
+| An entry was inserted / interior-deleted / reordered | ✅ detected | hash-chain verification |
+| A **suffix** was deleted (rollback to a valid prefix) | ⚠️ not detectable chain-only | `anchor external` / an anchored expected head (`--expected-head`) |
 | An entry existed *before* the outcome | ⚠️ partial | `anchor external` + OpenTimestamps (or a pushed public commit) |
 | The LLM's reasoning was correct | ❌ no | human / source review |
 | The strategy is profitable | ❌ no | a forward window + the validity checklist |
