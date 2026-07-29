@@ -7,7 +7,7 @@ revision, 37 pp on branch `paper-v2.1`; the live SSRN version is the 34 pp v2 re
 
 | Venue | Status | Date | Notes |
 |---|---|---|---|
-| SSRN | **v2 REVISION LIVE (public preprint)** | v2 posted 2026-07-25 (v1 accepted 2026-07-22; submitted 2026-06-29) | v1 is now publicly posted and receiving views/downloads (27 views / 15 downloads day one). It is a preprint, not a peer-reviewed publication. **Abstract ID 7017500 — <https://ssrn.com/abstract=7017500>** (operator-supplied 2026-07-23). Pre-submission verification 2026-06-28 (all funnel numbers ledger-reconciled). eJournals: CSRN (AI Alert, Computing Methodology Alert), FEN (Asset Pricing & Valuation, Market Efficiency), ERN (Econometrics: Computational Techniques). JEL: C45, C12, C53, C81, C88, G11, G17. |
+| SSRN | **v2.1 REVISION UPLOADED (public preprint)** | v2.1 uploaded 2026-07-29 under CC-BY-NC-ND (v2 posted 2026-07-25; v1 accepted 2026-07-22; submitted 2026-06-29) | v1 is now publicly posted and receiving views/downloads (27 views / 15 downloads day one). It is a preprint, not a peer-reviewed publication. **Abstract ID 7017500 — <https://ssrn.com/abstract=7017500>** (operator-supplied 2026-07-23). Pre-submission verification 2026-06-28 (all funnel numbers ledger-reconciled). eJournals: CSRN (AI Alert, Computing Methodology Alert), FEN (Asset Pricing & Valuation, Market Efficiency), ERN (Econometrics: Computational Techniques). JEL: C45, C12, C53, C81, C88, G11, G17. |
 | arXiv | Manuscript revision + endorsement pending | — | cs.AI primary, q-fin.CP cross-list. **The `arxiv/` bundle is still the v1 source — do NOT upload it; it must be re-synced from the canonical v2 after the SSRN revision lands (arXiv deferred by operator decision, 2026-07-24).** **Source copy prepared (WI-21):** [`arxiv/paper.tex`](arxiv/paper.tex) + `references.bib` (+ `paper.bbl` fallback), line-1 `% … SSRN submission draft` comment scrubbed on the copy only (original tex untouched; diff = 1 line), builds clean (pdflatex+bibtex+pdflatex×2 → 28 pp, 0 undefined citations). Upload `.tex` + `references.bib` (figures are inline TikZ — no ancillary files). **Endorser prep (WI-20c):** [`../docs/ARXIV_ENDORSER_PREP.md`](../docs/ARXIV_ENDORSER_PREP.md) — verified cs.AI endorser shortlist + outreach template. Remaining blocker: operator obtains one manual (Path-2) endorsement, then upload. |
 
 ## Version log
@@ -54,9 +54,11 @@ Sequencing decided for the `paper-v2` draft, after operator review:
 
 ## Current release step (2026-07-28)
 
-**One current instruction:** the SSRN v2.1 replacement (abstract 7017500) uploads after the
-reviewer accepts the pending correction block; **arXiv remains deferred by operator decision**;
-the future H4/registry/human-lane package is **v3**, a later revision. Everything below this
+**v2.1 RELEASED.** Uploaded to SSRN abstract 7017500 on 2026-07-29 (37 pp, CC-BY-NC-ND;
+reviewer acceptance: revise-log Block 35 + the two Block-36 addenda; conformance pinned to
+commit `83d6b24` in the page-1 footnote). `paper-v2.1` merged to `main` the same day.
+**arXiv remains deferred by operator decision**; the future H4/registry/human-lane package is
+**v3**, a later revision. Everything below this
 line in this section and the release-plan section beneath it is a **HISTORICAL RECORD** of the
 v2 release step (completed 2026-07-25), kept as dated history.
 
