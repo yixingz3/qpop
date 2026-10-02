@@ -62,3 +62,6 @@ research/paper/arxiv/*.toc
 *.external-anchor.json
 build_last.log
 texput.log
+
+# local scratch (pytest temp dirs, PDF build output); never published
+tmp/
