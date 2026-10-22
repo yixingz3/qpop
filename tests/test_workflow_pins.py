@@ -1,4 +1,4 @@
-"""Every third-party `uses:` step in .github/workflows must be pinned to a full commit SHA.
+"""Every non-local `uses:` step (third-party and first-party actions) in .github/workflows must be pinned to a full commit SHA.
 
 A tag or branch ref (for example `release/v1` or `v4`) can move without any change in this
 repository, so the code that runs in a job (including the OIDC publish jobs) could change between
